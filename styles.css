@@ -1,15 +1,15 @@
-      /* Variables de Color inspiradas en Pokémon */
+      /* paleta de colores no tocar */
         :root {
             --poke-red: #EE1515;
             --poke-yellow: #FFCC00;
-            --poke-blue: #3B4CCA; /* Azul clásico del logo */
+            --poke-blue: #3B4CCA; 
             --poke-dark-blue: #1D2C5E;
             --bg-light: #F4F4F8;
             --text-dark: #333333;
             --card-border: #E0E0E0;
         }
 
-        /* Reset y Estilos Globales */
+        /* estilos globales y reset de los margenes por defecto q trae el navegador */
         * {
             margin: 0;
             padding: 0;
@@ -60,7 +60,7 @@
             transform: translateY(5rem);
         }
 
-        /* --- MODO OSCURO --- */
+        /* darkmode */
         body.dark-mode {
             background-color: #0b1021;
             color: #e5e7eb;
@@ -204,7 +204,7 @@
         .btn-primary { background-color: var(--poke-yellow); color: var(--poke-dark-blue); }
         .btn-secondary { background-color: var(--poke-blue); color: white; }
 
-        /* --- HEADER --- */
+        /* header */
         .main-header {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0), rgba(29, 44, 94, 0.28));
             padding: 1rem 0;
@@ -268,7 +268,7 @@
             transition: transform 0.25s ease, opacity 0.25s ease;
         }
 
-                /* --- Toggle Modo Oscuro (Uiverse) --- */
+                /* modo oscuro */
                 .toggle-cont {
                     --primary: #d0d0d0;
                     --light: #f4f4f4;
@@ -374,7 +374,7 @@
                     fill: var(--light);
                 }
 
-                /* Estado activado */
+                /* estado activado */
                 .toggle-input:checked + .toggle-label {
                     background-color: rgba(65, 67, 68, 0);
                     border: 1px solid #3d6970;
@@ -417,7 +417,7 @@
             color: var(--poke-yellow);
         }
         
-        /* Círculo decorativo tipo Pokéball en el logo */
+        /* POKEBALL */
         .logo::before {
             content: '';
             display: inline-block;
@@ -440,7 +440,7 @@
             max-width: 500px;
         }
 
-        /* Uiverse-style search input */
+        /* BARRA DE BUSQUEDAS ESTILO NEUMORFISMO */
         .search-bar .input {
             width: 100%;
             border: none;
@@ -451,7 +451,7 @@
             box-shadow: inset 1px 3px 6px rgba(0,0,0,0.18);
             transition: 300ms ease-in-out;
             font-family: inherit;
-            padding-right: 140px; /* room for pill GO button */
+            padding-right: 140px; 
         }
 
         .search-bar .input:focus {
@@ -472,7 +472,7 @@
                         z-index: 2;
                 }
 
-                /* From Uiverse.io by adamgiebl */
+                /* btn go*/
                 .neu-button {
                     background-color: #e0e0e0;
                     border-radius: 10px;
@@ -527,9 +527,9 @@
             border-radius: 50%;
         }
 
-        /* --- LANDING HERO --- */
+        /* patron de inicio */
         .landing-hero {
-            /* Fondo con patrón sutil de pokeballs */
+      
             background: 
                 radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 20%, transparent 20%),
                 linear-gradient(135deg, var(--poke-blue) 0%, var(--poke-dark-blue) 100%);
@@ -577,13 +577,13 @@
             position: relative;
         }
         
-        /* Decoración de fondo para la imagen principal */
+        /* charizard card */
         .hero-image::before {
             content: '';
             position: absolute;
             width: 400px;
             height: 400px;
-            background-color: rgba(255, 204, 0, 0.2); /* Amarillo transparente */
+            background-color: rgba(255, 204, 0, 0.2); 
             border-radius: 50%;
             z-index: 0;
         }
@@ -596,7 +596,7 @@
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
         }
 
-        /* --- COMMON CARD STYLES --- */
+        /* estilo de las cartas en comun */
         .card-item {
             background: white;
             border-radius: 15px;
@@ -689,7 +689,7 @@
         .card-img-container img {
             max-width: 100%;
             height: auto;
-            /* Efecto foil sutil */
+        
             filter: brightness(1.05);
             will-change: transform;
         }
@@ -745,7 +745,7 @@
             background-color: var(--poke-dark-blue);
         }
 
-        /* --- CARRUSEL POPULARES (Simulado con scroll CSS) --- */
+        /* --- carrusell principal con 3d */
         .popular-section {
             padding: 4rem 0 6rem;
         }
@@ -1030,14 +1030,15 @@
             100% { transform: translateX(300%); }
         }
 
-        /* --- OFERTAS DE LA SEMANA --- */
+        /* ofertas */
         .deals-section {
             padding: 4rem 0;
-            background-color: #E3F2FD; /* Un azul muy claro para diferenciar la sección */
+            background-color: #E3F2FD; 
+
             position: relative;
         }
         
-        /* Decoración de borde superior estilo "dientes" */
+        /* deciracion de zigzag arriba */
         .deals-section::before {
             content: '';
             position: absolute;
@@ -1077,7 +1078,7 @@
             margin-left: 5px;
         }
 
-        /* --- FOOTER --- */
+        /* pie de pagina */
         .main-footer {
             background-color: var(--poke-dark-blue);
             color: white;
@@ -1137,7 +1138,7 @@
             color: #aaa;
         }
 
-        /* --- MEDIA QUERIES (Responsive básico) --- */
+        /* RESPONSIVE telefonos*/
         @media (max-width: 768px) {
             .hero-content {
                 flex-direction: column-reverse;
@@ -1228,3 +1229,4 @@
                 padding-right: 1rem;
             }
         }
+        

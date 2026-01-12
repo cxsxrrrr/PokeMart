@@ -62,53 +62,41 @@
         const mobileMediaQuery = window.matchMedia(MOBILE_QUERY);
         const THEME_KEY = 'pokemart-theme';
 
-        const applyTheme = (theme) => {
-            const isDark = theme === 'dark';
-            document.body.classList.toggle('dark-mode', isDark);
-            if (themeToggleInput) {
-                themeToggleInput.checked = isDark;
+        const aplicarTema = (tema)=>{
+            const esOscuro = tema === 'dark';
+            document.body.classList.toggle('dark-mode', esOscuro  );
+            if(themeToggleInput){
+                themeToggleInput.checked = esOscuro;
             }
         };
 
-        const loadSavedTheme = () => {
-            const saved = localStorage.getItem(THEME_KEY);
-            if (saved === 'dark' || saved === 'light') {
-                return saved;
+        const cargarTemaGuardado = ()=> {
+            const guardado = localStorage.getItem(THEME_KEY);
+            if (guardado === 'dark' || guardado=== 'light') {
+                return guardado;
             }
             return 'light';
         };
 
-        const toggleTheme = () => {
-            const next = themeToggleInput && themeToggleInput.checked ? 'dark' : 'light';
-            applyTheme(next);
-            localStorage.setItem(THEME_KEY, next);
+        const alternarTema = () => {
+            const siguiente = themeToggleInput && themeToggleInput.checked ? 'dark' : 'light';
+            aplicarTema(siguiente);
+            localStorage.setItem(THEME_KEY, siguiente);
         };
 
-        const isMobileLayout = () => mobileMediaQuery.matches;
+        const esDisenoMovil = () => mobileMediaQuery.matches;
 
-        const uniqueArray = (values = []) => Array.from(new Set(values.filter(Boolean)));
-        
-        const computeDeterministicOffset = (text) => {
-            if (!text) {
+        const listaSinDuplicados = (valores = []) =>  Array.from(new Set(valores.filter(Boolean)));
+
+        const calcularDesfaseDeterminista = (texto) =>{
+            if(!texto){
                 return 0;
             }
             let hash = 7;
-            for (let index = 0; index < text.length; index += 1) {
-                hash = (hash * 31 + text.charCodeAt(index)) % 1000;
+            for (let index = 0; index < texto.length; index += 1) {
+                hash = (hash * 31 + texto.charCodeAt(index)) % 1000;
             }
             return hash / 100; // 0.00 - 9.99
-        };
-
-        const getIdPieces = (cardId) => {
-            if (!cardId) {
-                return { setId: null, number: null };
-            }
-            const [setId, rawNumber] = cardId.split('-');
-            if (!setId || !rawNumber) {
-                return { setId: null, number: null };
-            }
-            const cleanedNumber = rawNumber.replace(/^[A-Za-z]+/, '');
-            return { setId: setId.toLowerCase(), number: cleanedNumber };
         };
 
         const buildImageCandidates = (card) => {
@@ -124,7 +112,7 @@
                 `${basePath}.webp`
             ];
             candidates.push(PLACEHOLDER_IMAGE);
-            return uniqueArray(candidates);
+            return listaSinDuplicados(candidates);
         };
 
         const normalizeCard = (card) => {
@@ -132,8 +120,8 @@
             const setName = card?.set?.name || card?.setName || 'Colección local';
             const rarity = card?.rarity || 'Rare';
             const basePrice = rarityBasePrices[rarity] ?? 12;
-            const deterministicOffset = computeDeterministicOffset(card?.id || card?.name);
-            const estimatedPrice = Number((basePrice + deterministicOffset).toFixed(2));
+            const desfase = calcularDesfaseDeterminista(card?.id || card?.name);
+            const estimatedPrice = Number((basePrice + desfase).toFixed(2));
             return {
                 ...card,
                 set: card?.set?.name ? card.set : { name: setName },
@@ -142,7 +130,7 @@
             };
         };
 
-        const ensureCatalog = async () => {
+        const asegurarCatalogo = async ()=>{
             if (catalog.length) {
                 return catalog;
             }
@@ -169,14 +157,14 @@
             return catalogPromise;
         };
 
-        const clearRotationTimer = () => {
+        const limpiarTemporizadorRotacion = () =>{
             if (rotationTimer) {
                 clearInterval(rotationTimer);
                 rotationTimer = null;
             }
         };
 
-        const disableCarouselNav = () => {
+        const desactivarControlesCarrusel = ()=> {
             if (carouselPrev) {
                 carouselPrev.disabled = true;
             }
@@ -185,21 +173,21 @@
             }
         };
 
-        const updateCarouselTransforms = () => {
+        const actualizarTransformacionesCarrusel = () => {
             if (!popularContainer || popularContainer.dataset.state !== 'ready') {
-                disableCarouselNav();
+                desactivarControlesCarrusel();
                 return;
             }
 
             const cards = Array.from(popularContainer.querySelectorAll('.card-item'));
             const total = cards.length;
             if (!total) {
-                disableCarouselNav();
+                desactivarControlesCarrusel();
                 return;
             }
 
-            if (isMobileLayout()) {
-                disableCarouselNav();
+            if (esDisenoMovil()) {
+                desactivarControlesCarrusel();
                 cards.forEach((card) => {
                     card.dataset.hidden = 'false';
                     card.style.transform = 'none';
@@ -255,8 +243,8 @@
             });
         };
 
-        const moveCarousel = (direction) => {
-            if (isMobileLayout()) {
+        const moverCarrusel = (direccion) => {
+            if (esDisenoMovil()) {
                 return;
             }
             if (!popularContainer || popularContainer.dataset.state !== 'ready') {
@@ -267,26 +255,26 @@
             if (total <= 1) {
                 return;
             }
-            carouselIndex = (carouselIndex + direction + total) % total;
-            updateCarouselTransforms();
+            carouselIndex = (carouselIndex + direccion + total) % total;
+            actualizarTransformacionesCarrusel();
         };
 
-        const shuffleArray = (array) => {
-            const copy = array.slice();
-            for (let index = copy.length - 1; index > 0; index -= 1) {
+        const mezclarArreglo = (arreglo) => {
+            const copia = arreglo.slice();
+            for (let index = copia.length - 1; index > 0; index -= 1) {
                 const swapIndex = Math.floor(Math.random() * (index + 1));
-                [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+                [copia[index], copia[swapIndex]] = [copia[swapIndex], copia[index]];
             }
-            return copy;
+            return copia;
         };
 
-        const pickRandomSubset = (cards, amount, exclusionSet = new Set()) => {
+        const elegirSubconjuntoAleatorio = (cards, amount, exclusionSet = new Set()) => {
             const pool = cards.filter((card) => !exclusionSet.has(card?.id));
             const workingPool = pool.length ? pool : cards.slice();
             if (!workingPool.length) {
                 return [];
             }
-            const shuffled = shuffleArray(workingPool);
+            const shuffled = mezclarArreglo(workingPool);
             const limit = Math.min(amount, shuffled.length);
             return shuffled.slice(0, limit);
         };
@@ -311,9 +299,9 @@
             });
         };
 
-        const createSkeletonCard = (options = {}) => {
+        const crearCartaSkeleton = (opciones = {}) => {
             const wrapper = document.createElement('div');
-            wrapper.className = 'card-item skeleton-card' + (options.isCarousel ? ' carousel-item' : '');
+            wrapper.className = 'card-item skeleton-card' + (opciones.isCarousel ? ' carousel-item' : '');
 
             const image = document.createElement('div');
             image.className = 'card-img-container';
@@ -346,18 +334,18 @@
             return wrapper;
         };
 
-        const getCardPrice = (card) => {
-            const directPrice = toNumber(card?.price);
+        const obtenerPrecioCarta = (carta) =>{
+            const directPrice = toNumber(carta?.price);
             if (directPrice && directPrice > 0) {
                 return directPrice;
             }
 
-            const marketPrice = toNumber(card?.cardmarket?.prices?.averageSellPrice);
+            const marketPrice = toNumber(carta?.cardmarket?.prices?.averageSellPrice);
             if (marketPrice && marketPrice > 0) {
                 return marketPrice;
             }
 
-            const priceGroups = card?.tcgplayer?.prices;
+            const priceGroups = carta?.tcgplayer?.prices;
             if (!priceGroups) {
                 return null;
             }
@@ -376,20 +364,20 @@
             return null;
         };
 
-        const createCardElement = (card, options = {}) => {
+        const crearElementoCarta = (carta, opciones = {}) => {
             const wrapper = document.createElement('div');
-            wrapper.className = 'card-item' + (options.isCarousel ? ' carousel-item' : '');
+            wrapper.className = 'card-item' + (opciones.isCarousel ? ' carousel-item' : '');
             wrapper.dataset.hidden = 'false';
-            if (card?.id) {
-                wrapper.dataset.cardId = card.id;
+            if (carta?.id) {
+                wrapper.dataset.cardId = carta.id;
             }
-            const basePrice = toNumber(options.basePrice);
+            const basePrice = toNumber(opciones.basePrice);
             let discountBadge = null;
 
-            if (options.discountRate && basePrice) {
+            if (opciones.discountRate && basePrice) {
                 discountBadge = document.createElement('div');
                 discountBadge.className = 'discount-badge';
-                discountBadge.textContent = `-${Math.round(options.discountRate * 100)}%`;
+                discountBadge.textContent = `-${Math.round(opciones.discountRate * 100)}%`;
             }
 
             const imageContainer = document.createElement('div');
@@ -401,7 +389,7 @@
             const createFaceImage = (faceClass) => {
                 const faceImage = document.createElement('img');
                 faceImage.className = `card-img-face ${faceClass}`;
-                faceImage.alt = card?.name || 'Carta Pokémon';
+                faceImage.alt = carta?.name || 'Carta Pokémon';
                 faceImage.decoding = 'async';
                 faceImage.loading = 'lazy';
                 return faceImage;
@@ -410,8 +398,8 @@
             const frontImage = createFaceImage('card-img-face--front');
             const backImage = createFaceImage('card-img-face--back');
 
-            const imageCandidates = Array.isArray(card?.imageCandidates) && card.imageCandidates.length
-                ? card.imageCandidates.slice()
+            const imageCandidates = Array.isArray(carta?.imageCandidates) && carta.imageCandidates.length
+                ? carta.imageCandidates.slice()
                 : [PLACEHOLDER_IMAGE];
             let currentImageIndex = 0;
             let handlingError = false;
@@ -462,33 +450,33 @@
             info.className = 'card-info';
 
             const title = document.createElement('h3');
-            title.textContent = card?.name || 'Carta Pokémon';
+            title.textContent = carta?.name || 'Carta Pokémon';
             info.appendChild(title);
 
             const setInfo = document.createElement('div');
             setInfo.className = 'card-set';
             const rarityIcon = document.createElement('span');
             rarityIcon.className = 'rarity-icon';
-            const rarity = card?.rarity || 'Rare';
+            const rarity = carta?.rarity || 'Rare';
             rarityIcon.textContent = raritySymbols[rarity] || '★';
             setInfo.appendChild(rarityIcon);
-            setInfo.appendChild(document.createTextNode(card?.set?.name || 'Colección local'));
+            setInfo.appendChild(document.createTextNode(carta?.set?.name || 'Colección local'));
             info.appendChild(setInfo);
 
             let displayedPrice = basePrice;
 
-            if (basePrice && options.discountRate) {
-                displayedPrice = basePrice * (1 - options.discountRate);
+            if (basePrice && opciones.discountRate) {
+                displayedPrice = basePrice * (1 - opciones.discountRate);
             }
 
             const priceElement = document.createElement('div');
             priceElement.className = 'card-price';
-            if (card?.id) {
-                priceElement.dataset.cardId = card.id;
+            if (carta?.id) {
+                priceElement.dataset.cardId = carta.id;
             }
             if (displayedPrice) {
                 priceElement.textContent = formatCurrency(displayedPrice);
-                if (basePrice && options.discountRate) {
+                if (basePrice && opciones.discountRate) {
                     const oldPrice = document.createElement('span');
                     oldPrice.className = 'old-price';
                     oldPrice.textContent = formatCurrency(basePrice);
@@ -502,7 +490,7 @@
 
             const button = document.createElement('button');
             button.className = 'add-to-cart';
-            button.textContent = options.ctaLabel || 'Añadir al carrito';
+            button.textContent = opciones.ctaLabel || 'Añadir al carrito';
             info.appendChild(button);
             attachCardFlipInteraction(wrapper, imageFlip);
 
@@ -510,22 +498,22 @@
             return wrapper;
         };
 
-        const renderPopular = (cards) => {
+        const renderizarPopulares = (cartas) =>{
             popularContainer.innerHTML = '';
-            popularContainer.dataset.count = String(cards.length);
+            popularContainer.dataset.count = String(cartas.length);
 
-            if (!cards.length) {
+            if (!cartas.length) {
                 popularContainer.dataset.state = 'empty';
-                disableCarouselNav();
+                desactivarControlesCarrusel();
                 popularContainer.innerHTML = '<p class="status-message error">No se encontraron cartas populares.</p>';
                 return;
             }
 
             popularContainer.dataset.state = 'ready';
 
-            cards.forEach((card) => {
-                const basePrice = getCardPrice(card);
-                const element = createCardElement(card, {
+            cartas.forEach((card) => {
+                const basePrice = obtenerPrecioCarta(card);
+                const element = crearElementoCarta(card, {
                     isCarousel: true,
                     basePrice,
                     ctaLabel: 'Añadir al carrito'
@@ -534,22 +522,22 @@
             });
 
             carouselIndex = 0;
-            updateCarouselTransforms();
-            requestAnimationFrame(updateCarouselTransforms);
+            actualizarTransformacionesCarrusel();
+            requestAnimationFrame(actualizarTransformacionesCarrusel);
         };
 
-        const renderDeals = (cards) => {
+        const renderizarOfertas = (cartas) => {
             dealsContainer.innerHTML = '';
-            if (!cards.length) {
+            if (!cartas.length) {
                 dealsContainer.innerHTML = '<p class="status-message error">No se encontraron ofertas.</p>';
                 return;
             }
 
             const discounts = [0.15, 0.2, 0.25, 0.3];
-            cards.forEach((card, index) => {
-                const basePrice = getCardPrice(card);
+            cartas.forEach((card, index) => {
+                const basePrice = obtenerPrecioCarta(card);
                 const discountRate = discounts[index % discounts.length];
-                const element = createCardElement(card, {
+                const element = crearElementoCarta(card, {
                     basePrice,
                     discountRate,
                     ctaLabel: '¡Comprar oferta!'
@@ -558,72 +546,72 @@
             });
         };
 
-        const showError = (message) => {
-            const content = `<p class="status-message error">${message}</p>`;
+        const mostrarError = (mensaje) => {
+            const content = `<p class="status-message error">${mensaje}</p>`;
             popularContainer.dataset.state = 'error';
             popularContainer.dataset.count = '0';
-            disableCarouselNav();
+            desactivarControlesCarrusel();
             popularContainer.innerHTML = content;
             dealsContainer.innerHTML = content;
-            clearRotationTimer();
+            limpiarTemporizadorRotacion();
         };
 
-        const showSkeletons = () => {
+        const mostrarSkeletons = () => {
             if (popularContainer) {
                 popularContainer.dataset.state = 'loading';
                 popularContainer.dataset.count = '0';
-                disableCarouselNav();
+                desactivarControlesCarrusel();
                 popularContainer.innerHTML = '';
             }
             if (dealsContainer) {
                 dealsContainer.innerHTML = '';
             }
-            clearRotationTimer();
+            limpiarTemporizadorRotacion();
             currentSourceCards = [];
 
             for (let index = 0; index < SKELETONS_POPULAR; index += 1) {
-                popularContainer.appendChild(createSkeletonCard({ isCarousel: true }));
+                popularContainer.appendChild(crearCartaSkeleton({ isCarousel: true }));
             }
 
             for (let index = 0; index < SKELETONS_DEALS; index += 1) {
-                dealsContainer.appendChild(createSkeletonCard());
+                dealsContainer.appendChild(crearCartaSkeleton());
             }
         };
 
-        const filterCards = (cards, term) => {
-            if (!term) {
-                return cards;
+        const filtrarCartas = (cartas, termino) => {
+            if (!termino) {
+                return cartas;
             }
-            const loweredTerm = term.toLowerCase();
-            return cards.filter((card) => {
+            const loweredTerm = termino.toLowerCase();
+            return cartas.filter((card) => {
                 const nameMatch = card?.name?.toLowerCase().includes(loweredTerm);
                 const idMatch = card?.id?.toLowerCase().includes(loweredTerm);
                 return nameMatch || idMatch;
             });
         };
 
-        const applyRandomSelections = (sourceCards) => {
+        const aplicarSeleccionesAleatorias = (sourceCards) => {
             if (!Array.isArray(sourceCards) || !sourceCards.length) {
-                renderPopular([]);
-                renderDeals([]);
+                renderizarPopulares([]);
+                renderizarOfertas([]);
                 return;
             }
 
-            const popularSelection = pickRandomSubset(sourceCards, POPULAR_COUNT);
+            const popularSelection = elegirSubconjuntoAleatorio(sourceCards, POPULAR_COUNT);
             const exclusion = new Set(popularSelection.map((card) => card?.id));
-            const dealsSelection = pickRandomSubset(sourceCards, DEALS_COUNT, exclusion);
+            const dealsSelection = elegirSubconjuntoAleatorio(sourceCards, DEALS_COUNT, exclusion);
 
-            renderPopular(popularSelection);
-            renderDeals(dealsSelection);
+            renderizarPopulares(popularSelection);
+            renderizarOfertas(dealsSelection);
         };
 
-        const scheduleRotation = () => {
-            clearRotationTimer();
+        const programarRotacion = () => {
+            limpiarTemporizadorRotacion();
             // Automatic rotation disabled; randomness now occurs only on load/search.
         };
 
-        const loadCards = async (term = '') => {
-            const normalizedTerm = term.trim();
+        const cargarCartas = async (termino = '') => {
+            const normalizedTerm = termino.trim();
             if (
                 normalizedTerm === lastQuery &&
                 popularContainer.children.length > 0 &&
@@ -634,53 +622,53 @@
             }
 
             lastQuery = normalizedTerm;
-            showSkeletons();
+            mostrarSkeletons();
 
             try {
-                const cards = await ensureCatalog();
-                const filtered = filterCards(cards, normalizedTerm);
+                const cards = await asegurarCatalogo();
+                const filtered = filtrarCartas(cards, normalizedTerm);
 
                 if (!filtered.length) {
-                    showError('No se encontraron cartas con ese criterio.');
+                    mostrarError('No se encontraron cartas con ese criterio.');
                     return;
                 }
 
                 currentSourceCards = filtered.slice();
-                applyRandomSelections(currentSourceCards);
-                scheduleRotation();
+                aplicarSeleccionesAleatorias(currentSourceCards);
+                programarRotacion();
             } catch (error) {
                 console.error(error);
-                showError('No se pudo cargar el catálogo local.');
+                mostrarError('No se pudo cargar el catálogo local.');
             }
         };
 
-        const handleSearch = () => {
-            loadCards(searchInput ? searchInput.value : '');
+        const manejarBusqueda = () => {
+            cargarCartas(searchInput ? searchInput.value : '');
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = loadSavedTheme();
-            applyTheme(savedTheme);
-            loadCards();
+            const savedTheme = cargarTemaGuardado();
+            aplicarTema(savedTheme);
+            cargarCartas();
             if (searchButton) {
-                searchButton.addEventListener('click', handleSearch);
+                searchButton.addEventListener('click', manejarBusqueda);
             }
             if (searchInput) {
                 searchInput.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
-                        handleSearch();
+                        manejarBusqueda();
                     }
                 });
             }
             if (themeToggleInput) {
-                themeToggleInput.addEventListener('change', toggleTheme);
+                themeToggleInput.addEventListener('change', alternarTema);
             }
             if (carouselPrev) {
-                carouselPrev.addEventListener('click', () => moveCarousel(-1));
+                carouselPrev.addEventListener('click', () => moverCarrusel(-1));
             }
             if (carouselNext) {
-                carouselNext.addEventListener('click', () => moveCarousel(1));
+                carouselNext.addEventListener('click', () => moverCarrusel(1));
             }
 
             let closeHeaderMenu = () => {};
@@ -714,7 +702,7 @@
             }
 
             const handleLayoutChange = () => {
-                requestAnimationFrame(updateCarouselTransforms);
+                requestAnimationFrame(actualizarTransformacionesCarrusel);
                 closeHeaderMenu();
             };
 
