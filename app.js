@@ -8,6 +8,9 @@
         const searchInput = document.querySelector('.search-bar input');
         const searchButton = document.querySelector('.search-btn');
         const themeToggleInput = document.getElementById('theme-toggle');
+        const headerContent = document.querySelector('.header-content');
+        const headerFlex = document.querySelector('.header-flex');
+        const menuToggleButton = document.querySelector('.menu-toggle');
         const carouselPrev = document.querySelector('.carousel-nav--prev');
         const carouselNext = document.querySelector('.carousel-nav--next');
         const SKELETONS_POPULAR = 6;
@@ -378,12 +381,12 @@
                 wrapper.dataset.cardId = card.id;
             }
             const basePrice = toNumber(options.basePrice);
+            let discountBadge = null;
 
             if (options.discountRate && basePrice) {
-                const discountBadge = document.createElement('div');
+                discountBadge = document.createElement('div');
                 discountBadge.className = 'discount-badge';
                 discountBadge.textContent = `-${Math.round(options.discountRate * 100)}%`;
-                wrapper.appendChild(discountBadge);
             }
 
             const imageContainer = document.createElement('div');
@@ -447,6 +450,9 @@
             imageFlip.appendChild(frontImage);
             imageFlip.appendChild(backImage);
             imageContainer.appendChild(imageFlip);
+            if (discountBadge) {
+                imageContainer.appendChild(discountBadge);
+            }
             wrapper.appendChild(imageContainer);
 
             const info = document.createElement('div');
@@ -673,16 +679,47 @@
             if (carouselNext) {
                 carouselNext.addEventListener('click', () => moveCarousel(1));
             }
-            window.addEventListener('resize', () => {
+
+            let closeHeaderMenu = () => {};
+            if (menuToggleButton && headerContent && headerFlex) {
+                const setMenuOpen = (open) => {
+                    menuToggleButton.setAttribute('aria-expanded', String(open));
+                    menuToggleButton.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+                    headerContent.classList.toggle('menu-open', open);
+                    headerFlex.setAttribute('aria-hidden', String(!open));
+                };
+
+                closeHeaderMenu = () => setMenuOpen(false);
+                setMenuOpen(false);
+
+                menuToggleButton.addEventListener('click', () => {
+                    const expanded = menuToggleButton.getAttribute('aria-expanded') === 'true';
+                    setMenuOpen(!expanded);
+                });
+
+                document.addEventListener('click', (event) => {
+                    if (!headerContent.contains(event.target)) {
+                        closeHeaderMenu();
+                    }
+                });
+
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') {
+                        closeHeaderMenu();
+                    }
+                });
+            }
+
+            const handleLayoutChange = () => {
                 requestAnimationFrame(updateCarouselTransforms);
-            });
+                closeHeaderMenu();
+            };
+
+            window.addEventListener('resize', handleLayoutChange);
+
             if (typeof mobileMediaQuery.addEventListener === 'function') {
-                mobileMediaQuery.addEventListener('change', () => {
-                    requestAnimationFrame(updateCarouselTransforms);
-                });
+                mobileMediaQuery.addEventListener('change', handleLayoutChange);
             } else if (typeof mobileMediaQuery.addListener === 'function') {
-                mobileMediaQuery.addListener(() => {
-                    requestAnimationFrame(updateCarouselTransforms);
-                });
+                mobileMediaQuery.addListener(handleLayoutChange);
             }
         });
