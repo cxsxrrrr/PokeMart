@@ -533,16 +533,7 @@
 
         const scheduleRotation = () => {
             clearRotationTimer();
-            if (!currentSourceCards.length || currentSourceCards.length === 1) {
-                return;
-            }
-
-            rotationTimer = window.setInterval(() => {
-                if (document.hidden) {
-                    return;
-                }
-                applyRandomSelections(currentSourceCards);
-            }, ROTATE_INTERVAL_MS);
+            // Automatic rotation disabled; randomness now occurs only on load/search.
         };
 
         const loadCards = async (term = '') => {
