@@ -112,6 +112,10 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.25);
         }
 
+        body.dark-mode .card-info h3 {
+            color: #f8fafc;
+        }
+
         body.dark-mode .card-set { color: #cbd5e1; }
 
         body.dark-mode .rarity-icon {
@@ -137,6 +141,10 @@
 
         body.dark-mode .deals-section::before {
             background-color: #0f172a;
+        }
+
+        body.dark-mode .card-img-container::before {
+            background-color: #101a37;
         }
 
         body.dark-mode .status-message { color: #cbd5e1; }
