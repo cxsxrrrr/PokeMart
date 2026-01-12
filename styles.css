@@ -312,32 +312,191 @@
 
         /* --- CARRUSEL POPULARES (Simulado con scroll CSS) --- */
         .popular-section {
-            padding: 4rem 0;
+            padding: 4rem 0 6rem;
         }
 
-        .carousel-container {
+        .carousel-shell {
             display: flex;
-            overflow-x: auto;
+            align-items: center;
             gap: 1.5rem;
-            padding: 1rem 0 2rem 0; /* Espacio para la sombra del hover */
-            scroll-behavior: smooth;
-            /* Ocultar barra de scroll estándar y personalizar */
-            scrollbar-width: thin;
-            scrollbar-color: var(--poke-red) var(--card-border);
+            margin-top: 1.5rem;
         }
-        
-        /* Personalización de scrollbar para Webkit (Chrome, Safari) */
-        .carousel-container::-webkit-scrollbar {
-            height: 10px;
+
+        .carousel-window {
+            flex: 1;
+            position: relative;
+            height: 460px;
+            perspective: 1600px;
+            overflow: visible;
         }
-        .carousel-container::-webkit-scrollbar-track {
-             background: var(--card-border);
-             border-radius: 10px;
+
+        .carousel-track {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
         }
-        .carousel-container::-webkit-scrollbar-thumb {
-             background-color: var(--poke-red);
-             border-radius: 10px;
-             border: 2px solid var(--card-border);
+
+        .carousel-track[data-state="loading"] {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .carousel-track .card-item {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 260px;
+            max-width: 70vw;
+            transform: translateX(-50%);
+            transition: transform 0.5s ease, opacity 0.4s ease, filter 0.4s ease;
+            box-shadow: 0 18px 30px rgba(0,0,0,0.18);
+        }
+
+        .carousel-track .card-item.is-center {
+            filter: brightness(1.05);
+        }
+
+        .carousel-track .card-item:not(.is-center) {
+            filter: brightness(0.85);
+        }
+
+        .carousel-track .card-item[data-hidden="true"] {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .carousel-track[data-state="loading"] .card-item {
+            position: relative;
+            left: auto;
+            width: 220px;
+            max-width: 60vw;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .carousel-track .status-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+        }
+
+        .carousel-nav {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--poke-dark-blue);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--poke-dark-blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .carousel-nav:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+        }
+
+        .carousel-nav:disabled {
+            opacity: 0.3;
+            cursor: default;
+            transform: none;
+            box-shadow: none;
+        }
+
+        @media (max-width: 992px) {
+            .carousel-window {
+                height: 380px;
+            }
+
+            .carousel-track .card-item {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .carousel-shell {
+                gap: 1rem;
+            }
+
+            .carousel-window {
+                height: 340px;
+            }
+
+            .carousel-nav {
+                width: 42px;
+                height: 42px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .carousel-window {
+                height: 320px;
+                overflow-x: auto;
+                overflow-y: visible;
+                padding-bottom: 1.5rem;
+                perspective: none;
+            }
+
+            .carousel-nav {
+                display: none;
+            }
+
+            .carousel-track {
+                position: static;
+                display: flex;
+                gap: 1rem;
+                width: max-content;
+                min-height: 0;
+                transform: none;
+            }
+
+            .carousel-track .card-item {
+                position: relative;
+                left: auto;
+                transform: none !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                pointer-events: auto !important;
+                width: 220px;
+                max-width: 70vw;
+                box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+            }
+
+            .carousel-track[data-state="loading"] {
+                justify-content: flex-start;
+            }
+
+            .carousel-track[data-state="loading"] .card-item {
+                width: 200px;
+            }
+
+            .carousel-track .card-item .card-img-container img {
+                transform: none;
+            }
+
+            .carousel-window::-webkit-scrollbar {
+                height: 10px;
+            }
+            .carousel-window::-webkit-scrollbar-track {
+                background: var(--card-border);
+                border-radius: 10px;
+            }
+            .carousel-window::-webkit-scrollbar-thumb {
+                background-color: var(--poke-red);
+                border-radius: 10px;
+                border: 2px solid var(--card-border);
+            }
         }
 
         .carousel-item {

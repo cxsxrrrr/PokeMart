@@ -1,12 +1,19 @@
         const DATA_URL = 'data/cards.json';
         const IMAGE_ROOT = 'assets/cards/';
         const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/245x342/FFFFFF/E0E0E0?text=Pokemon+TCG';
+        const MOBILE_QUERY = '(max-width: 540px)';
         const popularContainer = document.getElementById('popular-cards');
         const dealsContainer = document.getElementById('deal-cards');
         const searchInput = document.querySelector('.search-bar input');
         const searchButton = document.querySelector('.search-btn');
+        const carouselPrev = document.querySelector('.carousel-nav--prev');
+        const carouselNext = document.querySelector('.carousel-nav--next');
         const SKELETONS_POPULAR = 6;
         const SKELETONS_DEALS = 4;
+        const POPULAR_COUNT = 8;
+        const DEALS_COUNT = 4;
+        const MAX_VISIBLE_ITEMS = 5;
+        const ROTATE_INTERVAL_MS = 12000;
         const raritySymbols = {
             Common: '●',
             Uncommon: '◆',
@@ -41,6 +48,12 @@
         let catalog = [];
         let catalogPromise = null;
         let lastQuery = '';
+        let carouselIndex = 0;
+        let rotationTimer = null;
+        let currentSourceCards = [];
+        const mobileMediaQuery = window.matchMedia(MOBILE_QUERY);
+
+        const isMobileLayout = () => mobileMediaQuery.matches;
 
         const uniqueArray = (values = []) => Array.from(new Set(values.filter(Boolean)));
 
@@ -141,6 +154,128 @@
             return catalogPromise;
         };
 
+        const clearRotationTimer = () => {
+            if (rotationTimer) {
+                clearInterval(rotationTimer);
+                rotationTimer = null;
+            }
+        };
+
+        const disableCarouselNav = () => {
+            if (carouselPrev) {
+                carouselPrev.disabled = true;
+            }
+            if (carouselNext) {
+                carouselNext.disabled = true;
+            }
+        };
+
+        const updateCarouselTransforms = () => {
+            if (!popularContainer || popularContainer.dataset.state !== 'ready') {
+                disableCarouselNav();
+                return;
+            }
+
+            const cards = Array.from(popularContainer.querySelectorAll('.card-item'));
+            const total = cards.length;
+            if (!total) {
+                disableCarouselNav();
+                return;
+            }
+
+            if (isMobileLayout()) {
+                disableCarouselNav();
+                cards.forEach((card) => {
+                    card.dataset.hidden = 'false';
+                    card.style.transform = 'none';
+                    card.style.opacity = '1';
+                    card.style.zIndex = '';
+                    card.style.visibility = 'visible';
+                    card.style.pointerEvents = 'auto';
+                    card.classList.remove('is-center');
+                });
+                return;
+            }
+
+            if (carouselIndex >= total) {
+                carouselIndex = 0;
+            }
+
+            if (carouselPrev) {
+                carouselPrev.disabled = total <= 1;
+            }
+            if (carouselNext) {
+                carouselNext.disabled = total <= 1;
+            }
+
+            const visibleWindow = Math.min(MAX_VISIBLE_ITEMS, total);
+            const threshold = Math.floor(visibleWindow / 2);
+
+            cards.forEach((card, idx) => {
+                const rawOffset = idx - carouselIndex;
+                let offset = rawOffset;
+                if (offset > total / 2) {
+                    offset -= total;
+                }
+                if (offset < -total / 2) {
+                    offset += total;
+                }
+
+                const absOffset = Math.abs(offset);
+                const hidden = absOffset > threshold && total > visibleWindow;
+                card.dataset.hidden = hidden ? 'true' : 'false';
+
+                const translateX = offset * 12;
+                const translateZ = -Math.min(absOffset * 160, 720);
+                const rotateY = offset * -12;
+                const scale = Math.max(0.6, 1 - absOffset * 0.15);
+                const opacity = hidden ? 0 : Math.max(0.25, 1 - absOffset * 0.25);
+
+                card.style.transform = `translateX(-50%) translateX(${translateX}rem) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
+                card.style.opacity = opacity.toString();
+                card.style.zIndex = String(100 - absOffset * 10);
+                card.style.visibility = hidden ? 'hidden' : 'visible';
+                card.classList.toggle('is-center', offset === 0);
+                card.style.pointerEvents = absOffset <= 1 ? 'auto' : 'none';
+            });
+        };
+
+        const moveCarousel = (direction) => {
+            if (isMobileLayout()) {
+                return;
+            }
+            if (!popularContainer || popularContainer.dataset.state !== 'ready') {
+                return;
+            }
+            const cards = popularContainer.querySelectorAll('.card-item');
+            const total = cards.length;
+            if (total <= 1) {
+                return;
+            }
+            carouselIndex = (carouselIndex + direction + total) % total;
+            updateCarouselTransforms();
+        };
+
+        const shuffleArray = (array) => {
+            const copy = array.slice();
+            for (let index = copy.length - 1; index > 0; index -= 1) {
+                const swapIndex = Math.floor(Math.random() * (index + 1));
+                [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+            }
+            return copy;
+        };
+
+        const pickRandomSubset = (cards, amount, exclusionSet = new Set()) => {
+            const pool = cards.filter((card) => !exclusionSet.has(card?.id));
+            const workingPool = pool.length ? pool : cards.slice();
+            if (!workingPool.length) {
+                return [];
+            }
+            const shuffled = shuffleArray(workingPool);
+            const limit = Math.min(amount, shuffled.length);
+            return shuffled.slice(0, limit);
+        };
+
         const createSkeletonCard = (options = {}) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'card-item skeleton-card' + (options.isCarousel ? ' carousel-item' : '');
@@ -209,6 +344,7 @@
         const createCardElement = (card, options = {}) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'card-item' + (options.isCarousel ? ' carousel-item' : '');
+            wrapper.dataset.hidden = 'false';
             if (card?.id) {
                 wrapper.dataset.cardId = card.id;
             }
@@ -290,10 +426,16 @@
 
         const renderPopular = (cards) => {
             popularContainer.innerHTML = '';
+            popularContainer.dataset.count = String(cards.length);
+
             if (!cards.length) {
+                popularContainer.dataset.state = 'empty';
+                disableCarouselNav();
                 popularContainer.innerHTML = '<p class="status-message error">No se encontraron cartas populares.</p>';
                 return;
             }
+
+            popularContainer.dataset.state = 'ready';
 
             cards.forEach((card) => {
                 const basePrice = getCardPrice(card);
@@ -304,6 +446,10 @@
                 });
                 popularContainer.appendChild(element);
             });
+
+            carouselIndex = 0;
+            updateCarouselTransforms();
+            requestAnimationFrame(updateCarouselTransforms);
         };
 
         const renderDeals = (cards) => {
@@ -328,13 +474,26 @@
 
         const showError = (message) => {
             const content = `<p class="status-message error">${message}</p>`;
+            popularContainer.dataset.state = 'error';
+            popularContainer.dataset.count = '0';
+            disableCarouselNav();
             popularContainer.innerHTML = content;
             dealsContainer.innerHTML = content;
+            clearRotationTimer();
         };
 
         const showSkeletons = () => {
-            popularContainer.innerHTML = '';
-            dealsContainer.innerHTML = '';
+            if (popularContainer) {
+                popularContainer.dataset.state = 'loading';
+                popularContainer.dataset.count = '0';
+                disableCarouselNav();
+                popularContainer.innerHTML = '';
+            }
+            if (dealsContainer) {
+                dealsContainer.innerHTML = '';
+            }
+            clearRotationTimer();
+            currentSourceCards = [];
 
             for (let index = 0; index < SKELETONS_POPULAR; index += 1) {
                 popularContainer.appendChild(createSkeletonCard({ isCarousel: true }));
@@ -355,6 +514,35 @@
                 const idMatch = card?.id?.toLowerCase().includes(loweredTerm);
                 return nameMatch || idMatch;
             });
+        };
+
+        const applyRandomSelections = (sourceCards) => {
+            if (!Array.isArray(sourceCards) || !sourceCards.length) {
+                renderPopular([]);
+                renderDeals([]);
+                return;
+            }
+
+            const popularSelection = pickRandomSubset(sourceCards, POPULAR_COUNT);
+            const exclusion = new Set(popularSelection.map((card) => card?.id));
+            const dealsSelection = pickRandomSubset(sourceCards, DEALS_COUNT, exclusion);
+
+            renderPopular(popularSelection);
+            renderDeals(dealsSelection);
+        };
+
+        const scheduleRotation = () => {
+            clearRotationTimer();
+            if (!currentSourceCards.length || currentSourceCards.length === 1) {
+                return;
+            }
+
+            rotationTimer = window.setInterval(() => {
+                if (document.hidden) {
+                    return;
+                }
+                applyRandomSelections(currentSourceCards);
+            }, ROTATE_INTERVAL_MS);
         };
 
         const loadCards = async (term = '') => {
@@ -380,8 +568,9 @@
                     return;
                 }
 
-                renderPopular(filtered.slice(0, 8));
-                renderDeals(filtered.slice(8, 12));
+                currentSourceCards = filtered.slice();
+                applyRandomSelections(currentSourceCards);
+                scheduleRotation();
             } catch (error) {
                 console.error(error);
                 showError('No se pudo cargar el catálogo local.');
@@ -403,6 +592,24 @@
                         event.preventDefault();
                         handleSearch();
                     }
+                });
+            }
+            if (carouselPrev) {
+                carouselPrev.addEventListener('click', () => moveCarousel(-1));
+            }
+            if (carouselNext) {
+                carouselNext.addEventListener('click', () => moveCarousel(1));
+            }
+            window.addEventListener('resize', () => {
+                requestAnimationFrame(updateCarouselTransforms);
+            });
+            if (typeof mobileMediaQuery.addEventListener === 'function') {
+                mobileMediaQuery.addEventListener('change', () => {
+                    requestAnimationFrame(updateCarouselTransforms);
+                });
+            } else if (typeof mobileMediaQuery.addListener === 'function') {
+                mobileMediaQuery.addListener(() => {
+                    requestAnimationFrame(updateCarouselTransforms);
                 });
             }
         });

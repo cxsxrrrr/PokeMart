@@ -47,8 +47,14 @@
 
         <section class="popular-section container">
             <h2 class="section-title">🔥 Populares esta semana</h2>
-            <div class="carousel-container" id="popular-cards">
-                <p class="status-message">Cargando cartas...</p>
+            <div class="carousel-shell">
+                <button class="carousel-nav carousel-nav--prev" type="button" aria-label="Carta anterior" disabled>&lt;</button>
+                <div class="carousel-window">
+                    <div class="carousel-track" id="popular-cards" data-state="loading">
+                        <p class="status-message">Cargando cartas...</p>
+                    </div>
+                </div>
+                <button class="carousel-nav carousel-nav--next" type="button" aria-label="Carta siguiente" disabled>&gt;</button>
             </div>
         </section>
 
