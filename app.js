@@ -7,6 +7,7 @@
         const dealsContainer = document.getElementById('deal-cards');
         const searchInput = document.querySelector('.search-bar input');
         const searchButton = document.querySelector('.search-btn');
+        const themeToggleButton = document.querySelector('.theme-toggle');
         const carouselPrev = document.querySelector('.carousel-nav--prev');
         const carouselNext = document.querySelector('.carousel-nav--next');
         const SKELETONS_POPULAR = 6;
@@ -53,6 +54,30 @@
         let rotationTimer = null;
         let currentSourceCards = [];
         const mobileMediaQuery = window.matchMedia(MOBILE_QUERY);
+        const THEME_KEY = 'pokemart-theme';
+
+        const applyTheme = (theme) => {
+            const isDark = theme === 'dark';
+            document.body.classList.toggle('dark-mode', isDark);
+            if (themeToggleButton) {
+                themeToggleButton.setAttribute('aria-pressed', String(isDark));
+                themeToggleButton.textContent = isDark ? '☀️' : '🌙';
+            }
+        };
+
+        const loadSavedTheme = () => {
+            const saved = localStorage.getItem(THEME_KEY);
+            if (saved === 'dark' || saved === 'light') {
+                return saved;
+            }
+            return 'light';
+        };
+
+        const toggleTheme = () => {
+            const next = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+            applyTheme(next);
+            localStorage.setItem(THEME_KEY, next);
+        };
 
         const isMobileLayout = () => mobileMediaQuery.matches;
 
@@ -626,6 +651,8 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = loadSavedTheme();
+            applyTheme(savedTheme);
             loadCards();
             if (searchButton) {
                 searchButton.addEventListener('click', handleSearch);
@@ -637,6 +664,9 @@
                         handleSearch();
                     }
                 });
+            }
+            if (themeToggleButton) {
+                themeToggleButton.addEventListener('click', toggleTheme);
             }
             if (carouselPrev) {
                 carouselPrev.addEventListener('click', () => moveCarousel(-1));

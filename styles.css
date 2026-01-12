@@ -44,6 +44,111 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
+        /* --- MODO OSCURO --- */
+        body.dark-mode {
+            background-color: #0b1021;
+            color: #e5e7eb;
+        }
+
+        body.dark-mode .main-header {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+            border-color: rgba(148, 163, 184, 0.35);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        body.dark-mode .logo {
+            background: var(--poke-red);
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+        }
+
+        body.dark-mode .logo::before {
+            border-color: #f8fafc;
+        }
+
+        body.dark-mode .section-title {
+            color: #f3f4f6;
+        }
+
+        body.dark-mode .search-bar .input {
+            background-color: #1f2937;
+            color: #e5e7eb;
+            box-shadow: inset 1px 3px 6px rgba(0,0,0,0.45);
+        }
+
+        body.dark-mode .search-bar .input::placeholder {
+            color: #9ca3af;
+        }
+
+        body.dark-mode .search-bar .input:focus {
+            background-color: #111827;
+            box-shadow: 6px 6px 28px rgba(0,0,0,0.55),
+                        -6px -6px 28px rgba(255,255,255,0.04);
+        }
+
+        body.dark-mode .neu-button {
+            background-color: #1f2937;
+            color: #e5e7eb;
+            border-color: #2d3748;
+            box-shadow: inset 3px 3px 8px #0b1220, inset -3px -3px 8px #273244;
+        }
+
+        body.dark-mode .neu-button:hover,
+        body.dark-mode .neu-button:focus {
+            box-shadow: inset 2px 2px 5px #0b1220, inset -2px -2px 5px #273244, 2px 2px 6px #0b1220, -2px -2px 6px #273244;
+        }
+
+        body.dark-mode .landing-hero {
+            background:
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06) 20%, transparent 20%),
+                linear-gradient(135deg, #0f172a 0%, #111827 100%);
+        }
+
+        body.dark-mode .card-item {
+            background: #0f172a;
+            border-color: #1f2937;
+            color: #e5e7eb;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+        }
+
+        body.dark-mode .card-set { color: #cbd5e1; }
+
+        body.dark-mode .rarity-icon {
+            background-color: #1f2937;
+            color: var(--poke-yellow);
+        }
+
+        body.dark-mode .card-price {
+            color: var(--poke-yellow);
+        }
+
+        body.dark-mode .add-to-cart {
+            background-color: #2563eb;
+        }
+
+        body.dark-mode .add-to-cart:hover {
+            background-color: #1d4ed8;
+        }
+
+        body.dark-mode .deals-section {
+            background-color: #0f172a;
+        }
+
+        body.dark-mode .deals-section::before {
+            background-color: #0f172a;
+        }
+
+        body.dark-mode .status-message { color: #cbd5e1; }
+
+        body.dark-mode .main-footer {
+            background-color: #0b1021;
+            color: #e5e7eb;
+        }
+
+        body.dark-mode .footer-col ul li a { color: #cbd5e1; }
+
+        body.dark-mode .footer-col ul li a:hover { color: var(--poke-yellow); }
         
         .btn {
             padding: 12px 24px;
@@ -83,6 +188,27 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+        }
+
+        .theme-toggle {
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(0,0,0,0.2);
         }
 
         .logo {
