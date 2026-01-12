@@ -236,6 +236,8 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            transform-style: preserve-3d;
+            will-change: transform;
         }
 
         .card-item:hover {
@@ -245,11 +247,70 @@
         }
 
         .card-img-container {
-            background-color: #f9f9f9;
+    /* background-color: #f9f9f9; */
             border-radius: 10px;
             padding: 10px;
             margin-bottom: 1rem;
             text-align: center;
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            overflow: visible;
+            position: relative;
+        }
+
+        .card-img-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: #f9f9f9;
+    border-radius: 10px; 
+    
+ 
+    transform: translateZ(-50px); 
+    
+    
+    pointer-events: none; 
+}
+        .card-img-flip {
+            position: relative;
+            display: grid;
+            justify-items: center;
+            align-items: center;
+            transform-style: preserve-3d;
+            will-change: transform;
+            transform-origin: center;
+            transition: transform 0.6s ease;
+        }
+
+        .card-img-face {
+            grid-area: 1 / 1;
+            backface-visibility: hidden;
+            width: 100%;
+            transform-origin: center;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+        }
+
+        .card-img-face--back {
+            transform: rotateY(180deg);
+            border-radius: 14px;
+        }
+
+        .card-img-flip::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            background: linear-gradient(125deg, rgba(255,255,255,0.25), rgba(255,255,255,0));
+            mix-blend-mode: screen;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card-item:hover .card-img-flip::after {
+            opacity: 0.4;
         }
 
         .card-img-container img {
@@ -257,6 +318,7 @@
             height: auto;
             /* Efecto foil sutil */
             filter: brightness(1.05);
+            will-change: transform;
         }
 
         .card-info h3 {
@@ -586,6 +648,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 2rem;
+            perspective: 1400px;
         }
 
         .discount-badge {

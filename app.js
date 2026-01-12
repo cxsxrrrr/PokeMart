@@ -1,6 +1,7 @@
         const DATA_URL = 'data/cards.json';
         const IMAGE_ROOT = 'assets/cards/';
-        const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/245x342/FFFFFF/E0E0E0?text=Pokemon+TCG';
+        const CARD_BACK_IMAGE = 'assets/back.png';
+        const PLACEHOLDER_IMAGE = CARD_BACK_IMAGE;
         const MOBILE_QUERY = '(max-width: 540px)';
         const popularContainer = document.getElementById('popular-cards');
         const dealsContainer = document.getElementById('deal-cards');
@@ -81,33 +82,17 @@
         };
 
         const buildImageCandidates = (card) => {
-            const candidates = [];
-            if (card?.image) {
-                candidates.push(card.image);
+            if (!card?.id) {
+                return [PLACEHOLDER_IMAGE];
             }
-            if (card?.images?.small) {
-                candidates.push(card.images.small);
-            }
-            if (card?.images?.large) {
-                candidates.push(card.images.large);
-            }
-            if (card?.id) {
-                const basePath = `${IMAGE_ROOT}${card.id}`;
-                candidates.push(
-                    `${basePath}.png`,
-                    `${basePath}.jpg`,
-                    `${basePath}.jpeg`,
-                    `${basePath}.webp`
-                );
 
-                const { setId, number } = getIdPieces(card.id);
-                if (setId && number) {
-                    candidates.push(
-                        `https://images.pokemontcg.io/${setId}/${number}.png`,
-                        `https://images.pokemontcg.io/${setId}/${number}_hires.png`
-                    );
-                }
-            }
+            const basePath = `${IMAGE_ROOT}${card.id}`;
+            const candidates = [
+                `${basePath}.png`,
+                `${basePath}.jpg`,
+                `${basePath}.jpeg`,
+                `${basePath}.webp`
+            ];
             candidates.push(PLACEHOLDER_IMAGE);
             return uniqueArray(candidates);
         };
@@ -276,6 +261,26 @@
             return shuffled.slice(0, limit);
         };
 
+        const attachCardFlipInteraction = (cardElement, flipContainer) => {
+            if (!cardElement || !flipContainer) {
+                return;
+            }
+
+            if (!cardElement.dataset.rotation) {
+                cardElement.dataset.rotation = '0';
+            }
+
+            cardElement.addEventListener('click', (event) => {
+                if (event.target && event.target.closest('button')) {
+                    return;
+                }
+
+                const nextRotation = Number(cardElement.dataset.rotation || '0') + 180;
+                cardElement.dataset.rotation = String(nextRotation);
+                flipContainer.style.transform = `rotateY(${nextRotation}deg)`;
+            });
+        };
+
         const createSkeletonCard = (options = {}) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'card-item skeleton-card' + (options.isCarousel ? ' carousel-item' : '');
@@ -359,18 +364,65 @@
 
             const imageContainer = document.createElement('div');
             imageContainer.className = 'card-img-container';
-            const imageElement = document.createElement('img');
-            const imageCandidates = Array.isArray(card?.imageCandidates) && card.imageCandidates.length ? card.imageCandidates : [PLACEHOLDER_IMAGE];
+
+            const imageFlip = document.createElement('div');
+            imageFlip.className = 'card-img-flip';
+
+            const createFaceImage = (faceClass) => {
+                const faceImage = document.createElement('img');
+                faceImage.className = `card-img-face ${faceClass}`;
+                faceImage.alt = card?.name || 'Carta Pokémon';
+                faceImage.decoding = 'async';
+                faceImage.loading = 'lazy';
+                return faceImage;
+            };
+
+            const frontImage = createFaceImage('card-img-face--front');
+            const backImage = createFaceImage('card-img-face--back');
+
+            const imageCandidates = Array.isArray(card?.imageCandidates) && card.imageCandidates.length
+                ? card.imageCandidates.slice()
+                : [PLACEHOLDER_IMAGE];
             let currentImageIndex = 0;
-            imageElement.src = imageCandidates[currentImageIndex];
-            imageElement.alt = card?.name || 'Carta Pokémon';
-            imageElement.addEventListener('error', () => {
-                currentImageIndex += 1;
-                if (currentImageIndex < imageCandidates.length) {
-                    imageElement.src = imageCandidates[currentImageIndex];
+            let handlingError = false;
+
+            const applyImageSource = (source) => {
+                frontImage.src = source;
+            };
+
+            const advanceImageCandidate = () => {
+                if (currentImageIndex < imageCandidates.length - 1) {
+                    currentImageIndex += 1;
                 }
-            });
-            imageContainer.appendChild(imageElement);
+                applyImageSource(imageCandidates[currentImageIndex]);
+            };
+
+            const handleImageError = () => {
+                if (handlingError) {
+                    return;
+                }
+                handlingError = true;
+                advanceImageCandidate();
+                window.requestAnimationFrame(() => {
+                    handlingError = false;
+                });
+            };
+
+            frontImage.addEventListener('error', handleImageError);
+
+            const handleBackImageError = () => {
+                backImage.src = PLACEHOLDER_IMAGE;
+                backImage.removeEventListener('error', handleBackImageError);
+            };
+
+            backImage.addEventListener('error', handleBackImageError);
+
+            applyImageSource(imageCandidates[currentImageIndex]);
+            backImage.src = CARD_BACK_IMAGE;
+
+            imageFlip.appendChild(frontImage);
+            imageFlip.appendChild(backImage);
+            imageContainer.appendChild(imageFlip);
             wrapper.appendChild(imageContainer);
 
             const info = document.createElement('div');
@@ -417,8 +469,9 @@
 
             const button = document.createElement('button');
             button.className = 'add-to-cart';
-            button.textContent = options.ctaLabel || 'Añadir al Carrito';
+            button.textContent = options.ctaLabel || 'Añadir al carrito';
             info.appendChild(button);
+            attachCardFlipInteraction(wrapper, imageFlip);
 
             wrapper.appendChild(info);
             return wrapper;
@@ -442,7 +495,7 @@
                 const element = createCardElement(card, {
                     isCarousel: true,
                     basePrice,
-                    ctaLabel: 'Añadir al Carrito'
+                    ctaLabel: 'Añadir al carrito'
                 });
                 popularContainer.appendChild(element);
             });
@@ -466,7 +519,7 @@
                 const element = createCardElement(card, {
                     basePrice,
                     discountRate,
-                    ctaLabel: '¡Comprar Oferta!'
+                    ctaLabel: '¡Comprar oferta!'
                 });
                 dealsContainer.appendChild(element);
             });
