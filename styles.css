@@ -993,6 +993,11 @@
                 font-size: 1.2rem;
             }
 
+            .hero-card { 
+        width: min(80%, 320px); 
+        margin: 0 auto; 
+    }
+
             .deals-grid {
                 justify-content: center;
                 justify-items: center;
@@ -1000,6 +1005,15 @@
 
             .deals-grid .card-item {
                 margin: 0 auto;
+            }
+
+            /* Centra las cartas cargadas en secciones móviles */
+            #popular-cards .card-item,
+            #deal-cards .card-item {
+                width: 100%;
+                max-width: 320px;
+                margin-left: auto;
+                margin-right: auto;
             }
         }
 
@@ -1024,6 +1038,7 @@
                 width: max-content;
                 min-height: 0;
                 transform: none;
+                justify-content: center;
             }
 
             .carousel-track .card-item {
@@ -1036,6 +1051,11 @@
                 width: 220px;
                 max-width: 70vw;
                 box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+            }
+
+            #popular-cards {
+                margin-left: auto;
+                margin-right: auto;
             }
 
             .carousel-track[data-state="loading"] {
@@ -1278,7 +1298,10 @@
                 text-align: center;
             }
             .hero-text h1 { font-size: 2.5rem; }
-            .hero-card { width: min(80%, 320px); }
+            .hero-card { 
+        width: min(80%, 320px); 
+        margin: 0 auto;
+    }
 
             .header-content {
                 gap: 0.75rem;
