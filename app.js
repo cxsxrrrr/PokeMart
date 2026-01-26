@@ -15,6 +15,7 @@
         const headerFlex = document.querySelector('.header-flex');
         const menuToggleButton = document.querySelector('.menu-toggle');
         const heroSection = document.querySelector('.landing-hero');
+        const heroImage = document.querySelector('.hero-image img');
         const carouselPrev = document.querySelector('.carousel-nav--prev');
         const carouselNext = document.querySelector('.carousel-nav--next');
         const cartPanel = document.querySelector('[data-cart-panel]');
@@ -76,6 +77,10 @@
         let cartItems = [];
         const mobileMediaQuery = window.matchMedia(MOBILE_QUERY);
         const THEME_KEY = 'pokemart-theme';
+        const HERO_LIGHT_IMAGE = 'assets/cards/charizarday.png';
+        const HERO_LIGHT_ALT = 'Charizard arte diurno Carta Destacada';
+        const HERO_DARK_IMAGE = 'assets/Charizard_ex.png';
+        const HERO_DARK_ALT = 'Charizard EX Carta Destacada';
 
         const safeParseCart = (value) => {
             if (!value) {
@@ -300,6 +305,7 @@
             if(themeToggleInput){
                 themeToggleInput.checked = esOscuro;
             }
+            updateHeroImageSource(esOscuro ? 'dark' : 'light');
         };
 
         const cargarTemaGuardado = ()=> {
@@ -336,6 +342,24 @@
             }
             const shouldLight = headerNeedsLightContrast();
             headerContent.classList.toggle('header-content--light', shouldLight);
+        };
+
+        const updateHeroImageSource = (theme = 'light') => {
+            if (!heroImage) {
+                return;
+            }
+            const normalizedTheme = theme === 'dark' ? 'dark' : 'light';
+            const isDarkTheme = normalizedTheme === 'dark';
+            const nextSrc = isDarkTheme ? HERO_DARK_IMAGE : HERO_LIGHT_IMAGE;
+            const nextAlt = isDarkTheme ? HERO_DARK_ALT : HERO_LIGHT_ALT;
+
+            if (heroImage.getAttribute('src') !== nextSrc) {
+                heroImage.setAttribute('src', nextSrc);
+            }
+            if (heroImage.getAttribute('alt') !== nextAlt) {
+                heroImage.setAttribute('alt', nextAlt);
+            }
+            heroImage.dataset.heroTheme = normalizedTheme;
         };
 
         const esDisenoMovil = () => mobileMediaQuery.matches;
