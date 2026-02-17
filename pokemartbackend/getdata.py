@@ -113,7 +113,7 @@ def fetch_cards(query: str | None, order_by: str | None, page_size: int, max_pag
     session = requests.Session()
     session.headers.update(get_headers())
     try:
-        current_page = 3
+        current_page = 5
         total_created = 0
         total_skipped = 0
         existing_keys = set(Card.objects.values_list("name", "collection"))

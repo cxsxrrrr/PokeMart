@@ -18,8 +18,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from .swagger import swagger_ui, openapi_schema
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("store/", include("store.urls")),
     path("users/", include("users.urls")),
+    path("docs/", swagger_ui, name="swagger_ui"),
+    path("docs/schema/", openapi_schema, name="openapi_schema"),
 ]
