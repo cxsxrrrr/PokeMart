@@ -5,7 +5,7 @@ const GlobalStyle = createGlobalStyle`
         :root {
             --poke-red: #be1f1f;
             --poke-yellow: #FFCC00;
-            --poke-blue: #14113a; 
+            --poke-blue: #14113a;
             --poke-dark-blue: #141f41;
             --bg-light: #e6e6ee;
             --text-dark: #333333;
@@ -184,7 +184,7 @@ const GlobalStyle = createGlobalStyle`
 
         body.dark-mode .deals-section {
             background-color: #0f172a;
-            box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+
         }
 
         body.dark-mode .deals-section::before {
@@ -1179,7 +1179,7 @@ const GlobalStyle = createGlobalStyle`
             background-color: #E3F2FD; 
             position: relative;
             overflow: hidden;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -1px 0 rgba(17, 25, 53, 0.15);
+            box-shadow: none;
         }
 
         .deals-section > * {

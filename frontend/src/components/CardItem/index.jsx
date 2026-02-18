@@ -40,14 +40,14 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel, onAdd, isCarousel }
 
   return (
     <div
-      className={`card-item${isCarousel ? " carousel-item" : ""}`}
-      data-hidden="false"
-      data-card-id={card?.id}
-      onClick={(e) => {
-        if (e.target.closest("button")) return;
-        setRotation((prev) => prev + 180);
-      }}
+      className={`
+        card-item relative group rounded-xl p-4 transition-all duration-300
+        bg-white dark:bg-content1
+        shadow-lg hover:shadow-2xl hover:-translate-y-2
+        border border-gray-100 dark:border-white/5
+      `}
     >
+      {/* Imagen */}
       <div className="card-img-container">
         <div className="card-img-flip" style={{ transform: `rotateY(${rotation}deg)` }}>
           <img
@@ -66,20 +66,28 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel, onAdd, isCarousel }
         </div>
         {discountRate ? <div className="discount-badge">-{Math.round(discountRate * 100)}%</div> : null}
       </div>
-      <div className="card-info">
-        <h3>{card?.name || "Carta Pokémon"}</h3>
-        <div className="card-set">
-          <span className="rarity-icon">{raritySymbols[rarity] || "★"}</span>
-          {card?.set?.name || "Colección local"}
+
+      <div className="card-info mt-4">
+        <h3 className="font-bold text-lg text-gray-800 dark:text-white truncate">
+          {card.name}
+        </h3>
+
+        <div className="flex justify-between items-center mt-2">
+          <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+            {card.set?.name}
+          </span>
+          {/* Precio */}
+          <span className="font-bold text-poke-darkBlue dark:text-poke-yellow text-lg">
+            {displayedPrice ? formatCurrency(displayedPrice) : "N/D"}
+            {displayedPrice && basePrice && discountRate && (
+              <span className="old-price">{formatCurrency(basePrice)}</span>
+            )}
+          </span>
         </div>
-        <div className="card-price">
-          {displayedPrice ? formatCurrency(displayedPrice) : "N/D"}
-          {displayedPrice && basePrice && discountRate && (
-            <span className="old-price">{formatCurrency(basePrice)}</span>
-          )}
-        </div>
+
+        {/* Botón Añadir */}
         <button
-          className={`add-to-cart${added ? " add-to-cart--added" : ""}`}
+          className="w-full mt-4 py-2 rounded-lg bg-poke-red text-white font-bold hover:bg-red-700 transition-colors shadow-md shadow-red-500/20"
           onClick={(e) => { e.preventDefault(); handleAdd(); }}
         >
           {added ? "Agregado ✓" : ctaLabel}

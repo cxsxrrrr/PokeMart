@@ -7,7 +7,8 @@ const Header = ({
   theme,
   onToggleTheme,
   onSearch,
-  headerLight
+  headerLight,
+  isTransparen
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);

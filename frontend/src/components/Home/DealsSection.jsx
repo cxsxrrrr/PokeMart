@@ -1,15 +1,18 @@
+import React from 'react';
 import CardItem from '../CardItem';
 import { obtenerPrecioCarta } from '../../utils/formatters';
 
 const DealsSection = ({ cards, status, statusMessage, onAdd }) => {
   return (
-    <section className="deals-section" id="deals">
-      <div className="container">
-        <h2 className="section-title">
-          <img src="/assets/Pikachu.svg" alt="Pikachu" className="section-title__icon section-title__icon--offset" />
-          <span>Ofertas Relámpago</span>
+    <section className="deals-section py-16 bg-poke-light/50 dark:bg-content3 transition-colors duration-500 border-none shadow-none" id="deals">
+      <div className="container mx-auto px-4">
+        {/* Título con color adaptativo */}
+        <h2 className="text-3xl font-bold mb-10 flex items-center justify-center gap-3 text-poke-darkBlue dark:text-white uppercase tracking-wider">
+           {/* Icono ... */}
+           <span className="dark:text-poke-yellow">Ofertas Relámpago</span>
         </h2>
 
+        {/* Grid de cartas */}
         <div className="deals-grid" id="deal-cards">
           {status === "loading" && Array.from({ length: 4 }).map((_, i) => (
              <div key={i} className="card-item skeleton-card"><div className="skeleton skeleton-img"/></div>
@@ -22,6 +25,7 @@ const DealsSection = ({ cards, status, statusMessage, onAdd }) => {
           {status === "ready" && cards.map((card, index) => {
              const discounts = [0.15, 0.20, 0.25, 0.30];
              const discount = discounts[index % discounts.length];
+
              return (
                <CardItem
                  key={card.id}
