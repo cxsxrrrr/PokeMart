@@ -87,7 +87,7 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel, onAdd, isCarousel }
 
         {/* Botón Añadir */}
         <button
-          className="w-full mt-4 py-2 rounded-lg bg-poke-red text-white font-bold hover:bg-red-700 transition-colors shadow-md shadow-red-500/20"
+          className="w-full mt-4 py-2 rounded-lg bg-poke-blue text-white font-bold hover:bg-red-700 transition-colors shadow-md shadow-red-500/20"
           onClick={(e) => { e.preventDefault(); handleAdd(); }}
         >
           {added ? "Agregado ✓" : ctaLabel}

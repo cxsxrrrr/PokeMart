@@ -63,9 +63,8 @@ const PopularCarousel = ({ cards, status, onAdd, isMobile, statusMessage }) => {
 
   return (
     <section className="popular-section container" id="popular">
-      <h2 className="section-title text-poke-darkBlue dark:text-white transition-colors duration-300">
-        <img src="/assets/Charizard.svg" alt="Charizard" className="section-title__icon" onError={(e) => e.target.style.display='none'} />
-        <span>Populares esta semana</span>
+      <h2 className="text-3xl font-bold mb-10 flex items-center justify-center gap-3 text-poke-darkBlue dark:text-white uppercase tracking-wider">
+        <span className=''>Populares esta semana</span>
       </h2>
 
       <div className="carousel-shell">

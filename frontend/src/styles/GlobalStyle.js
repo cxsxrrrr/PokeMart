@@ -62,8 +62,8 @@ const GlobalStyle = createGlobalStyle`
             margin-bottom: 1.5rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            display: inline-flex;
-            align-items: flex-end;
+
+            align-items: center;
             gap: 0.65rem;
         }
 
@@ -661,7 +661,7 @@ const GlobalStyle = createGlobalStyle`
         }
 
         .hero-tilt-wrapper:focus-visible {
-            outline: 2px solid var(--poke-yellow);
+            outline: 2px solid var(--poke-blue);
             outline-offset: 6px;
         }
 /* Contenedor Principal: SIN filter para no romper el 3D */
@@ -736,7 +736,6 @@ const GlobalStyle = createGlobalStyle`
 
         .card-item:hover {
             border-color: var(--poke-yellow);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             transform: translateY(-5px);
         }
 
@@ -870,7 +869,7 @@ const GlobalStyle = createGlobalStyle`
 
         /* --- carrusell principal con 3d */
         .popular-section {
-            padding: 4rem 0 6rem;
+            padding: 4rem 0 8rem;
         }
 
         .carousel-shell {
@@ -899,14 +898,14 @@ const GlobalStyle = createGlobalStyle`
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
+            gap: 2rem;
         }
 
         .carousel-track .card-item {
             position: absolute;
             top: 0;
             left: 50%;
-            width: 260px;
+            width: 290px;
             max-width: 70vw;
             transform: translateX(-50%);
             transition: transform 0.5s ease, opacity 0.4s ease, filter 0.4s ease;
@@ -961,7 +960,6 @@ const GlobalStyle = createGlobalStyle`
 
         .carousel-nav:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
         }
 
         .carousel-nav:disabled {
