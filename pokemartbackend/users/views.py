@@ -91,3 +91,18 @@ def get_user(request, user_id):
         "email": user.email,
         "role": user.role,
     }, status=200)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_current_user(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required."}, status=401)
+
+    user = request.user
+    return JsonResponse({
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "role": user.role,
+    }, status=200)
