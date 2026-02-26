@@ -6,16 +6,13 @@ const DealsSection = ({ cards, status, statusMessage, onAdd }) => {
   return (
     <section className="
         deals-section py-16
-        bg-poke-light/50 dark:bg-content3 transition-colors duration-500
-        border-none shadow-none
-        bg-cover bg-center bg-no-repeat
+
       "
-      style={{ backgroundImage: `url(${fondo})` }} 
     >
       <div className="container mx-auto px-4">
         {/* Título con color adaptativo */}
         <h2 className="text-3xl font-bold mb-10 flex items-center justify-center gap-3 text-poke-darkBlue dark:text-white uppercase tracking-wider">
-          {/* Icono ... */}
+          {/* Icono */}
           <span className="dark:text-poke-yellow">Ofertas Relámpago</span>
         </h2>
 
