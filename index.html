@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=20260111-1">
 </head>
+
 <body>
 
     <header class="main-header">
@@ -15,18 +17,46 @@
             <a href="#" class="logo">
                 <img src="assets/logo.png" alt="PokéMart TCG" class="logo__img">
             </a>
-            <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="header-utility">
+            <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false"
+                aria-controls="header-utility">
                 <span class="menu-toggle__bar"></span>
                 <span class="menu-toggle__bar"></span>
                 <span class="menu-toggle__bar"></span>
             </button>
             <div class="header-flex" id="header-utility">
                 <div class="search-bar">
-                    <input type="text" autocomplete="off" name="text" class="input" placeholder="Busca Charizard, Pikachu, Crown Zenith...">
+                    <input type="text" autocomplete="off" name="text" class="input"
+                        placeholder="Busca Charizard, Pikachu, Crown Zenith...">
                     <button class="search-btn neu-button">GO!</button>
                 </div>
                 <div class="user-actions">
                     <a href="#" class="header-sell">Vender Cartas</a>
+                    <div class="auth-nav" id="auth-nav">
+                        <button class="auth-nav__btn" id="auth-nav-btn" type="button" aria-label="Cuenta de usuario">
+                            <svg class="auth-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <span class="auth-nav__label" id="auth-nav-label">Iniciar Sesión</span>
+                        </button>
+                        <div class="auth-dropdown" id="auth-dropdown" aria-hidden="true">
+                            <div class="auth-dropdown__logged-out" id="auth-logged-out">
+                                <button class="auth-dropdown__action" id="open-login-modal" type="button">Iniciar
+                                    Sesión</button>
+                                <button class="auth-dropdown__action auth-dropdown__action--register"
+                                    id="open-register-modal" type="button">Crear Cuenta</button>
+                            </div>
+                            <div class="auth-dropdown__logged-in" id="auth-logged-in" hidden>
+                                <div class="auth-dropdown__user-info">
+                                    <span class="auth-dropdown__greeting" id="auth-greeting">Hola, usuario</span>
+                                    <span class="auth-dropdown__role" id="auth-role">customer</span>
+                                </div>
+                                <button class="auth-dropdown__action auth-dropdown__action--logout" id="logout-btn"
+                                    type="button">Cerrar Sesión</button>
+                            </div>
+                        </div>
+                    </div>
                     <button class="cart-icon" type="button" aria-label="Ver carrito" data-cart-toggle>
                         <img src="assets/cart.png" alt="Carrito" class="cart-icon__img">
                         <span class="cart-count">0</span>
@@ -60,7 +90,9 @@
                                 <span style="--width: 1; --deg: 174; --duration: 10" class="sparkle"></span>
                                 <span style="--width: 1; --deg: 236; --duration: 5" class="sparkle"></span>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 30 30" class="icon">
-                                    <path d="M0.96233 28.61C1.36043 29.0081 1.96007 29.1255 2.47555 28.8971L10.4256 25.3552C13.2236 24.11 16.4254 24.1425 19.2107 25.4401L27.4152 29.2747C27.476 29.3044 27.5418 29.3023 27.6047 29.32C27.6563 29.3348 27.7079 29.3497 27.761 29.3574C27.843 29.3687 27.9194 29.3758 28 29.3688C28.1273 29.3617 28.2531 29.3405 28.3726 29.2945C28.4447 29.262 28.5162 29.2287 28.5749 29.1842C28.6399 29.1446 28.6993 29.0994 28.7509 29.0477L28.9008 28.8582C28.9468 28.7995 28.9793 28.7274 29.0112 28.656C29.0599 28.5322 29.0811 28.4036 29.0882 28.2734C29.0939 28.1957 29.0868 28.1207 29.0769 28.0415C29.0705 27.9955 29.0585 27.9524 29.0472 27.9072C29.0295 27.8343 29.0302 27.7601 28.9984 27.6901L25.1638 19.4855C23.8592 16.7073 23.8273 13.5048 25.0726 10.7068L28.6145 2.75679C28.8429 2.24131 28.7318 1.63531 28.3337 1.2372C27.9165 0.820011 27.271 0.721743 26.7491 0.9961L19.8357 4.59596C16.8418 6.15442 13.2879 6.18696 10.2615 4.70062L1.80308 0.520214C1.7055 0.474959 1.60722 0.441742 1.50964 0.421943C1.44459 0.409215 1.37882 0.395769 1.3074 0.402133C1.14406 0.395769 0.981436 0.428275 0.818095 0.499692C0.77284 0.519491 0.719805 0.545671 0.67455 0.578198C0.596061 0.617088 0.524653 0.675786 0.4596 0.74084C0.394546 0.805894 0.335843 0.877306 0.296245 0.956502C0.263718 1.00176 0.237561 1.05477 0.217762 1.10003C0.152708 1.24286 0.126545 1.40058 0.120181 1.54978C0.120181 1.61483 0.126527 1.6735 0.132891 1.73219C0.15269 1.85664 0.178881 1.97332 0.237571 2.08434L4.41798 10.5427C5.91139 13.5621 5.8725 17.1238 4.3204 20.1099L0.720514 27.0233C0.440499 27.5536 0.545137 28.1928 0.96233 28.61Z"></path>
+                                    <path
+                                        d="M0.96233 28.61C1.36043 29.0081 1.96007 29.1255 2.47555 28.8971L10.4256 25.3552C13.2236 24.11 16.4254 24.1425 19.2107 25.4401L27.4152 29.2747C27.476 29.3044 27.5418 29.3023 27.6047 29.32C27.6563 29.3348 27.7079 29.3497 27.761 29.3574C27.843 29.3687 27.9194 29.3758 28 29.3688C28.1273 29.3617 28.2531 29.3405 28.3726 29.2945C28.4447 29.262 28.5162 29.2287 28.5749 29.1842C28.6399 29.1446 28.6993 29.0994 28.7509 29.0477L28.9008 28.8582C28.9468 28.7995 28.9793 28.7274 29.0112 28.656C29.0599 28.5322 29.0811 28.4036 29.0882 28.2734C29.0939 28.1957 29.0868 28.1207 29.0769 28.0415C29.0705 27.9955 29.0585 27.9524 29.0472 27.9072C29.0295 27.8343 29.0302 27.7601 28.9984 27.6901L25.1638 19.4855C23.8592 16.7073 23.8273 13.5048 25.0726 10.7068L28.6145 2.75679C28.8429 2.24131 28.7318 1.63531 28.3337 1.2372C27.9165 0.820011 27.271 0.721743 26.7491 0.9961L19.8357 4.59596C16.8418 6.15442 13.2879 6.18696 10.2615 4.70062L1.80308 0.520214C1.7055 0.474959 1.60722 0.441742 1.50964 0.421943C1.44459 0.409215 1.37882 0.395769 1.3074 0.402133C1.14406 0.395769 0.981436 0.428275 0.818095 0.499692C0.77284 0.519491 0.719805 0.545671 0.67455 0.578198C0.596061 0.617088 0.524653 0.675786 0.4596 0.74084C0.394546 0.805894 0.335843 0.877306 0.296245 0.956502C0.263718 1.00176 0.237561 1.05477 0.217762 1.10003C0.152708 1.24286 0.126545 1.40058 0.120181 1.54978C0.120181 1.61483 0.126527 1.6735 0.132891 1.73219C0.15269 1.85664 0.178881 1.97332 0.237571 2.08434L4.41798 10.5427C5.91139 13.5621 5.8725 17.1238 4.3204 20.1099L0.720514 27.0233C0.440499 27.5536 0.545137 28.1928 0.96233 28.61Z">
+                                    </path>
                                 </svg>
                             </div>
                         </label>
@@ -69,6 +101,71 @@
             </div>
         </div>
     </header>
+
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="auth-modal" aria-hidden="true">
+        <div class="auth-modal__backdrop" id="auth-modal-backdrop"></div>
+        <div class="auth-modal__dialog" role="dialog" aria-labelledby="auth-modal-title">
+            <button class="auth-modal__close" id="auth-modal-close" type="button" aria-label="Cerrar">×</button>
+            <div class="auth-modal__header">
+                <img src="assets/logo.png" alt="PokéMart" class="auth-modal__logo">
+                <h2 class="auth-modal__title" id="auth-modal-title">Bienvenido</h2>
+            </div>
+            <div class="auth-modal__tabs">
+                <button class="auth-modal__tab auth-modal__tab--active" id="tab-login" type="button">Iniciar
+                    Sesión</button>
+                <button class="auth-modal__tab" id="tab-register" type="button">Crear Cuenta</button>
+            </div>
+            <div class="auth-modal__error" id="auth-modal-error" hidden></div>
+            <div class="auth-modal__success" id="auth-modal-success" hidden></div>
+            <!-- Login Form -->
+            <form class="auth-modal__form" id="login-form" autocomplete="on">
+                <div class="auth-modal__field">
+                    <label for="login-username">Usuario</label>
+                    <input type="text" id="login-username" name="username" required autocomplete="username"
+                        placeholder="Tu nombre de usuario">
+                </div>
+                <div class="auth-modal__field">
+                    <label for="login-password">Contraseña</label>
+                    <input type="password" id="login-password" name="password" required autocomplete="current-password"
+                        placeholder="Tu contraseña">
+                </div>
+                <button class="auth-modal__submit" type="submit" id="login-submit">
+                    <span class="auth-modal__submit-text">Entrar</span>
+                    <span class="auth-modal__spinner" hidden></span>
+                </button>
+            </form>
+            <!-- Register Form -->
+            <form class="auth-modal__form" id="register-form" hidden autocomplete="on">
+                <div class="auth-modal__field">
+                    <label for="register-username">Usuario</label>
+                    <input type="text" id="register-username" name="username" required autocomplete="username"
+                        placeholder="Elige un nombre de usuario">
+                </div>
+                <div class="auth-modal__field">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" name="email" required autocomplete="email"
+                        placeholder="tu@email.com">
+                </div>
+                <div class="auth-modal__field">
+                    <label for="register-password">Contraseña</label>
+                    <input type="password" id="register-password" name="password" required autocomplete="new-password"
+                        placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="auth-modal__field">
+                    <label for="register-role">Tipo de Usuario</label>
+                    <select id="register-role" name="role">
+                        <option value="customer">Comprador</option>
+                        <option value="seller">Vendedor</option>
+                    </select>
+                </div>
+                <button class="auth-modal__submit" type="submit" id="register-submit">
+                    <span class="auth-modal__submit-text">Crear Cuenta</span>
+                    <span class="auth-modal__spinner" hidden></span>
+                </button>
+            </form>
+        </div>
+    </div>
 
     <div class="cart-panel" data-cart-panel aria-hidden="true">
         <div class="cart-panel__backdrop" data-cart-dismiss></div>
@@ -96,7 +193,8 @@
             <div class="container hero-content">
                 <div class="hero-text">
                     <h1>Hazte con todas... <span>¡Las mejores cartas!</span></h1>
-                    <p>El mercado más seguro para comprar y vender tus cartas coleccionables de Pokémon TCG. Desde clásicos vintage hasta las últimas expansiones.</p>
+                    <p>El mercado más seguro para comprar y vender tus cartas coleccionables de Pokémon TCG. Desde
+                        clásicos vintage hasta las últimas expansiones.</p>
                     <div style="display: flex; gap: 1rem;">
                         <button class="btn btn-primary">Explorar Cartas</button>
                         <button class="btn btn-secondary">Empezar a Vender</button>
@@ -105,8 +203,10 @@
                 <div class="hero-image">
                     <div class="hero-tilt-wrapper">
                         <div class="hero-card">
-                            <img src="assets/cards/charizarday.png" alt="Charizard arte diurno Carta Destacada" class="hero-card__face hero-card__face--front">
-                            <img src="assets/back.png" alt="" aria-hidden="true" class="hero-card__face hero-card__face--back">
+                            <img src="assets/cards/charizarday.png" alt="Charizard arte diurno Carta Destacada"
+                                class="hero-card__face hero-card__face--front">
+                            <img src="assets/back.png" alt="" aria-hidden="true"
+                                class="hero-card__face hero-card__face--back">
                         </div>
                     </div>
                 </div>
@@ -116,21 +216,25 @@
         <audio id="hero-roar-audio" src="assets/sounds/charizard.mp3" preload="auto"></audio>
 
         <section class="popular-section container">
-            <h2 class="section-title"><img src="assets/charizard-seeklogo.svg" alt="Icono de Charizard" class="section-title__icon"><span>Populares esta semana</span></h2>
+            <h2 class="section-title"><img src="assets/charizard-seeklogo.svg" alt="Icono de Charizard"
+                    class="section-title__icon"><span>Populares esta semana</span></h2>
             <div class="carousel-shell">
-                <button class="carousel-nav carousel-nav--prev" type="button" aria-label="Carta anterior" disabled>&lt;</button>
+                <button class="carousel-nav carousel-nav--prev" type="button" aria-label="Carta anterior"
+                    disabled>&lt;</button>
                 <div class="carousel-window">
                     <div class="carousel-track" id="popular-cards" data-state="loading">
-         <p class="status-message">Cargando cartas...</p>
+                        <p class="status-message">Cargando cartas...</p>
                     </div>
                 </div>
-                <button class="carousel-nav carousel-nav--next" type="button" aria-label="Carta siguiente" disabled>&gt;</button>
+                <button class="carousel-nav carousel-nav--next" type="button" aria-label="Carta siguiente"
+                    disabled>&gt;</button>
             </div>
         </section>
 
         <section class="deals-section">
             <div class="container">
-                <h2 class="section-title"><img src="assets/Pikachu.svg" alt="Icono de Pikachu" class="section-title__icon section-title__icon--offset"><span>Ofertas Relámpago</span></h2>
+                <h2 class="section-title"><img src="assets/Pikachu.svg" alt="Icono de Pikachu"
+                        class="section-title__icon section-title__icon--offset"><span>Ofertas Relámpago</span></h2>
                 <div class="deals-grid" id="deal-cards">
                     <p class="status-message">Cargando cartas...</p>
                 </div>
@@ -146,16 +250,17 @@
                         <img src="assets/logo.png" alt="PokéMart TCG" class="logo__img">
                     </div>
                     <p style="margin-top:1rem; color: #ccc; font-size: 0.9rem;">
-                        Tu tienda de confianza hecha por fans para fans. Compra, vende e intercambia tus cartas favoritas de forma segura.
+                        Tu tienda de confianza hecha por fans para fans. Compra, vende e intercambia tus cartas
+                        favoritas de forma segura.
                     </p>
                 </div>
                 <div class="footer-col">
                     <h4>Enlaces Rápidos</h4>
                     <ul>
-                    <li><a href="#">Comprar Cartas</a></li>
-                    <li><a href="#">Vender mis Cartas</a></li>
-                    <li><a href="#">Guía de Estado</a></li>
-                    <li><a href="#">Sobre Nosotros</a></li>
+                        <li><a href="#">Comprar Cartas</a></li>
+                        <li><a href="#">Vender mis Cartas</a></li>
+                        <li><a href="#">Guía de Estado</a></li>
+                        <li><a href="#">Sobre Nosotros</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -169,7 +274,8 @@
                 </div>
                 <div class="footer-col">
                     <h4>Suscríbete a ofertas</h4>
-                    <p style="color:#ccc; font-size:0.9rem; margin-bottom:1rem;">Recibe alertas de stock y descuentos exclusivos.</p>
+                    <p style="color:#ccc; font-size:0.9rem; margin-bottom:1rem;">Recibe alertas de stock y descuentos
+                        exclusivos.</p>
                     <form class="newsletter-form">
                         <input type="email" placeholder="Tu email...">
                         <button type="submit">⚡</button>
@@ -184,4 +290,5 @@
 
     <script src="app.js"></script>
 </body>
+
 </html>
