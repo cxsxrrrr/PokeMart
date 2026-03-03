@@ -1,14 +1,9 @@
 import CardItem from '../CardItem';
-import fondo from '../../assets/pokemon.jpg';
 import { obtenerPrecioCarta } from '../../utils/formatters';
 
 const DealsSection = ({ cards, status, statusMessage, onAdd }) => {
   return (
-    <section className="
-        deals-section py-16
-
-      "
-    >
+    <section className="popular-section deals-section py-16">
       <div className="container mx-auto px-4">
         {/* Título con color adaptativo */}
         <h2 className="text-3xl font-bold mb-10 flex items-center justify-center gap-3 text-poke-darkBlue dark:text-white uppercase tracking-wider">

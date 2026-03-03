@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { CONSTANTS } from '../../utils/constants';
 
 // Función auxiliar para limitar valores
@@ -122,7 +122,7 @@ const HeroSection = ({ theme }) => {
   return (
     <>
       <section
-        className="landing-hero relative overflow-hidden bg-gray-50 dark:bg-poke-darkBg transition-colors duration-500"
+        className="landing-hero relative overflow-hidden popular-section transition-colors duration-500"
         id="hero"
       >
         <div className="container hero-content">

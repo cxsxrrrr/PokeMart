@@ -3,11 +3,13 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import GlobalStyle from './styles/GlobalStyle';
 
 import HeroSection from './components/Hero';
+import HeroSection2 from './components/Hero/Hero2';
 import CartPanel from './components/CartPanel';
 import Header from './components/Common/Header';
 import Footer from './components/Common/Footer';
 import PopularCarousel from './components/Home/PopularCarousel';
 import DealsSection from './components/Home/DealsSection';
+import HowItWorksSection from './components/HowItWorks';
 import RegisterForm from './components/Auth/RegisterForm';
 
 import { useCart } from './hooks/useCart';
@@ -37,7 +39,8 @@ function App() {
   // Componente para la HomePage
   const HomePage = () => (
     <>
-      <HeroSection theme={theme} />
+      {/* <HeroSection theme={theme} /> */}
+      <HeroSection2 />
       <PopularCarousel
         cards={popularCards}
         status={status}
@@ -45,6 +48,7 @@ function App() {
         onAdd={addItemToCart}
         isMobile={isMobile}
       />
+      <HowItWorksSection />
       <DealsSection
         cards={dealCards}
         status={status}
@@ -60,7 +64,7 @@ function App() {
 
       {!isAuthPage && (
         <Header
-          cartCount={cartItems.reduce((acc, item) => acc + item.quantity, 0)} 
+          cartCount={cartItems.reduce((acc, item) => acc + item.quantity, 0)}
           onCartClick={() => setIsCartOpen(true)}
           theme={theme}
           onToggleTheme={toggleTheme}

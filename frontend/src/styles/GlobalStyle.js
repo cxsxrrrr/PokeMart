@@ -183,12 +183,12 @@ const GlobalStyle = createGlobalStyle`
         }
 
         body.dark-mode .deals-section {
-            background-color: #0f172a;
+            background-color: transparent;
 
         }
 
         body.dark-mode .deals-section::before {
-            background-color: #0f172a;
+            background-color: transparent;
         }
 
         body.dark-mode .card-img-container::before {
@@ -1174,7 +1174,7 @@ const GlobalStyle = createGlobalStyle`
         /* ofertas */
         .deals-section {
             padding: 4rem 0;
-            background-color: #E3F2FD; 
+            background-color: transparent,
             position: relative;
             overflow: hidden;
             box-shadow: none;
@@ -1207,7 +1207,7 @@ const GlobalStyle = createGlobalStyle`
             left: 0;
             width: 100%;
             height: 20px;
-            background-color: #E3F2FD;
+            background-color: transparent;
             clip-path: polygon(0 100%, 100% 100%, 100% 0, 75% 100%, 50% 0, 25% 100%, 0 0);
         }
 
