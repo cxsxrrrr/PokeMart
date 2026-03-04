@@ -41,6 +41,7 @@ function App() {
     <>
       {/* <HeroSection theme={theme} /> */}
       <HeroSection2 />
+      <HowItWorksSection />
       <PopularCarousel
         cards={popularCards}
         status={status}
@@ -48,7 +49,6 @@ function App() {
         onAdd={addItemToCart}
         isMobile={isMobile}
       />
-      <HowItWorksSection />
       <DealsSection
         cards={dealCards}
         status={status}

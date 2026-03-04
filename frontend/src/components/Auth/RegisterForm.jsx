@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Importar esto
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardBody,
@@ -7,7 +7,6 @@ import {
   Button,
   Checkbox,
   Link,
-  Switch // Si quieres poner el toggle de tema aquí, o usas un botón simple
 } from "@heroui/react";
 import { IconEye, IconEyeOff, IconBrandGoogle, IconPokeball, IconArrowLeft, IconSun, IconMoon } from "@tabler/icons-react";
 

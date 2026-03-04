@@ -62,7 +62,6 @@ const Footer = ({ backendStatus }) => {
                         <h4>Suscríbete a ofertas</h4>
                         <p
                             style={{
-                                color: "#ccc",
                                 fontSize: "0.9rem",
                                 marginBottom: "1rem",
                             }}

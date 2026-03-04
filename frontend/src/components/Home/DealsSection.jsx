@@ -13,9 +13,7 @@ const DealsSection = ({ cards, status, statusMessage, onAdd }) => {
 
         {/* Grid de cartas */}
         <div className="deals-grid" id="deal-cards">
-          {status === "loading" && Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="card-item skeleton-card"><div className="skeleton skeleton-img" /></div>
-          ))}
+
 
           {(status === "error" || status === "empty") && (
             <p className="status-message error">{statusMessage || "No hay ofertas."}</p>
