@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import GlobalStyle from './styles/GlobalStyle';
 
-import HeroSection from './components/Hero';
 import HeroSection2 from './components/Hero/Hero2';
 import CartPanel from './components/CartPanel';
 import Header from './components/Common/Header';
@@ -11,6 +10,7 @@ import PopularCarousel from './components/Home/PopularCarousel';
 import DealsSection from './components/Home/DealsSection';
 import HowItWorksSection from './components/HowItWorks';
 import RegisterForm from './components/Auth/RegisterForm';
+import VideoNewsSection from './components/VideoNewsSection/VideoNewsSection';
 
 import { useCart } from './hooks/useCart';
 import { useProducts } from './hooks/useProducts';
@@ -36,7 +36,6 @@ function App() {
     }
   };
 
-  // Componente para la HomePage
   const HomePage = () => (
     <>
       {/* <HeroSection theme={theme} /> */}
@@ -55,6 +54,7 @@ function App() {
         statusMessage={statusMessage}
         onAdd={addItemToCart}
       />
+      <VideoNewsSection />
     </>
   );
 
