@@ -74,3 +74,14 @@ class Card(models.Model):
 
     def __str__(self):
         return f"Card(id={self.id}, name={self.name}, collection={self.collection}, rarity={self.rarity})"
+
+
+class Reviews(models.Model):
+    id = models.AutoField(primary_key=True)
+    order_id = models.OneToOneField('Orders', on_delete=models.CASCADE, related_name='review')
+    rating = models.IntegerField()
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Reviews(id={self.id}, order_id={self.order_id}, rating={self.rating})"
