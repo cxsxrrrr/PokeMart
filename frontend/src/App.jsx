@@ -11,6 +11,7 @@ import DealsSection from './components/Home/DealsSection';
 import HowItWorksSection from './components/HowItWorks';
 import RegisterForm from './components/Auth/RegisterForm';
 import VideoNewsSection from './components/VideoNewsSection/VideoNewsSection';
+import Catalog from './components/Catalog/Catalog';
 
 import { useCart } from './hooks/useCart';
 import { useProducts } from './hooks/useProducts';
@@ -22,7 +23,7 @@ function App() {
   const isAuthPage = location.pathname === '/register';
 
   const { cartItems, isCartOpen, setIsCartOpen, addItemToCart, removeItemFromCart, updateItemQuantity, cartTotal } = useCart();
-  const { popularCards, dealCards, status, statusMessage, loadCards } = useProducts();
+  const { popularCards, dealCards, catalogCards, status, statusMessage, loadCards } = useProducts();
   const isMobile = useMediaQuery('(max-width: 540px)');
 
   const toggleTheme = () => {
@@ -86,10 +87,23 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<RegisterForm />} />
+
+          <Route
+            path="/catalog"
+            element={
+              <Catalog
+                cards={catalogCards}
+                status={status}
+                statusMessage={statusMessage}
+                onAdd={addItemToCart}
+                onSearch={loadCards}
+              />
+            }
+          />
         </Routes>
       </main>
 
-      <Footer backendStatus="online" />
+      <Footer backendStatus="offline" />
     </>
   );
 }

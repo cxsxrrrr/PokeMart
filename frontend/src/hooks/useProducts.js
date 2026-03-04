@@ -5,6 +5,7 @@ import { normalizeCard, filtrarCartas, elegirSubconjuntoAleatorio } from '../uti
 export const useProducts = () => {
     const [popularCards, setPopularCards] = useState([]);
     const [dealCards, setDealCards] = useState([]);
+    const [catalogCards, setCatalogCards] = useState([]); // <-- NUEVO
     const [status, setStatus] = useState("loading");
     const [statusMessage, setStatusMessage] = useState("");
 
@@ -12,34 +13,36 @@ export const useProducts = () => {
     const catalogPromiseRef = useRef(null);
     const lastQueryRef = useRef("");
 
-  const ensureCatalog = useCallback(async () => {
-    if (catalogRef.current.length) {
-      return catalogRef.current;
-    }
+    const ensureCatalog = useCallback(async () => {
+        if (catalogRef.current.length) {
+            return catalogRef.current;
+        }
 
-    if (!catalogPromiseRef.current) {
-      catalogPromiseRef.current = fetch(CONSTANTS.DATA_URL, { cache: "no-store" })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("No se pudo cargar el catálogo local");
-          }
-          return response.json();
-        })
-        .then((payload) => {
-          const cards = Array.isArray(payload?.data) ? payload.data : [];
-          catalogRef.current = cards.map(normalizeCard);
-          return catalogRef.current;
-        })
-        .catch((error) => {
-          catalogPromiseRef.current = null;
-          throw error;
-        });
-    }
+        if (!catalogPromiseRef.current) {
+            catalogPromiseRef.current = fetch(CONSTANTS.DATA_URL, { cache: "no-store" })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("No se pudo cargar el catálogo local");
+                    }
+                    return response.json();
+                })
+                .then((payload) => {
+                    const cards = Array.isArray(payload?.data) ? payload.data : [];
+                    catalogRef.current = cards.map(normalizeCard);
+                    return catalogRef.current;
+                })
+                .catch((error) => {
+                    catalogPromiseRef.current = null;
+                    throw error;
+                });
+        }
 
-    return catalogPromiseRef.current;
-  }, []);
+        return catalogPromiseRef.current;
+    }, []);
 
     const aplicarSelecciones = (sourceCards) => {
+        setCatalogCards(sourceCards);
+
         if (!sourceCards.length) {
             setPopularCards([]);
             setDealCards([]);
@@ -47,6 +50,7 @@ export const useProducts = () => {
             setStatusMessage("No se encontraron cartas.");
             return;
         }
+
         const popular = elegirSubconjuntoAleatorio(sourceCards, CONSTANTS.POPULAR_COUNT);
         const exclusion = new Set(popular.map(c => c.id));
         const deals = elegirSubconjuntoAleatorio(sourceCards, CONSTANTS.DEALS_COUNT, exclusion);
@@ -54,6 +58,7 @@ export const useProducts = () => {
         setPopularCards(popular);
         setDealCards(deals);
         setStatus("ready");
+        setStatusMessage(""); // <-- limpia mensajes cuando hay data
     };
 
     const loadCards = useCallback(async (termino = "") => {
@@ -78,5 +83,5 @@ export const useProducts = () => {
         loadCards("");
     }, [loadCards]);
 
-    return { popularCards, dealCards, status, statusMessage, loadCards };
+    return { popularCards, dealCards, catalogCards, status, statusMessage, loadCards }; // <-- NUEVO
 };
