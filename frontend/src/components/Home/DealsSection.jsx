@@ -1,0 +1,43 @@
+import CardItem from '../CardItem';
+import { obtenerPrecioCarta } from '../../utils/formatters';
+
+const DealsSection = ({ cards, status, statusMessage, onAdd }) => {
+  return (
+    <section className="popular-section deals-section py-16">
+      <div className="container mx-auto px-4">
+        {/* Título con color adaptativo */}
+        <h2 className="text-3xl font-bold mb-10 flex items-center justify-center gap-3 text-poke-darkBlue dark:text-white uppercase tracking-wider">
+          {/* Icono */}
+          <span className="dark:text-poke-yellow">Ofertas Relámpago</span>
+        </h2>
+
+        {/* Grid de cartas */}
+        <div className="deals-grid" id="deal-cards">
+
+
+          {(status === "error" || status === "empty") && (
+            <p className="status-message error">{statusMessage || "No hay ofertas."}</p>
+          )}
+
+          {status === "ready" && cards.map((card, index) => {
+            const discounts = [0.15, 0.20, 0.25, 0.30];
+            const discount = discounts[index % discounts.length];
+
+            return (
+              <CardItem
+                key={card.id}
+                card={card}
+                basePrice={obtenerPrecioCarta(card)}
+                discountRate={discount}
+                ctaLabel="¡Comprar oferta!"
+                onAdd={onAdd}
+              />
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default DealsSection;

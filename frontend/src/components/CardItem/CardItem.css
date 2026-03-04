@@ -1,0 +1,52 @@
+/* Mantiene el área de la imagen estable */
+.card-3d-wrapper {
+  perspective: 1200px;
+  width: 100%;
+  height: 280px; /* Altura firme para la imagen */
+  margin-bottom: 1rem;
+}
+
+/* El contenedor que realmente gira */
+.card-3d-flip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+/* Al poner el mouse en la carta (grupo), gira este contenedor */
+.poke-card-group:hover .card-3d-flip {
+  transform: rotateY(180deg);
+}
+
+/* Las dos caras superpuestas con position absolute (Evita el bug de la foto cortada) */
+.card-3d-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-3d-front {
+  transform: rotateY(0deg);
+}
+
+.card-3d-back {
+  transform: rotateY(180deg);
+}
+
+/* La imagen en sí, respetando límites sin recortarse */
+.card-3d-face img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2));
+}
