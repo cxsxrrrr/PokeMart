@@ -1,4 +1,4 @@
-import React from 'react';
+import logo from "../../assets/logo-morado.png";
 
 const Footer = ({ backendStatus }) => {
     const backendLabel =
@@ -12,7 +12,7 @@ const Footer = ({ backendStatus }) => {
                     <div className="footer-col">
                         <div className="logo" style={{ fontSize: "1.4rem" }}>
                             <img
-                                src="/assets/logo.png"
+                                src={logo}
                                 alt="PokéMart TCG"
                                 className="logo__img"
                             />
