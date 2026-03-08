@@ -30,13 +30,15 @@ def create_user(request):
     user = User.objects.create_user(
         username=payload["username"],
         email=payload["email"],
-        password=payload["password"]
+        password=payload["password"],
+        avatar_url=payload.get("avatarUrl", "")
     )
     return JsonResponse({
         "id": user.id,
         "username": user.username,
         "email": user.email,
         "role": user.role,
+        "avatarUrl": user.avatar_url,
     }, status=201)
 
 
@@ -68,6 +70,7 @@ def login_user(request):
         "username": user.username,
         "email": user.email,
         "role": user.role,
+        "avatarUrl": user.avatar_url,
     }, status=200)
 
 
@@ -90,6 +93,7 @@ def get_user(request, user_id):
         "username": user.username,
         "email": user.email,
         "role": user.role,
+        "avatarUrl": user.avatar_url,
     }, status=200)
 
 
@@ -105,4 +109,5 @@ def get_current_user(request):
         "username": user.username,
         "email": user.email,
         "role": user.role,
+        "avatarUrl": user.avatar_url,
     }, status=200)

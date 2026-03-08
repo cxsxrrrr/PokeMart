@@ -70,10 +70,10 @@ const Header = ({
                 Catálogo
               </Link>
 
-              {/* Si “Nosotros” es una sección del Home */}
-              <a href="/#footer" className="header-sell">
+              {/* Seccion NOSOTROS*/}
+              <Link to="/about" className="header-sell" onClick={() => isMenuMobile && setMenuOpen(false)}>
                 Nosotros
-              </a>
+              </Link>
 
               <button
                 className="header-sell cart-icon flex items-center justify-center transition-transform hover:-translate-y-1"

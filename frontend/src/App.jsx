@@ -18,6 +18,8 @@ import About from './components/About/About';
 import { useCart } from './hooks/useCart';
 import { useProducts } from './hooks/useProducts';
 import { useMediaQuery } from './hooks/useMediaQuery';
+import { useAuth } from './hooks/useAuth';
+import { useEffect } from 'react';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem('pokemart-theme') || 'light');
@@ -27,6 +29,11 @@ function App() {
   const { cartItems, isCartOpen, setIsCartOpen, addItemToCart, removeItemFromCart, updateItemQuantity, cartTotal } = useCart();
   const { popularCards, dealCards, catalogCards, status, statusMessage, loadCards } = useProducts();
   const isMobile = useMediaQuery('(max-width: 540px)');
+  const { user, checkCurrentUser } = useAuth();
+
+  useEffect(() => {
+    checkCurrentUser();
+  }, [checkCurrentUser]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -71,6 +78,7 @@ function App() {
           theme={theme}
           onToggleTheme={toggleTheme}
           onSearch={loadCards}
+          user={user}
         />
       )}
 

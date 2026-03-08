@@ -1,31 +1,48 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input, Button, Checkbox, Link as NextUILink } from "@heroui/react";
-import { IconEye, IconEyeOff, IconBrandGoogle, IconSparkles, IconX } from "@tabler/icons-react";
+import { IconEye, IconEyeOff, IconBrandGoogle, IconSparkles, IconX, IconAlertCircle } from "@tabler/icons-react";
+import { useAuth } from "../../hooks/useAuth";
 import "./RegisterForm.css";
+
+const AVATAR_OPTIONS = [
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",  // Pikachu
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",   // Bulbasaur
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",   // Charmander
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",   // Squirtle
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png", // Eevee
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png",  // Gengar
+];
 
 export default function RegisterForm() {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(AVATAR_OPTIONS[0]);
   const [isInvalid, setIsInvalid] = useState(false);
+  const { register, loading, error } = useAuth();
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   const validateEmail = (value) =>
     value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateEmail(email)) {
       setIsInvalid(true);
       return;
     }
-    if (password.length < 6) return;
+    if (password.length < 6 || !username.trim()) return;
 
-    console.log("Registrando usuario:", email);
-    navigate('/');
+    try {
+      await register(username, email, password, avatarUrl);
+      navigate('/login'); // mandamos a hacer login
+    } catch (err) {
+      console.error("Registro fallido:", err);
+    }
   };
 
   const goHome = () => navigate('/');
@@ -134,34 +151,27 @@ export default function RegisterForm() {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Input
-                isRequired
-                label="Nombre"
-                labelPlacement="outside"
-                placeholder="Ash"
-                variant="bordered"
-                radius="sm"
-                classNames={{
-                  label: "font-semibold text-slate-700 dark:text-cyan-300 pb-1",
-                  inputWrapper: "bg-white dark:bg-slate-900 border-slate-200 dark:border-cyan-900/50 hover:border-violet-300 dark:hover:border-cyan-700 focus-within:!border-violet-600 dark:focus-within:!border-cyan-400 h-12 shadow-sm transition-colors",
-                  input: "text-slate-900 dark:text-cyan-50"
-                }}
-              />
-              <Input
-                isRequired
-                label="Apellido"
-                labelPlacement="outside"
-                placeholder="Ketchum"
-                variant="bordered"
-                radius="sm"
-                classNames={{
-                  label: "font-semibold text-slate-700 dark:text-cyan-300 pb-1",
-                  inputWrapper: "bg-white dark:bg-slate-900 border-slate-200 dark:border-cyan-900/50 hover:border-violet-300 dark:hover:border-cyan-700 focus-within:!border-violet-600 dark:focus-within:!border-cyan-400 h-12 shadow-sm transition-colors",
-                  input: "text-slate-900 dark:text-cyan-50"
-                }}
-              />
-            </div>
+            {error && (
+              <div className="flex items-center gap-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-3 rounded-lg text-sm font-medium">
+                <IconAlertCircle size={20} />
+                {error}
+              </div>
+            )}
+
+            <Input
+              isRequired
+              label="Nombre de Usuario"
+              labelPlacement="outside"
+              placeholder="Escribe un alias único"
+              variant="bordered"
+              radius="sm"
+              onValueChange={setUsername}
+              classNames={{
+                label: "font-semibold text-slate-700 dark:text-cyan-300 pb-1",
+                inputWrapper: "bg-white dark:bg-slate-900 border-slate-200 dark:border-cyan-900/50 hover:border-violet-300 dark:hover:border-cyan-700 focus-within:!border-violet-600 dark:focus-within:!border-cyan-400 h-12 shadow-sm transition-colors",
+                input: "text-slate-900 dark:text-cyan-50"
+              }}
+            />
 
             <Input
               isRequired
@@ -202,6 +212,26 @@ export default function RegisterForm() {
               }}
             />
 
+            <div className="flex flex-col gap-2 mt-2">
+              <label className="font-semibold text-slate-700 dark:text-cyan-300 text-sm">Escoge tu Avatar</label>
+              <div className="flex gap-3 mt-1 flex-wrap">
+                {AVATAR_OPTIONS.map((url) => (
+                  <button
+                    key={url}
+                    type="button"
+                    onClick={() => setAvatarUrl(url)}
+                    className={`w-12 h-12 rounded-full border-2 overflow-hidden bg-violet-100 dark:bg-slate-800 transition-all filter hover:brightness-110 ${
+                      avatarUrl === url
+                        ? "border-violet-600 dark:border-cyan-400 scale-110 shadow-md"
+                        : "border-transparent opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <img src={url} alt="Avatar option" className="w-full h-full object-cover scale-125" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="mt-1">
               <Checkbox
                 size="sm"
@@ -215,11 +245,12 @@ export default function RegisterForm() {
 
             <Button
               type="submit"
+              isLoading={loading}
               className="w-full font-display font-bold text-base h-14 rounded-xl mt-3 flex items-center justify-center gap-2 transition-all 
                          bg-violet-800 text-white hover:bg-violet-900 shadow-[0_4px_14px_rgba(109,40,217,0.3)] hover:shadow-[0_6px_20px_rgba(109,40,217,0.4)]
                          dark:bg-cyan-500 dark:text-slate-950 dark:shadow-[0_4px_14px_rgba(6,182,212,0.3)] dark:hover:shadow-[0_6px_20px_rgba(6,182,212,0.4)]"
             >
-              Crear mi cuenta
+              {loading ? "Creando..." : "Crear mi cuenta"}
             </Button>
 
             <div className="relative flex py-4 items-center">

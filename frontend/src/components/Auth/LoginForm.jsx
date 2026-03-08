@@ -1,31 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input, Button, Checkbox, Link as NextUILink } from "@heroui/react";
-import { IconEye, IconEyeOff, IconBrandGoogle, IconSparkles, IconX } from "@tabler/icons-react";
+import { IconEye, IconEyeOff, IconBrandGoogle, IconSparkles, IconX, IconAlertCircle } from "@tabler/icons-react";
+import { useAuth } from "../../hooks/useAuth";
 import "./LoginForm.css";
 
 export default function LoginForm() {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isInvalid, setIsInvalid] = useState(false);
+  const { login, loading, error } = useAuth();
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const validateEmail = (value) =>
-    value.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateEmail(email)) {
-      setIsInvalid(true);
-      return;
-    }
-    if (password.length < 6) return;
+    if (!username.trim() || password.length < 1) return;
 
-    console.log("Iniciando sesión con:", email);
-    navigate('/');
+    try {
+      await login(username, password);
+      // login exitoso
+      navigate('/');
+    } catch (err) {
+      console.error("Login fallido:", err);
+    }
   };
 
   const goHome = () => navigate('/');
@@ -121,17 +120,22 @@ export default function LoginForm() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
+            {error && (
+              <div className="flex items-center gap-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-3 rounded-lg text-sm font-medium">
+                <IconAlertCircle size={20} />
+                {error}
+              </div>
+            )}
+
             <Input
               isRequired
-              type="email"
-              label="Correo Electrónico"
+              type="text"
+              label="Nombre de Usuario"
               labelPlacement="outside"
-              placeholder="tu@email.com"
+              placeholder="Ej. trainer_ash"
               variant="bordered"
               radius="sm"
-              isInvalid={isInvalid}
-              errorMessage={isInvalid && "Ingresa un correo válido"}
-              onValueChange={(v) => { setEmail(v); if (isInvalid) setIsInvalid(false); }}
+              onValueChange={setUsername}
               classNames={{
                 label: "font-semibold text-slate-700 dark:text-cyan-300 pb-1",
                 inputWrapper: "bg-white dark:bg-slate-900 border-slate-200 dark:border-cyan-900/50 hover:border-violet-300 dark:hover:border-cyan-700 focus-within:!border-violet-600 dark:focus-within:!border-cyan-400 h-14 shadow-sm transition-colors",
@@ -176,11 +180,12 @@ export default function LoginForm() {
 
             <Button
               type="submit"
+              isLoading={loading}
               className="w-full font-display font-bold text-base h-14 rounded-xl mt-4 flex items-center justify-center gap-2 transition-all 
                          bg-violet-800 text-white hover:bg-violet-900 shadow-[0_4px_14px_rgba(109,40,217,0.3)] hover:shadow-[0_6px_20px_rgba(109,40,217,0.4)]
                          dark:bg-cyan-500 dark:text-slate-950 dark:shadow-[0_4px_14px_rgba(6,182,212,0.3)] dark:hover:shadow-[0_6px_20px_rgba(6,182,212,0.4)]"
             >
-              Iniciar Sesión
+              {loading ? "Iniciando..." : "Iniciar Sesión"}
             </Button>
 
             <div className="relative flex py-6 items-center">
