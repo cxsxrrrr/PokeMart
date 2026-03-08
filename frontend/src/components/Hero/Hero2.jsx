@@ -34,7 +34,6 @@ const HeroSection = () => {
         {[...Array(25)].map((_, i) => (
           <motion.div
             key={i}
-            // Violeta en Light / Cyan en Dark
             className="absolute rounded-full bg-violet-500/30 dark:bg-cyan-400/30 blur-[1px]"
             style={{
               // Distribución dispersa por toda la pantalla usando matemáticas simples

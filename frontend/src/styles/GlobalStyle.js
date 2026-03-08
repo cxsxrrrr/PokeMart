@@ -275,7 +275,7 @@ const GlobalStyle = createGlobalStyle`
         color: white;
         padding: 60px 0 20px;
         margin-top: 60px;
-        border-top: 4px solid var(--badge-purple);
+        border-top: 4px solid white;
     }
 
     /* 👇 ESTO ASEGURA QUE SE BORREN LOS DEGRADADOS FANTASMAS ANTERIORES 👇 */
@@ -284,7 +284,7 @@ const GlobalStyle = createGlobalStyle`
     .footer-grid {
         display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; margin-bottom: 40px;
     }
-    .footer-col h4 { color: var(--badge-purple); margin-bottom: 20px; font-size: 1.2rem; font-weight: 800; } /* Changed from var(--poke-yellow) to purple for light mode */
+    .footer-col h4 { color: var(--poke--yellow); margin-bottom: 20px; font-size: 1.2rem; font-weight: 800; }
     .footer-col p { font-size: 0.95rem; line-height: 1.6; }
     .footer-col ul li { margin-bottom: 12px; }
     .footer-col ul li a { color: #ccc; transition: color 0.2s; font-size: 0.95rem; font-weight: 500; }
@@ -293,15 +293,14 @@ const GlobalStyle = createGlobalStyle`
     .newsletter-form { display: flex; margin-bottom: 1.5rem; }
     .newsletter-form input { flex: 1; padding: 10px 15px; border-radius: 8px 0 0 8px; border: none; outline: none; background: rgba(255,255,255,0.1); color: white; }
     .newsletter-form input::placeholder { color: #aaa; }
-    .newsletter-form button { 
-        background-color: var(--badge-purple); /* Changed from var(--poke-yellow) to purple for light mode */
-        color: white; /* Adjusted for better contrast on purple */
-        border: none; padding: 0 15px; border-radius: 0 8px 8px 0; cursor: pointer; font-size: 1.2rem; transition: background 0.2s; 
+    .newsletter-form button {
+        background-color: #2e6680;
+        color: var(--poke-dark-blue);
+        border: none; padding: 0 15px; border-radius: 0 8px 8px 0; cursor: pointer; font-size: 1.2rem; transition: background 0.2s;
     }
-    .newsletter-form button:hover { 
-        background-color: #7c3aed; /* Darker purple for hover in light mode */
+    .newsletter-form button:hover {
+        background-color: #74a8c0;
     }
-
     .backend-status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; padding: 6px 12px; border-radius: 20px; background: var(--badge-purple); color: white; } /* Changed background and color for light mode badge */
     .backend-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; display: block !important; background: none; }
     .backend-status--online::before { background-color: #4ade80 !important; box-shadow: 0 0 8px #4ade80; }
@@ -314,18 +313,17 @@ const GlobalStyle = createGlobalStyle`
        DARK MODE GLOBALES
        ========================================= */
     body.dark-mode { background-color: #0b1021; color: #e5e7eb; }
-    
     body.dark-mode .main-header {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.7));
+        background: linear-gradient(135deg, rgba(38, 42, 15, 0.9), rgba(15, 23, 42, 0.7));
         border-color: rgba(148, 163, 184, 0.35); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
     body.dark-mode .header-content.header-content--light .header-sell { color: #f8fafc; }
-    
+
     body.dark-mode .section-title { color: var(--badge-cyan); } /* Changed to cyan for dark mode */
     body.dark-mode .search-bar .input { background-color: #1f2937; color: #e5e7eb; box-shadow: inset 1px 3px 6px rgba(0,0,0,0.45); }
     body.dark-mode .search-bar .input::placeholder { color: #9ca3af; }
     body.dark-mode .search-bar .input:focus { background-color: #111827; box-shadow: 6px 6px 28px rgba(0,0,0,0.55), -6px -6px 28px rgba(255,255,255,0.04); }
-    
+
     body.dark-mode .neu-button {
         background-color: #1f2937; color: #e5e7eb; border-color: #2d3748;
         box-shadow: inset 3px 3px 8px #0b1220, inset -3px -3px 8px #273244;
@@ -356,20 +354,6 @@ const GlobalStyle = createGlobalStyle`
     body.dark-mode .cart-panel__summary strong { color: #f8fafc; }
 
     body.dark-mode .cart-count { background-color: var(--badge-cyan); color: black; } /* Changed to cyan for dark mode */
-
-    /* DARK MODE: FOOTER */
-    body.dark-mode .main-footer {
-        border-top-color: var(--badge-cyan) !important; /* Cyan line in dark mode */
-    }
-    body.dark-mode .footer-col h4 { color: var(--badge-cyan) !important; } /* Cyan headings */
-    body.dark-mode .footer-col p { color: var(--badge-cyan) !important; } /* Cyan paragraphs (overrides inline style) */
-    body.dark-mode .footer-col ul li a { color: var(--badge-cyan) !important; } /* Cyan links */
-    body.dark-mode .footer-col ul li a:hover { color: #ffffff !important; } /* White hover */
-    body.dark-mode .backend-status { background: var(--badge-cyan) !important; color: black !important; } /* Cyan badge */
-    body.dark-mode .newsletter-form button { 
-        background-color: var(--badge-cyan) !important; /* Cyan button in dark mode */
-        color: black !important; /* Text color for contrast */
-    }
 
     /* Increase opacity for CTA buttons in deals section (flash deals) */
     body.dark-mode .deals-section .card-cta,
