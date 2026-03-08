@@ -7,7 +7,7 @@ import newpokemon from "../../assets/pokemon-wind-wave.webp";
 const fallbackVideos = [
   {
     id: "pokemon-news-1",
-    title: "Nuevos Pokémon iniciales (tráiler)",
+    title: "Nuevos Pokémon iniciales",
     description: "Primer vistazo a los nuevos compañeros de aventura: carisma, personalidad y una región tropical que promete exploración desde el minuto uno.",
     source: "Canal Oficial Pokémon",
     publishedAt: "Nuevo",

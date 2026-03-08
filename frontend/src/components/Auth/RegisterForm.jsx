@@ -9,6 +9,7 @@ import {
   Link,
 } from "@heroui/react";
 import { IconEye, IconEyeOff, IconBrandGoogle, IconPokeball, IconArrowLeft, IconSun, IconMoon } from "@tabler/icons-react";
+import "./RegisterForm.css";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function RegisterForm() {
   const goHome = () => navigate('/');
 
   return (
-    <div className="flex w-full min-h-screen bg-white dark:bg-[#050510] transition-colors duration-500 overflow-hidden relative">
+    <div className="flex w-full min-h-screen bg-white dark:bg-[#050510] transition-colors duration-500 overflow-hidden relative register-form-root">
 
       {/* BOTÓN FLOTANTE PARA VOLVER (Esquina superior izquierda) */}
       <button 
@@ -67,9 +68,8 @@ export default function RegisterForm() {
             </p>
         </div>
 
-        {/* Imagen Central (Charizard o Cartas) - Reemplaza src con lo que gustes */}
+        {/* Imagen Central (Charizard o Cartas) */}
         <div className="relative z-10 flex-1 flex items-center justify-center">
-             {/* Usamos un placehoder visual atractivo o una imagen de carta flotando */}
              <div className="relative w-[300px] h-[420px] bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 shadow-2xl rotate-[-6deg] hover:rotate-0 transition-all duration-500 group flex items-center justify-center">
                 <div className="absolute inset-2 border border-white/10 rounded-lg"></div>
                 <IconPokeball size={120} className="text-white/20 group-hover:text-poke-yellow/40 transition-colors" />
@@ -108,7 +108,6 @@ export default function RegisterForm() {
 
             <Card className="w-full shadow-none bg-transparent border-none">
                 <CardBody className="p-0 overflow-visible"> 
-                {/* overflow-visible para que la sombra del botón no se corte */}
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                                         <div className="flex flex-col sm:flex-row gap-4">
                     <Input
@@ -181,7 +180,7 @@ export default function RegisterForm() {
                     type="submit"
                     className="w-full font-bold text-lg bg-poke-red text-white shadow-lg shadow-poke-red/20 h-12 rounded-medium mt-2"
                     >
-                    COMENZAR AVENTURA
+                    REGISTRARSE
                     </Button>
 
                     <div className="relative flex py-2 items-center">

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
-import Catalog from "../Catalog/Catalog";
+import logo from "../../assets/logo2.png";
 
 const Header = ({
   cartCount,
@@ -44,7 +44,7 @@ const Header = ({
       >
         <Link to="/" className="logo">
           <img
-            src="/assets/logo.png"
+            src={logo}
             alt="PokéMart TCG"
             className="logo__img"
             
@@ -93,9 +93,7 @@ const Header = ({
             </button>
           </div>
           <div className="user-actions">
-            <Link to="/" className="header-sell">
-              Inicio
-            </Link>
+            <a href="/#hero" className="header-sell">Inicio</a>
             <Link to="/catalog" className="header-sell" onClick={() => isMenuMobile && setMenuOpen(false)}>
               Catálogo
             </Link>
