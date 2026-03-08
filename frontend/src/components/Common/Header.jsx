@@ -47,7 +47,6 @@ const Header = ({
             src={logo}
             alt="PokéMart TCG"
             className="logo__img"
-            
           />
         </Link>
         <button

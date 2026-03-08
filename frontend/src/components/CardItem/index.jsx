@@ -53,7 +53,10 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel, onAdd }) => {
 
       {/* BADGE DE DESCUENTO */}
       {discountRate ? (
-        <div className="absolute -top-3 -left-3 bg-yellow-400 text-slate-900 px-3 py-1 rounded-full font-extrabold text-sm z-50 border-2 border-slate-900 shadow-lg">
+        <div className="absolute -top-3 -left-3 
+      bg-purple-400 text-slate-900 
+      dark:bg-cyan-400 dark:text-cyan-900
+      px-3 py-1 rounded-full font-extrabold text-sm z-50 border-2 border-slate-900 shadow-lg">
           -{Math.round(discountRate * 100)}%
         </div>
       ) : null}
@@ -84,7 +87,7 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel, onAdd }) => {
                 {formatCurrency(basePrice)}
               </span>
             )}
-            <span className="text-xl font-black text-red-600 dark:text-cyan-400 leading-none tracking-tight">
+            <span className="text-xl font-black text-[color:dark-gray] dark:text-cyan-400 leading-none tracking-tight">
               {displayedPrice ? formatCurrency(displayedPrice) : "N/D"}
             </span>
           </div>
@@ -116,7 +119,9 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel, onAdd }) => {
 
         {/* Botón*/}
         <button
-          className="w-full mt-auto py-3 px-4 bg-[#141f41] dark:bg-cyan-600 hover:bg-violet-700 dark:hover:bg-cyan-400 text-white dark:text-slate-900 rounded-xl font-bold transition-colors shadow-md"
+          className="w-full mt-auto py-3 px-4 bg-violet-900 hover:bg-violet-500 dark:bg-cyan-600 dark:hover:bg-cyan-400
+    text-white dark:text-slate-900
+    rounded-xl font-bold transition-colors shadow-md"
           onClick={(e) => { e.preventDefault(); handleAdd(); }}
         >
           {added ? "Agregado" : ctaLabel}
