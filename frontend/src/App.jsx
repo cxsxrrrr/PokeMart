@@ -14,6 +14,7 @@ import LoginForm from './components/Auth/LoginForm';
 import VideoNewsSection from './components/VideoNewsSection/VideoNewsSection';
 import Catalog from './components/Catalog/Catalog';
 import About from './components/About/About';
+import Dashboard from './components/Dashboard/Dashboard';
 
 import { useCart } from './hooks/useCart';
 import { useProducts } from './hooks/useProducts';
@@ -94,7 +95,8 @@ function App() {
 
       <main style={{ minHeight: '80vh', paddingTop: location.pathname === '/' ? '0' : '0' }}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={user ? <Dashboard /> : <HomePage />} />
+          <Route path="/dashboard" element={user ? <Dashboard /> : <LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/login" element={<LoginForm />} />
 

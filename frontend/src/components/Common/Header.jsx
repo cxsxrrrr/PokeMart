@@ -5,6 +5,8 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 import AuthModal from "../Auth/AuthModal";
 import logo from "../../assets/logo2.png";
 
+import { useAuth } from "../../hooks/useAuth";
+
 const Header = ({
   cartCount,
   onCartClick,
@@ -14,7 +16,9 @@ const Header = ({
   headerLight,
   user,
 }) => {
+  const { logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const headerContentRef = useRef(null);
   const headerFlexRef = useRef(null);
@@ -26,6 +30,9 @@ const Header = ({
     const handler = (event) => {
       if (headerContentRef.current && !headerContentRef.current.contains(event.target)) {
         setMenuOpen(false);
+      }
+      if (!event.target.closest('.user-menu-container')) {
+        setUserMenuOpen(false);
       }
     };
     document.addEventListener("click", handler);
@@ -65,15 +72,22 @@ const Header = ({
             ref={headerFlexRef}
           >
             <div className="user-actions">
-              <a href="/#hero" className="header-sell">Inicio</a>
+              <Link to="/" className="header-sell" onClick={() => isMenuMobile && setMenuOpen(false)}>
+                Inicio
+              </Link>
               <Link to="/catalog" className="header-sell" onClick={() => isMenuMobile && setMenuOpen(false)}>
                 Catálogo
               </Link>
-
-              {/* Seccion NOSOTROS*/}
-              <Link to="/about" className="header-sell" onClick={() => isMenuMobile && setMenuOpen(false)}>
-                Nosotros
-              </Link>
+              {!user && (
+                <Link to="/about" className="header-sell" onClick={() => isMenuMobile && setMenuOpen(false)}>
+                  Nosotros
+                </Link>
+              )}
+              {user && (
+                <Link to="/dashboard" className="header-sell" onClick={() => isMenuMobile && setMenuOpen(false)}>
+                  Vender / Operaciones
+                </Link>
+              )}
 
               <button
                 className="header-sell cart-icon flex items-center justify-center transition-transform hover:-translate-y-1"
@@ -98,20 +112,50 @@ const Header = ({
                   <IconMoon size={26} />
                 )}
               </button>
-              <div className="user-profile flex items-center ml-1">
+              <div className="user-profile flex items-center ml-1 relative user-menu-container">
                 {user ? (
-                  <button
-                    className="header-sell w-9 h-9 rounded-full overflow-hidden border-2"
-                    style={{ borderColor: 'currentColor', display: 'block', padding: 0 }}
-                    onClick={() => navigate("/profile")}
-                    aria-label="Perfil"
-                  >
-                    <img
-                      src={user.avatarUrl}
-                      alt={user.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
+                  <div className="relative">
+                    <button
+                      className="header-sell w-9 h-9 rounded-full overflow-hidden border-2 transition-transform hover:scale-105"
+                      style={{ borderColor: 'currentColor', display: 'block', padding: 0 }}
+                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                      aria-label="Perfil"
+                    >
+                      <img
+                        src={user.avatarUrl}
+                        alt={user.username}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                    {userMenuOpen && (
+                      <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="p-3 border-b border-slate-100 dark:border-slate-800">
+                          <p className="text-sm font-bold text-slate-800 dark:text-cyan-400 capitalize truncate">{user.username}</p>
+                          <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                        </div>
+                        <div className="p-1">
+                          <button
+                            onClick={() => { navigate("/dashboard"); setUserMenuOpen(false); }}
+                            className="w-full text-left px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-slate-800 hover:text-violet-700 dark:hover:text-cyan-400 rounded-md transition-colors"
+                          >
+                            Dashboard
+                          </button>
+                          <button
+                            onClick={() => { navigate("/profile"); setUserMenuOpen(false); }}
+                            className="w-full text-left px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-slate-800 hover:text-violet-700 dark:hover:text-cyan-400 rounded-md transition-colors"
+                          >
+                            Configuración de Perfil
+                          </button>
+                          <button
+                            onClick={() => { logout(); setUserMenuOpen(false); navigate("/"); }}
+                            className="w-full text-left px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-md transition-colors"
+                          >
+                            Cerrar Sesión
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <button
                     className="header-sell flex items-center justify-center transition-transform hover:-translate-y-1"
