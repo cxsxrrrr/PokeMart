@@ -109,16 +109,11 @@ const GlobalStyle = createGlobalStyle`
     .header-content.header-content--light .header-sell { color: #111111; }
 
     .cart-icon {
-        position: relative; cursor: pointer; display: inline-flex; align-items: center;
-        justify-content: center; background: transparent; border: none; padding: 0; transition: transform 0.2s ease;
+        position: relative; display: inline-flex; align-items: center; justify-content: center;
+        background: transparent; border: none; padding: 0; transition: transform 0.2s ease;
     }
     .cart-icon:focus-visible { outline: 2px solid rgba(29, 44, 94, 0.6); outline-offset: 4px; }
-    .cart-icon:hover { transform: translateY(-2px); }
-    .cart-icon__img { width: 45px; height: auto; }
-    .cart-count {
-        position: absolute; top: -8px; right: -10px; background-color: var(--badge-purple); /* Changed from var(--poke-yellow) to purple for light mode */
-        color: white; font-size: 0.8rem; font-weight: bold; padding: 2px 6px; border-radius: 50%;
-    }
+    .cart-icon:hover { transform: translateY(-4px); }
 
     /* =========================================
        TOGGLE DARK MODE (SWITCH)
@@ -294,7 +289,7 @@ const GlobalStyle = createGlobalStyle`
     .newsletter-form input { flex: 1; padding: 10px 15px; border-radius: 8px 0 0 8px; border: none; outline: none; background: rgba(255,255,255,0.1); color: white; }
     .newsletter-form input::placeholder { color: #aaa; }
     .newsletter-form button {
-        background-color: #2e6680;
+        background-color: #4d7080;
         color: var(--poke-dark-blue);
         border: none; padding: 0 15px; border-radius: 0 8px 8px 0; cursor: pointer; font-size: 1.2rem; transition: background 0.2s;
     }

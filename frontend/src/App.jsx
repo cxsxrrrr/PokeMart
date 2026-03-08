@@ -10,6 +10,7 @@ import PopularCarousel from './components/Home/PopularCarousel';
 import DealsSection from './components/Home/DealsSection';
 import HowItWorksSection from './components/HowItWorks';
 import RegisterForm from './components/Auth/RegisterForm';
+import LoginForm from './components/Auth/LoginForm';
 import VideoNewsSection from './components/VideoNewsSection/VideoNewsSection';
 import Catalog from './components/Catalog/Catalog';
 
@@ -20,7 +21,7 @@ import { useMediaQuery } from './hooks/useMediaQuery';
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem('pokemart-theme') || 'light');
   const location = useLocation();
-  const isAuthPage = location.pathname === '/register';
+  const isAuthPage = location.pathname === '/register' || location.pathname === '/login';
 
   const { cartItems, isCartOpen, setIsCartOpen, addItemToCart, removeItemFromCart, updateItemQuantity, cartTotal } = useCart();
   const { popularCards, dealCards, catalogCards, status, statusMessage, loadCards } = useProducts();
@@ -39,7 +40,6 @@ function App() {
 
   const HomePage = () => (
     <>
-      {/* <HeroSection theme={theme} /> */}
       <HeroSection2 />
       <HowItWorksSection />
       <PopularCarousel
@@ -87,6 +87,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<RegisterForm />} />
+          <Route path="/login" element={<LoginForm />} />
 
           <Route
             path="/catalog"
@@ -103,7 +104,7 @@ function App() {
         </Routes>
       </main>
 
-      <Footer backendStatus="offline" />
+      {!isAuthPage && <Footer backendStatus="offline" />}
     </>
   );
 }
