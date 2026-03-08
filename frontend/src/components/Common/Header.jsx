@@ -14,7 +14,6 @@ const Header = ({
   headerLight,
   user,
 }) => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const headerContentRef = useRef(null);
@@ -32,13 +31,6 @@ const Header = ({
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, [menuOpen]);
-
-  const handleSearchSubmit = () => {
-    const q = searchTerm.trim();
-    if (onSearch) onSearch(q);
-    navigate(`/catalog?search=${encodeURIComponent(q)}`);
-    if (isMenuMobile) setMenuOpen(false);
-  };
 
   return (
     <>
@@ -72,30 +64,6 @@ const Header = ({
             aria-hidden={isMenuMobile ? !menuOpen : false}
             ref={headerFlexRef}
           >
-            <div className="search-bar">
-              <input
-                type="text"
-                autoComplete="off"
-                name="text"
-                className="input"
-                placeholder="Busca Charizard, Pikachu, Crown Zenith..."
-                value={searchTerm}
-                onChange={(event) => setSearchTerm(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    handleSearchSubmit();
-                  }
-                }}
-              />
-              <button
-                className="search-btn neu-button"
-                type="button"
-                onClick={handleSearchSubmit}
-              >
-                GO!
-              </button>
-            </div>
             <div className="user-actions">
               <a href="/#hero" className="header-sell">Inicio</a>
               <Link to="/catalog" className="header-sell" onClick={() => isMenuMobile && setMenuOpen(false)}>

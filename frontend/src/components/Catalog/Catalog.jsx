@@ -31,6 +31,8 @@ const Catalog = ({ onAdd }) => {
   const [fetchStatus, setFetchStatus] = useState("loading");
   const [fetchError, setFetchError] = useState("");
   const [query, setQuery] = useState("");
+  const [conditionFilter, setConditionFilter] = useState("");
+  const [rarityFilter, setRarityFilter] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -60,18 +62,28 @@ const Catalog = ({ onAdd }) => {
     return () => { cancelled = true; };
   }, []);
 
+  const uniqueConditions = useMemo(() => {
+    return Array.from(new Set(listings.map(l => l.condition).filter(Boolean)));
+  }, [listings]);
+
+  const uniqueRarities = useMemo(() => {
+    return Array.from(new Set(listings.map(l => l.rarity).filter(Boolean)));
+  }, [listings]);
+
   const filteredCards = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return listings;
-    return listings.filter((c) =>
-      (c.name ?? "").toLowerCase().includes(q) ||
-      (c.seller ?? "").toLowerCase().includes(q)
-    );
-  }, [listings, query]);
+    return listings.filter((c) => {
+      const matchesQuery = !q || (c.name ?? "").toLowerCase().includes(q) || (c.seller ?? "").toLowerCase().includes(q);
+      const matchesCondition = !conditionFilter || c.condition === conditionFilter;
+      const matchesRarity = !rarityFilter || c.rarity === rarityFilter;
+      return matchesQuery && matchesCondition && matchesRarity;
+    });
+  }, [listings, query, conditionFilter, rarityFilter]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
   };
+
 
   const isEmpty = fetchStatus === "ready" && filteredCards.length === 0;
 
@@ -85,21 +97,44 @@ const Catalog = ({ onAdd }) => {
 
           <form
             onSubmit={handleSubmit}
-            className="search-bar"
-            style={{ marginTop: 18, justifyContent: "center" }}
+            className="flex flex-col gap-4 items-center mt-6 w-full max-w-2xl mx-auto"
           >
-            <input
-              type="text"
-              autoComplete="off"
-              name="catalog-search"
-              className="input"
-              placeholder="Buscar por nombre o vendedor..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <button className="search-btn neu-button" type="submit">
-              Buscar
-            </button>
+            <div className="search-bar w-full" style={{ marginTop: 0 }}>
+              <input
+                type="text"
+                autoComplete="off"
+                name="catalog-search"
+                className="input"
+                placeholder="Buscar por nombre o vendedor..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <button className="search-btn neu-button" type="submit">
+                Buscar
+              </button>
+            </div>
+
+            {listings.length > 0 && (
+              <div className="flex gap-4 w-full justify-center flex-wrap">
+                <select 
+                  className="input px-4 py-2 bg-white/70 dark:bg-black/40 border border-gray-300 dark:border-gray-700 rounded-xl max-w-xs cursor-pointer text-sm dark:text-white"
+                  value={conditionFilter}
+                  onChange={(e) => setConditionFilter(e.target.value)}
+                >
+                  <option value="">Cualquier Condición</option>
+                  {uniqueConditions.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+
+                <select 
+                  className="input px-4 py-2 bg-white/70 dark:bg-black/40 border border-gray-300 dark:border-gray-700 rounded-xl max-w-xs cursor-pointer text-sm dark:text-white"
+                  value={rarityFilter}
+                  onChange={(e) => setRarityFilter(e.target.value)}
+                >
+                  <option value="">Cualquier Rareza</option>
+                  {uniqueRarities.map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </div>
+            )}
           </form>
         </header>
 
