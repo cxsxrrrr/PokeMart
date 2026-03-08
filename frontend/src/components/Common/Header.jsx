@@ -98,9 +98,10 @@ const Header = ({
             </Link>
 
             {/* Si “Nosotros” es una sección del Home */}
-            <a href="/#footer" className="header-sell">
+            {/* Nosotros */}
+            <Link to="/about" className="header-sell" onClick={() => isMenuMobile && setMenuOpen(false)}>
               Nosotros
-            </a>
+            </Link>
 
             <button
               className="cart-icon"

@@ -12,6 +12,7 @@ import HowItWorksSection from './components/HowItWorks';
 import RegisterForm from './components/Auth/RegisterForm';
 import VideoNewsSection from './components/VideoNewsSection/VideoNewsSection';
 import Catalog from './components/Catalog/Catalog';
+import About from './components/About/About';
 
 import { useCart } from './hooks/useCart';
 import { useProducts } from './hooks/useProducts';
@@ -92,14 +93,11 @@ function App() {
             path="/catalog"
             element={
               <Catalog
-                cards={catalogCards}
-                status={status}
-                statusMessage={statusMessage}
                 onAdd={addItemToCart}
-                onSearch={loadCards}
               />
             }
           />
+          <Route path="/about" element={<About />} />
         </Routes>
       </main>
 

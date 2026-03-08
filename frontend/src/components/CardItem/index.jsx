@@ -3,7 +3,7 @@ import { CONSTANTS } from '../../utils/constants';
 import { formatCurrency } from '../../utils/formatters';
 import './CardItem.css';
 
-const CardItem = ({ card, basePrice, discountRate, ctaLabel, onAdd }) => {
+const CardItem = ({ card, basePrice, discountRate, ctaLabel = 'Añadir al carrito', onAdd }) => {
   const [added, setAdded] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const timeoutRef = useRef(null);
@@ -113,7 +113,7 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel, onAdd }) => {
         <div className="flex items-center gap-2.5 mb-4">
           <img src={mockData.sellerAvatar} alt="avatar" className="w-6 h-6 rounded-full bg-slate-200 border border-slate-300 dark:border-slate-600 object-cover" />
           <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 truncate">
-            @{mockData.sellerName}
+            @{card.seller || mockData.sellerName}
           </span>
         </div>
 

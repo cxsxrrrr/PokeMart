@@ -1,43 +1,79 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import CardItem from "../CardItem";
-import { obtenerPrecioCarta } from "../../utils/formatters";
-import cardsJson from "../../data/cards.json";
+import { CONSTANTS } from "../../utils/constants";
 
-const safeGetPrice = (card) => {
-  try {
-    return obtenerPrecioCarta(card);
-  } catch {
-    return null;
-  }
-};
+const API_BASE = CONSTANTS.API_BASE_URL || "http://localhost:8000";
+const LISTINGS_URL = `${API_BASE}/store/listings/`;
 
-const Catalog = ({
-  cards = [],
-  status = "ready",
-  statusMessage = "",
-  onAdd,
-  onSearch,
-}) => {
+// Adapta un listing del backend al formato que entiende CardItem
+const normalizeListing = (listing) => ({
+  id: `listing-${listing.id}`,
+  listingId: listing.id,
+  name: listing.card?.name ?? "Sin nombre",
+  rarity: listing.card?.rarity ?? "Rare",
+  set: { name: listing.card?.collection ?? "Colección" },
+  price: parseFloat(listing.price) || 0,
+  quantity: listing.quantity,
+  condition: listing.condition,
+  seller: listing.seller?.username ?? "Vendedor",
+  description: listing.description ?? "",
+  image_url: listing.card?.image_url ?? "",
+  imageCandidates: listing.card?.image_url
+    ? [listing.card.image_url]
+    : [CONSTANTS.PLACEHOLDER_IMAGE],
+  images: listing.card?.image_url
+    ? { small: listing.card.image_url, large: listing.card.image_url }
+    : null,
+});
+
+const Catalog = ({ onAdd }) => {
+  const [listings, setListings] = useState([]);
+  const [fetchStatus, setFetchStatus] = useState("loading");
+  const [fetchError, setFetchError] = useState("");
   const [query, setQuery] = useState("");
 
-  // Si la ruta/padre no pasa cards, usamos el JSON local
-  const effectiveCards = useMemo(() => {
-    if (Array.isArray(cards) && cards.length > 0) return cards;
-    return Array.isArray(cardsJson?.data) ? cardsJson.data : [];
-  }, [cards]);
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadListings = async () => {
+      setFetchStatus("loading");
+      try {
+        const response = await fetch(LISTINGS_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+
+        if (cancelled) return;
+
+        const normalized = Array.isArray(data) ? data.map(normalizeListing) : [];
+        setListings(normalized);
+        setFetchStatus(normalized.length ? "ready" : "empty");
+        setFetchError("");
+      } catch (err) {
+        if (cancelled) return;
+        console.error("Error cargando listings del backend:", err);
+        setFetchStatus("error");
+        setFetchError("No se pudo conectar con el servidor. Verifica que el backend esté corriendo.");
+      }
+    };
+
+    loadListings();
+    return () => { cancelled = true; };
+  }, []);
 
   const filteredCards = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return effectiveCards;
-    return effectiveCards.filter((c) => (c?.name ?? "").toLowerCase().includes(q));
-  }, [effectiveCards, query]);
+    if (!q) return listings;
+    return listings.filter((c) =>
+      (c.name ?? "").toLowerCase().includes(q) ||
+      (c.seller ?? "").toLowerCase().includes(q)
+    );
+  }, [listings, query]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onSearch) onSearch(query);
   };
 
-  const isEmpty = status === "ready" && filteredCards.length === 0;
+  const isEmpty = fetchStatus === "ready" && filteredCards.length === 0;
 
   return (
     <main className="popular-section py-16">
@@ -57,7 +93,7 @@ const Catalog = ({
               autoComplete="off"
               name="catalog-search"
               className="input"
-              placeholder="Buscar en el catálogo..."
+              placeholder="Buscar por nombre o vendedor..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
@@ -67,31 +103,40 @@ const Catalog = ({
           </form>
         </header>
 
-        {(status === "error" || status === "empty") && (
-          <p className="status-message error">
-            {statusMessage || "No hay cartas para mostrar."}
+        {fetchStatus === "loading" && (
+          <p style={{ textAlign: "center", padding: "2rem", color: "#666" }}>
+            Cargando listings del servidor...
           </p>
         )}
 
-        {status === "ready" && (
+        {fetchStatus === "error" && (
+          <p className="status-message error" style={{ textAlign: "center", color: "#dc2626" }}>
+            {fetchError}
+          </p>
+        )}
+
+        {fetchStatus === "empty" && (
+          <p style={{ textAlign: "center", padding: "2rem", color: "#666" }}>
+            No hay listings disponibles en este momento.
+          </p>
+        )}
+
+        {fetchStatus === "ready" && (
           <section className="deals-grid" aria-label="Resultados del catálogo">
             {filteredCards.map((card) => {
-              const hasImages = Boolean(card?.images?.small || card?.images?.large);
-              const price = safeGetPrice(card);
+              const hasImages = Boolean(card.images?.small || card.images?.large);
 
-              // Si tu card viene “completa”, usa CardItem como en Home
               if (hasImages) {
                 return (
                   <CardItem
                     key={card.id}
                     card={card}
-                    basePrice={price ?? 0}
+                    basePrice={card.price}
                     onAdd={onAdd}
                   />
                 );
               }
 
-              // Fallback para cards del JSON (id, name, rarity)
               return (
                 <article
                   key={card.id}
@@ -103,21 +148,31 @@ const Catalog = ({
                     background: "#fff",
                   }}
                 >
-                  <h3 style={{ margin: 0, fontWeight: 800 }}>{card?.name}</h3>
+                  <h3 style={{ margin: 0, fontWeight: 800 }}>{card.name}</h3>
                   <p style={{ margin: "6px 0 0", color: "#475569" }}>
-                    Rareza: <strong>{card?.rarity ?? "—"}</strong>
+                    Vendedor: <strong>{card.seller}</strong>
                   </p>
                   <p style={{ margin: "6px 0 0", color: "#475569" }}>
-                    Precio: <strong>{price ?? "—"}</strong>
+                    Condición: <strong>{card.condition}</strong>
                   </p>
+                  <p style={{ margin: "6px 0 0", color: "#475569" }}>
+                    Rareza: <strong>{card.rarity}</strong>
+                  </p>
+                  <p style={{ margin: "6px 0 0", color: "#1d4ed8", fontWeight: 700 }}>
+                    ${card.price.toFixed(2)}
+                  </p>
+                  {card.description && (
+                    <p style={{ margin: "6px 0 0", color: "#64748b", fontSize: "0.85rem" }}>
+                      {card.description}
+                    </p>
+                  )}
                   <button
                     type="button"
                     className="neu-button"
-                    style={{ marginTop: 10, opacity: 0.7 }}
-                    disabled
-                    title="Para comprar, hace falta cargar datos completos (imagen/precio)"
+                    style={{ marginTop: 10, width: "100%" }}
+                    onClick={() => onAdd && onAdd(card, card.price)}
                   >
-                    Añadir
+                    Añadir al carrito
                   </button>
                 </article>
               );
@@ -125,9 +180,9 @@ const Catalog = ({
           </section>
         )}
 
-        {status === "ready" && isEmpty && (
-          <p className="status-message">
-            Sin resultados para “{query}”.
+        {fetchStatus === "ready" && isEmpty && (
+          <p className="status-message" style={{ textAlign: "center", padding: "2rem" }}>
+            Sin resultados para "{query}".
           </p>
         )}
       </div>
