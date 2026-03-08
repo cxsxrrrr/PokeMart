@@ -1,86 +1,54 @@
-:root{
-  /* usa las variables globales si existen */
-  --rg-purple: var(--badge-purple, #7c3aed);
-  --rg-purple-600: #5b21b6;
-  --rg-focus-shadow: 0 6px 18px rgba(124,58,237,0.14);
+.register-form-root {
+  -webkit-font-smoothing: antialiased;
 }
 
-/* contenedor específico para evitar colisiones con Tailwind */
-.register-form-root { 
-  /* la bg la maneja Tailwind; solo ajustes de texto/contraste */
-  color: var(--text-dark, #111);
+/* Base transitions */
+.register-form-root * {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* título principal */
-.register-form-root h1 {
-  color: var(--rg-purple) !important;
+.register-form-root button {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
 }
 
-/* link de inicio de sesión */
-.register-form-root a {
-  color: var(--rg-purple) !important;
-}
-.register-form-root a:hover {
-  color: var(--rg-purple-600) !important;
-}
-
-/* botón primario (submit) */
-.register-form-root button[type="submit"] {
-  background: linear-gradient(135deg, var(--rg-purple) 0%, var(--rg-purple-600) 100%) !important;
-  color: #fff !important;
-  border: none !important;
-  box-shadow: 0 8px 24px rgba(92,33,182,0.18);
-  transition: transform .12s ease, box-shadow .12s ease, opacity .12s;
-}
-.register-form-root button[type="submit"]:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(92,33,182,0.20);
+/* Fix for webkit autofill matching Light mode */
+.register-form-root input:-webkit-autofill,
+.register-form-root input:-webkit-autofill:hover,
+.register-form-root input:-webkit-autofill:focus,
+.register-form-root input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #f5f3ff inset !important;
+  -webkit-text-fill-color: #1e1b4b !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
-/* botón secundario (Google u otros) */
-.register-form-root button:not([type="submit"]) {
-  border-color: rgba(124,58,237,0.14) !important;
-  color: var(--rg-purple) !important;
-}
-.register-form-root button:not([type="submit"]):hover {
-  background: rgba(124,58,237,0.06) !important;
-}
-
-/* inputs: borde y foco púrpura */
-.register-form-root input,
-.register-form-root .input,
-.register-form-root .h-12 input {
-  transition: box-shadow .15s ease, border-color .12s ease;
-}
-.register-form-root input:focus,
-.register-form-root .h-12 input:focus {
-  outline: none !important;
-  border-color: var(--rg-purple) !important;
-  box-shadow: var(--rg-focus-shadow) !important;
+/* Fix for webkit autofill matching Dark mode */
+.dark .register-form-root input:-webkit-autofill,
+.dark .register-form-root input:-webkit-autofill:hover,
+.dark .register-form-root input:-webkit-autofill:focus,
+.dark .register-form-root input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #0f172a inset !important; 
+  -webkit-text-fill-color: #cffafe !important;
 }
 
-/* checkbox label color */
-.register-form-root .checkbox-label,
-.register-form-root .checkbox label {
-  color: rgba(0,0,0,0.75);
+@media (max-width: 1024px) {
+  .register-form-root h1 {
+    font-size: 2.6rem;
+  }
 }
 
-/* adaptaciones para modo oscuro */
-body.dark-mode .register-form-root h1,
-body.dark-mode .register-form-root .checkbox-label,
-body.dark-mode .register-form-root p,
-body.dark-mode .register-form-root .text-gray-500 {
-  color: #e5e7eb !important;
+@keyframes premiumFloat {
+  0% { transform: translateY(0) rotate(3deg); }
+  50% { transform: translateY(-15px) rotate(-1deg); }
+  100% { transform: translateY(0) rotate(3deg); }
 }
 
-/* en dark mode, mantener boton visible y con buen contraste */
-body.dark-mode .register-form-root button[type="submit"] {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
-  color: #fff !important;
-  box-shadow: 0 8px 20px rgba(14,18,30,0.6);
+.premium-card-anim {
+  animation: premiumFloat 6s ease-in-out infinite;
+  transition: transform 0.4s ease-out, box-shadow 0.4s ease-out !important;
 }
 
-/* pequeñas mejoras responsivas */
-@media (max-width: 1024px){
-  .register-form-root h1 { font-size: 2.6rem; }
+.premium-card-anim:hover {
+  animation-play-state: paused;
+  transform: translateY(-5px) scale(1.05) rotate(0deg) !important;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6) !important;
 }
