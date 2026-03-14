@@ -1,5 +1,6 @@
 import { useState, useCallback, createContext, useContext } from 'react';
 import authService from '../services/auth.service';
+import { normalizeError } from '../utils/normalizeResponses';
 
 const AuthContext = createContext();
 
@@ -16,7 +17,7 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       return userData;
     } catch (err) {
-      setError(err.message);
+      setError(normalizeError(err.message));
       throw err;
     } finally {
       setLoading(false);
@@ -30,7 +31,7 @@ export const AuthProvider = ({ children }) => {
       const userData = await authService.register(username, email, password, avatarUrl);
       return userData;
     } catch (err) {
-      setError(err.message);
+      setError(normalizeError(err.message));
       throw err;
     } finally {
       setLoading(false);
@@ -60,7 +61,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, register, logout, checkCurrentUser, setUser }}>
+    <AuthContext.Provider value={{ user, loading, error, login, register, logout, checkCurrentUser, setUser, setError }}>
       {children}
     </AuthContext.Provider>
   );

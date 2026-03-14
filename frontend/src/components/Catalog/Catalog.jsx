@@ -1,11 +1,28 @@
 import { useMemo, useState, useEffect } from "react";
 import CardItem from "../CardItem";
 import { CONSTANTS } from "../../utils/constants";
+import { 
+  IconFilter, 
+  IconSearch, 
+  IconLayoutGrid, 
+  IconAdjustmentsHorizontal,
+  IconX,
+  IconChevronRight,
+  IconMoodEmpty
+} from "@tabler/icons-react";
+import { 
+  Button, 
+  Input, 
+  Select, 
+  SelectItem, 
+  Slider,
+  Checkbox,
+  ScrollShadow
+} from "@heroui/react";
 
 const API_BASE = CONSTANTS.API_BASE_URL || "http://localhost:8000";
 const LISTINGS_URL = `${API_BASE}/store/listings/`;
 
-// Adapta un listing del backend al formato que entiende CardItem
 const normalizeListing = (listing) => ({
   id: `listing-${listing.id}`,
   listingId: listing.id,
@@ -18,210 +35,247 @@ const normalizeListing = (listing) => ({
   seller: listing.seller?.username ?? "Vendedor",
   description: listing.description ?? "",
   image_url: listing.card?.image_url ?? "",
-  imageCandidates: listing.card?.image_url
-    ? [listing.card.image_url]
-    : [CONSTANTS.PLACEHOLDER_IMAGE],
-  images: listing.card?.image_url
-    ? { small: listing.card.image_url, large: listing.card.image_url }
-    : null,
+  imageCandidates: listing.card?.image_url ? [listing.card.image_url] : [CONSTANTS.PLACEHOLDER_IMAGE],
+  images: listing.card?.image_url ? { small: listing.card.image_url, large: listing.card.image_url } : null,
 });
+
+const FilterSidebar = ({ 
+  query, 
+  setQuery, 
+  usePriceFilter, 
+  setUsePriceFilter, 
+  priceRange, 
+  setPriceRange, 
+  conditionFilter, 
+  setConditionFilter, 
+  rarityFilter, 
+  setRarityFilter, 
+  uniqueRarities,
+  clearFilters 
+}) => (
+  <div className="flex flex-col gap-8">
+    <div>
+      <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Filtros Avanzados</h3>
+      <Input
+        placeholder="Buscar cartas..."
+        variant="flat"
+        startContent={<IconSearch size={18} className="text-slate-400" />}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        classNames={{ 
+          inputWrapper: "bg-slate-100 dark:bg-slate-800 rounded-xl transition-all shadow-none after:hidden before:hidden border-none group-data-[focus=true]:bg-slate-200 dark:group-data-[focus=true]:bg-slate-700",
+          input: "placeholder:text-slate-400 !outline-none !ring-0 focus:!ring-0"
+        }}
+      />
+    </div>
+
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-bold text-slate-800 dark:text-white">Rango de Precio</h3>
+        <Checkbox 
+          size="sm" 
+          color="secondary" 
+          isSelected={usePriceFilter} 
+          onValueChange={setUsePriceFilter}
+        >
+          Activar
+        </Checkbox>
+      </div>
+      <div className={usePriceFilter ? "opacity-100" : "opacity-40 pointer-events-none"}>
+        <Slider 
+          step={10} 
+          minValue={0} 
+          maxValue={2000} 
+          value={priceRange} 
+          onChange={setPriceRange}
+          formatOptions={{style: "currency", currency: "USD"}}
+          className="max-w-md"
+          color="secondary"
+        />
+        <div className="flex justify-between mt-2 text-xs font-bold text-slate-500">
+          <span>${priceRange[0]}</span>
+          <span>${priceRange[1]}+</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4">Condición</h3>
+      <div className="flex flex-col gap-2">
+        {["Full Art", "Mint", "Near Mint", "Excellent", "Good", "Lightly Played"].map(cond => (
+          <button
+            key={cond}
+            onClick={() => setConditionFilter(conditionFilter === cond ? "" : cond)}
+            className={`text-left px-3 py-2 rounded-lg text-sm transition-all ${
+              conditionFilter === cond 
+                ? "bg-violet-600 text-white font-bold" 
+                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+            }`}
+          >
+            {cond}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4">Rareza</h3>
+      <Select 
+        placeholder="Seleccionar rareza" 
+        variant="flat"
+        selectedKeys={rarityFilter ? [rarityFilter] : []}
+        onSelectionChange={(keys) => setRarityFilter(Array.from(keys)[0])}
+        classNames={{ trigger: "bg-slate-100 dark:bg-slate-800 rounded-xl" }}
+      >
+        {uniqueRarities.map(r => <SelectItem key={r} textValue={r}>{r}</SelectItem>)}
+      </Select>
+    </div>
+
+    <Button 
+      variant="light" 
+      color="danger" 
+      size="sm" 
+      onClick={clearFilters}
+      startContent={<IconX size={16} />}
+    >
+      Limpiar Filtros
+    </Button>
+  </div>
+);
 
 const Catalog = ({ onAdd }) => {
   const [listings, setListings] = useState([]);
   const [fetchStatus, setFetchStatus] = useState("loading");
-  const [fetchError, setFetchError] = useState("");
   const [query, setQuery] = useState("");
   const [conditionFilter, setConditionFilter] = useState("");
   const [rarityFilter, setRarityFilter] = useState("");
+  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [usePriceFilter, setUsePriceFilter] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-
     const loadListings = async () => {
-      setFetchStatus("loading");
       try {
         const response = await fetch(LISTINGS_URL);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-
-        if (cancelled) return;
-
         const normalized = Array.isArray(data) ? data.map(normalizeListing) : [];
         setListings(normalized);
         setFetchStatus(normalized.length ? "ready" : "empty");
-        setFetchError("");
       } catch (err) {
-        if (cancelled) return;
-        console.error("Error cargando listings del backend:", err);
+        console.error(err);
         setFetchStatus("error");
-        setFetchError("No se pudo conectar con el servidor. Verifica que el backend esté corriendo.");
       }
     };
-
     loadListings();
-    return () => { cancelled = true; };
   }, []);
 
-  const uniqueConditions = useMemo(() => {
-    return Array.from(new Set(listings.map(l => l.condition).filter(Boolean)));
-  }, [listings]);
-
-  const uniqueRarities = useMemo(() => {
-    return Array.from(new Set(listings.map(l => l.rarity).filter(Boolean)));
-  }, [listings]);
+  const uniqueRarities = useMemo(() => [...new Set(listings.map(l => l.rarity))].filter(Boolean), [listings]);
 
   const filteredCards = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = query.toLowerCase();
     return listings.filter((c) => {
-      const matchesQuery = !q || (c.name ?? "").toLowerCase().includes(q) || (c.seller ?? "").toLowerCase().includes(q);
+      const matchesQuery = !q || c.name.toLowerCase().includes(q) || c.seller.toLowerCase().includes(q);
       const matchesCondition = !conditionFilter || c.condition === conditionFilter;
       const matchesRarity = !rarityFilter || c.rarity === rarityFilter;
-      return matchesQuery && matchesCondition && matchesRarity;
+      const matchesPrice = !usePriceFilter || (c.price >= priceRange[0] && c.price <= priceRange[1]);
+      return matchesQuery && matchesCondition && matchesRarity && matchesPrice;
     });
-  }, [listings, query, conditionFilter, rarityFilter]);
+  }, [listings, query, conditionFilter, rarityFilter, priceRange, usePriceFilter]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const clearFilters = () => {
+    setQuery("");
+    setConditionFilter("");
+    setRarityFilter("");
+    setPriceRange([0, 1000]);
+    setUsePriceFilter(false);
   };
 
-
-  const isEmpty = fetchStatus === "ready" && filteredCards.length === 0;
+  const sidebarProps = {
+    query, setQuery,
+    usePriceFilter, setUsePriceFilter,
+    priceRange, setPriceRange,
+    conditionFilter, setConditionFilter,
+    rarityFilter, setRarityFilter,
+    uniqueRarities, clearFilters
+  };
 
   return (
-    <main className="popular-section py-16">
-      <div className="container mx-auto px-4">
-        <header className="mb-10 text-center">
-          <h1 className="text-3xl font-bold flex items-center justify-center gap-3 text-poke-darkBlue dark:text-white uppercase tracking-wider">
-            <span className="dark:text-poke-yellow">Catálogo</span>
-          </h1>
+    <div className="container mx-auto px-4 min-h-[90vh]">
+      <div className="flex flex-col lg:flex-row gap-8 pt-6">
+        
+        {/* SIDEBAR FILTERS (Desktop) */}
+        <aside className="hidden lg:block w-72 shrink-0">
+          <div className="sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto pr-2 scrollbar-hide">
+            <FilterSidebar {...sidebarProps} />
+          </div>
+        </aside>
 
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-4 items-center mt-6 w-full max-w-2xl mx-auto"
-          >
-            <div className="search-bar w-full" style={{ marginTop: 0 }}>
-              <input
-                type="text"
-                autoComplete="off"
-                name="catalog-search"
-                className="input"
-                placeholder="Buscar por nombre o vendedor..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              <button className="search-btn neu-button" type="submit">
-                Buscar
-              </button>
+        {/* MAIN CONTENT AREA */}
+        <main className="flex-1">
+          {/* Header & Mobile Toggle */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-2xl font-black dark:text-white flex items-center gap-2">
+                <IconLayoutGrid className="text-violet-600 dark:text-cyan-400" />
+                Catálogo de Cartas
+              </h1>
+              <p className="text-sm text-slate-500 font-medium">Explora {filteredCards.length} objetos disponibles</p>
             </div>
+            
+            <Button 
+              className="lg:hidden bg-violet-600 text-white font-bold rounded-xl"
+              startContent={<IconFilter size={18} />}
+              onClick={() => setShowMobileFilters(true)}
+            >
+              Filtros
+            </Button>
+          </div>
 
-            {listings.length > 0 && (
-              <div className="flex gap-4 w-full justify-center flex-wrap">
-                <select 
-                  className="input px-4 py-2 bg-white/70 dark:bg-black/40 border border-gray-300 dark:border-gray-700 rounded-xl max-w-xs cursor-pointer text-sm dark:text-white"
-                  value={conditionFilter}
-                  onChange={(e) => setConditionFilter(e.target.value)}
-                >
-                  <option value="">Cualquier Condición</option>
-                  {uniqueConditions.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-
-                <select 
-                  className="input px-4 py-2 bg-white/70 dark:bg-black/40 border border-gray-300 dark:border-gray-700 rounded-xl max-w-xs cursor-pointer text-sm dark:text-white"
-                  value={rarityFilter}
-                  onChange={(e) => setRarityFilter(e.target.value)}
-                >
-                  <option value="">Cualquier Rareza</option>
-                  {uniqueRarities.map(r => <option key={r} value={r}>{r}</option>)}
-                </select>
-              </div>
-            )}
-          </form>
-        </header>
-
-        {fetchStatus === "loading" && (
-          <p style={{ textAlign: "center", padding: "2rem", color: "#666" }}>
-            Cargando listings del servidor...
-          </p>
-        )}
-
-        {fetchStatus === "error" && (
-          <p className="status-message error" style={{ textAlign: "center", color: "#dc2626" }}>
-            {fetchError}
-          </p>
-        )}
-
-        {fetchStatus === "empty" && (
-          <p style={{ textAlign: "center", padding: "2rem", color: "#666" }}>
-            No hay listings disponibles en este momento.
-          </p>
-        )}
-
-        {fetchStatus === "ready" && (
-          <section className="deals-grid" aria-label="Resultados del catálogo">
-            {filteredCards.map((card) => {
-              const hasImages = Boolean(card.images?.small || card.images?.large);
-
-              if (hasImages) {
-                return (
-                  <CardItem
-                    key={card.id}
-                    card={card}
-                    basePrice={card.price}
-                    onAdd={onAdd}
-                  />
-                );
-              }
-
-              return (
-                <article
+          {/* Cards Grid */}
+          {fetchStatus === "loading" ? (
+             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+               {[1,2,3,4,5,6].map(i => (
+                 <div key={i} className="h-96 rounded-3xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
+               ))}
+             </div>
+          ) : filteredCards.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredCards.map((card) => (
+                <CardItem
                   key={card.id}
-                  className="card-item"
-                  style={{
-                    border: "1px solid rgba(148,163,184,0.35)",
-                    borderRadius: 14,
-                    padding: 14,
-                    background: "#fff",
-                  }}
-                >
-                  <h3 style={{ margin: 0, fontWeight: 800 }}>{card.name}</h3>
-                  <p style={{ margin: "6px 0 0", color: "#475569" }}>
-                    Vendedor: <strong>{card.seller}</strong>
-                  </p>
-                  <p style={{ margin: "6px 0 0", color: "#475569" }}>
-                    Condición: <strong>{card.condition}</strong>
-                  </p>
-                  <p style={{ margin: "6px 0 0", color: "#475569" }}>
-                    Rareza: <strong>{card.rarity}</strong>
-                  </p>
-                  <p style={{ margin: "6px 0 0", color: "#1d4ed8", fontWeight: 700 }}>
-                    ${card.price.toFixed(2)}
-                  </p>
-                  {card.description && (
-                    <p style={{ margin: "6px 0 0", color: "#64748b", fontSize: "0.85rem" }}>
-                      {card.description}
-                    </p>
-                  )}
-                  <button
-                    type="button"
-                    className="neu-button"
-                    style={{ marginTop: 10, width: "100%" }}
-                    onClick={() => onAdd && onAdd(card, card.price)}
-                  >
-                    Añadir al carrito
-                  </button>
-                </article>
-              );
-            })}
-          </section>
-        )}
-
-        {fetchStatus === "ready" && isEmpty && (
-          <p className="status-message" style={{ textAlign: "center", padding: "2rem" }}>
-            Sin resultados para "{query}".
-          </p>
-        )}
+                  card={card}
+                  basePrice={card.price}
+                  onAdd={onAdd}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-24 bg-slate-50 dark:bg-slate-900/30 rounded-[3rem] border border-dashed border-slate-200 dark:border-slate-800">
+               <IconMoodEmpty className="mx-auto text-slate-300 mb-4" size={64} />
+               <h2 className="text-xl font-bold dark:text-white">No encontramos lo que buscas</h2>
+               <p className="text-slate-500 mt-2">Intenta ajustar los filtros de búsqueda</p>
+            </div>
+          )}
+        </main>
       </div>
-    </main>
+
+      {/* MOBILE FILTERS DRAWER */}
+      {showMobileFilters && (
+        <div className="fixed inset-0 z-[200] lg:hidden">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowMobileFilters(false)} />
+          <div className="absolute right-0 top-0 bottom-0 w-[80%] max-w-sm bg-white dark:bg-[#0b1021] p-6 shadow-2xl animate-in slide-in-from-right duration-300">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl font-black dark:text-white">Filtros</h2>
+              <Button isIconOnly variant="flat" onClick={() => setShowMobileFilters(false)}><IconX /></Button>
+            </div>
+            <ScrollShadow className="h-[calc(100vh-120px)]">
+              <FilterSidebar {...sidebarProps} />
+            </ScrollShadow>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

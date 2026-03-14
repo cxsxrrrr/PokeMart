@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input, Button, Checkbox, Link as NextUILink } from "@heroui/react";
 import { IconEye, IconEyeOff, IconBrandGoogle, IconSparkles, IconX, IconAlertCircle } from "@tabler/icons-react";
@@ -10,7 +10,18 @@ export default function LoginForm() {
   const [isVisible, setIsVisible] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { login, loading, error } = useAuth();
+  const [rememberMe, setRememberMe] = useState(false);
+  const { login, loading, error, setError } = useAuth();
+
+  // Al montar, limpiar errores y cargar usuario recordado
+  useEffect(() => {
+    setError(null);
+    const savedUsername = localStorage.getItem("pokemart_remembered_user");
+    if (savedUsername) {
+      setUsername(savedUsername);
+      setRememberMe(true);
+    }
+  }, [setError]);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -20,7 +31,14 @@ export default function LoginForm() {
 
     try {
       await login(username, password);
-      // login exitoso
+      
+      // Lógica de "Recordarme"
+      if (rememberMe) {
+        localStorage.setItem("pokemart_remembered_user", username);
+      } else {
+        localStorage.removeItem("pokemart_remembered_user");
+      }
+
       navigate('/');
     } catch (err) {
       console.error("Login fallido:", err);
@@ -133,6 +151,7 @@ export default function LoginForm() {
               label="Nombre de Usuario"
               labelPlacement="outside"
               placeholder="Ej. trainer_ash"
+              value={username}
               variant="bordered"
               radius="sm"
               onValueChange={setUsername}
@@ -167,6 +186,8 @@ export default function LoginForm() {
             <div className="flex justify-between items-center mt-2">
               <Checkbox
                 size="sm"
+                isSelected={rememberMe}
+                onValueChange={setRememberMe}
                 classNames={{
                   label: "text-sm text-slate-600 dark:text-slate-400 font-medium"
                 }}
@@ -188,21 +209,6 @@ export default function LoginForm() {
               {loading ? "Iniciando..." : "Iniciar Sesión"}
             </Button>
 
-            <div className="relative flex py-6 items-center">
-              <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
-              <span className="flex-shrink-0 mx-4 text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">
-                O INICIA CON
-              </span>
-              <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
-            </div>
-
-            <Button
-              variant="bordered"
-              startContent={<IconBrandGoogle className="text-slate-700 dark:text-slate-300" />}
-              className="font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 h-14 rounded-xl shadow-sm transition-colors"
-            >
-              Continuar con Google
-            </Button>
           </form>
 
           <div className="mt-12 text-center lg:text-left text-sm text-slate-400 dark:text-slate-500 font-medium">
@@ -213,5 +219,3 @@ export default function LoginForm() {
     </div>
   );
 }
-
-

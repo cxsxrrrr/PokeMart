@@ -85,7 +85,7 @@ const Header = ({
               )}
               {user && (
                 <Link to="/dashboard" className="header-sell" onClick={() => isMenuMobile && setMenuOpen(false)}>
-                  Vender / Operaciones
+                 Dashboard
                 </Link>
               )}
 
@@ -122,9 +122,10 @@ const Header = ({
                       aria-label="Perfil"
                     >
                       <img
-                        src={user.avatarUrl}
+                        src={user.avatarUrl && user.avatarUrl !== "" ? user.avatarUrl : "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"}
                         alt={user.username}
                         className="w-full h-full object-cover"
+                        onError={(e) => { e.target.src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"; }}
                       />
                     </button>
                     {userMenuOpen && (
@@ -134,12 +135,6 @@ const Header = ({
                           <p className="text-xs text-slate-500 truncate">{user.email}</p>
                         </div>
                         <div className="p-1">
-                          <button
-                            onClick={() => { navigate("/dashboard"); setUserMenuOpen(false); }}
-                            className="w-full text-left px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-slate-800 hover:text-violet-700 dark:hover:text-cyan-400 rounded-md transition-colors"
-                          >
-                            Dashboard
-                          </button>
                           <button
                             onClick={() => { navigate("/profile"); setUserMenuOpen(false); }}
                             className="w-full text-left px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-violet-50 dark:hover:bg-slate-800 hover:text-violet-700 dark:hover:text-cyan-400 rounded-md transition-colors"

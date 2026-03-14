@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input, Button, Checkbox, Link as NextUILink } from "@heroui/react";
 import { IconEye, IconEyeOff, IconBrandGoogle, IconSparkles, IconX, IconAlertCircle } from "@tabler/icons-react";
@@ -12,6 +12,7 @@ const AVATAR_OPTIONS = [
   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",   // Squirtle
   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png", // Eevee
   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png",  // Gengar
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png", // Snorlax
 ];
 
 export default function RegisterForm() {
@@ -22,7 +23,11 @@ export default function RegisterForm() {
   const [password, setPassword] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(AVATAR_OPTIONS[0]);
   const [isInvalid, setIsInvalid] = useState(false);
-  const { register, loading, error } = useAuth();
+  const { register, loading, error, setError } = useAuth();
+ 
+  useEffect(() => {
+    setError(null);
+  }, [setError]);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
@@ -121,8 +126,8 @@ export default function RegisterForm() {
         <div className="relative z-10 flex items-center mt-8">
           <div className="flex items-center gap-4 bg-black/20 p-4 rounded-2xl backdrop-blur-md border border-white/10">
             <div className="flex -space-x-3">
-              <div className="w-10 h-10 rounded-full border-2 border-violet-900 dark:border-slate-900 bg-violet-200 overflow-hidden"><img src="https://i.pravatar.cc/100?img=1" alt="user" className="w-full h-full object-cover" /></div>
-              <div className="w-10 h-10 rounded-full border-2 border-violet-900 dark:border-slate-900 bg-fuchsia-200 overflow-hidden"><img src="https://i.pravatar.cc/100?img=2" alt="user" className="w-full h-full object-cover" /></div>
+              <div className="w-10 h-10 rounded-full border-2 border-violet-900 dark:border-slate-900 bg-violet-200 overflow-hidden"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/150.png" alt="user" className="w-full h-full object-contain scale-125" /></div>
+              <div className="w-10 h-10 rounded-full border-2 border-violet-900 dark:border-slate-900 bg-fuchsia-200 overflow-hidden"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/151.png" alt="user" className="w-full h-full object-contain scale-125" /></div>
               <div className="w-10 h-10 rounded-full border-2 border-violet-900 dark:border-slate-900 bg-white text-violet-900 font-bold flex items-center justify-center text-xs">+5k</div>
             </div>
             <div className="flex flex-col">
@@ -134,11 +139,10 @@ export default function RegisterForm() {
       </div>
 
       {/* =======================================================
-          COLUMNA DERECHA (Formulario Limpio)
+          COLUMNA DERECHA
          ======================================================= */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative bg-white dark:bg-slate-950">
 
-        {/* Decoración sutil en bg */}
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-violet-50/50 dark:bg-cyan-900/10 rounded-full blur-[100px] pointer-events-none"></div>
 
         <div className="w-full max-w-[420px] relative z-10">
@@ -239,7 +243,7 @@ export default function RegisterForm() {
                   label: "text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed"
                 }}
               >
-                He leído y acepto los <NextUILink href="#" size="sm" className="font-bold text-violet-700 dark:text-cyan-400 hover:underline">Términos</NextUILink> y <NextUILink href="#" size="sm" className="font-bold text-violet-700 dark:text-cyan-400 hover:underline">Privacidad</NextUILink>
+                He leído y acepto los <NextUILink href="#" onClick={(e) => { e.preventDefault(); navigate("/terms"); }} size="sm" className="font-bold text-violet-700 dark:text-cyan-400 hover:underline">Términos</NextUILink> y <NextUILink href="#" onClick={(e) => { e.preventDefault(); navigate("/privacy"); }} size="sm" className="font-bold text-violet-700 dark:text-cyan-400 hover:underline">Privacidad</NextUILink>
               </Checkbox>
             </div>
 
@@ -253,21 +257,6 @@ export default function RegisterForm() {
               {loading ? "Creando..." : "Crear mi cuenta"}
             </Button>
 
-            <div className="relative flex py-4 items-center">
-              <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
-              <span className="flex-shrink-0 mx-4 text-slate-400 dark:text-slate-500 text-xs font-bold uppercase tracking-widest">
-                O REGÍSTRATE CON
-              </span>
-              <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
-            </div>
-
-            <Button
-              variant="bordered"
-              startContent={<IconBrandGoogle className="text-slate-700 dark:text-slate-300" />}
-              className="font-bold text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 h-14 rounded-xl shadow-sm transition-colors"
-            >
-              Continuar con Google
-            </Button>
           </form>
 
           <div className="mt-10 text-center lg:text-left text-sm text-slate-400 dark:text-slate-500 font-medium">

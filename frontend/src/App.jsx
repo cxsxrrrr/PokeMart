@@ -11,10 +11,15 @@ import DealsSection from './components/Home/DealsSection';
 import HowItWorksSection from './components/HowItWorks';
 import RegisterForm from './components/Auth/RegisterForm';
 import LoginForm from './components/Auth/LoginForm';
+import LogoutForm from './components/Auth/LogoutForm';
 import VideoNewsSection from './components/VideoNewsSection/VideoNewsSection';
 import Catalog from './components/Catalog/Catalog';
 import About from './components/About/About';
 import Dashboard from './components/Dashboard/Dashboard';
+import Terms from './components/Legal/Terms';
+import Privacy from './components/Legal/Privacy';
+import NegotiationChat from './components/Dashboard/NegotiationChat';
+import HomeFeed from './components/Home/HomeFeed';
 
 import { useCart } from './hooks/useCart';
 import { useProducts } from './hooks/useProducts';
@@ -27,7 +32,7 @@ function App() {
   const location = useLocation();
   const isAuthPage = location.pathname === '/register' || location.pathname === '/login';
 
-  const { cartItems, isCartOpen, setIsCartOpen, addItemToCart, removeItemFromCart, updateItemQuantity, cartTotal } = useCart();
+  const { cartItems, isCartOpen, setIsCartOpen, addItemToCart, removeItemFromCart, updateItemQuantity, cartTotal, loading: cartLoading } = useCart();
   const { popularCards, dealCards, catalogCards, status, statusMessage, loadCards } = useProducts();
   const isMobile = useMediaQuery('(max-width: 540px)');
   const { user, checkCurrentUser } = useAuth();
@@ -91,24 +96,21 @@ function App() {
         onDecrease={(id) => updateItemQuantity(id, -1)}
         onRemove={removeItemFromCart}
         total={cartTotal}
+        loading={cartLoading}
       />
 
-      <main style={{ minHeight: '80vh', paddingTop: location.pathname === '/' ? '0' : '0' }}>
+      <main style={{ minHeight: '80vh', paddingTop: (location.pathname === '/' && !user) ? '0' : '45px' }}>
         <Routes>
-          <Route path="/" element={user ? <Dashboard /> : <HomePage />} />
+          <Route path="/" element={user ? <HomeFeed onAdd={addItemToCart} /> : <HomePage />} />
           <Route path="/dashboard" element={user ? <Dashboard /> : <LoginForm />} />
+          <Route path="/dashboard/negotiations/:id" element={user ? <NegotiationChat /> : <LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/login" element={<LoginForm />} />
-
-          <Route
-            path="/catalog"
-            element={
-              <Catalog
-                onAdd={addItemToCart}
-              />
-            }
-          />
+          <Route path="/logout" element={<LogoutForm />} />
+          <Route path="/catalog" element={<Catalog onAdd={addItemToCart} />} />
           <Route path="/about" element={<About />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
         </Routes>
       </main>
 

@@ -42,7 +42,7 @@ const cardStyle = "bg-white dark:bg-[#17233f] rounded-2xl shadow-md border borde
 
 const About = () => {
     return (
-        <div className="pt-12">
+        <div>
 
             {/* Hero Section */}
             <section className="text-center px-6 pt-20 pb-16 rounded-b-[32px] bg-gradient-to-br from-violet-600/[0.08] to-cyan-500/[0.06] dark:from-violet-600/[0.15] dark:to-cyan-500/[0.1]">
@@ -128,7 +128,7 @@ const About = () => {
             </section>
 
             {/* Misión */}
-            <section className="container mx-auto px-5 pt-28 pb-16">
+            <section className="container mx-auto px-5 pt-10 pb-12">
                 <div className="relative max-w-4xl mx-auto">
                     {/* Glow effect behind */}
                     <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-cyan-500 blur-2xl opacity-20 dark:opacity-30 rounded-[3rem] -z-10 animate-pulse" />

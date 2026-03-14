@@ -25,6 +25,17 @@ const GlobalStyle = createGlobalStyle`
         transition: background-color 0.4s ease, color 0.4s ease;
     }
 
+    input:focus, textarea:focus, select:focus, button:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* Para componentes que usen focus-visible */
+    *:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
     body.cart-open { overflow: hidden; }
     a { text-decoration: none; }
     ul { list-style: none; }
@@ -204,63 +215,8 @@ const GlobalStyle = createGlobalStyle`
     }
 
     /* =========================================
-       CARRITO DE COMPRAS (CartPanel)
+       CARRITO DE COMPRAS (CartPanel - Deprecated, now in component)
        ========================================= */
-    .cart-panel {
-        position: fixed; inset: 0; z-index: 999; pointer-events: none;
-    }
-    .cart-panel.is-open { pointer-events: auto; }
-    
-    .cart-panel__backdrop {
-        position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.5);
-        opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(2px);
-    }
-    .cart-panel.is-open .cart-panel__backdrop { opacity: 1; }
-
-    .cart-panel__body {
-        position: absolute; top: 0; right: 0; width: 400px; max-width: 100%; height: 100%;
-        background-color: white; transform: translateX(100%);
-        transition: transform 0.3s cubic-bezier(0.77, 0, 0.175, 1); display: flex; flex-direction: column;
-        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-    }
-    .cart-panel.is-open .cart-panel__body { transform: translateX(0); }
-
-    .cart-panel__header {
-        padding: 20px; border-bottom: 1px solid #eee; display: flex;
-        justify-content: space-between; align-items: center; background-color: var(--poke-blue); color: white;
-    }
-    .cart-panel__header h2 { font-size: 1.2rem; margin: 0; font-weight: 700; color: white; }
-    .cart-panel__close { background: none; border: none; font-size: 2rem; cursor: pointer; color: white; line-height: 1; padding: 0 10px; }
-    .cart-panel__close:hover { color: var(--poke-yellow); }
-
-    .cart-panel__content { flex: 1; overflow-y: auto; padding: 20px; }
-    .cart-panel__empty { text-align: center; color: #666; margin-top: 2rem; font-size: 1rem; font-weight: 500;}
-    
-    .cart-panel__list { display: flex; flex-direction: column; gap: 15px; }
-    
-    .cart-item-row { display: flex; gap: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
-    .cart-item-row img { width: 65px; height: 90px; object-fit: contain; background: #f9f9f9; border-radius: 8px; border: 1px solid #eee;}
-    
-    .cart-item-row__meta { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-    .cart-item-row__name { font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; line-height: 1.2;}
-    .cart-item-row__set { font-size: 0.8rem; color: #666; margin-bottom: 6px; }
-    
-    .cart-item-row__actions { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-    .cart-qty-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid #ccc; background: white; cursor: pointer; font-weight: bold; color: var(--text-dark); display: flex; justify-content: center; align-items: center;}
-    .cart-item-row__qty { font-size: 0.95rem; font-weight: 600; min-width: 16px; text-align: center; }
-    
-    .cart-item-row__remove { color: #999; background: none; border: none; font-size: 0.8rem; cursor: pointer; text-align: left; text-decoration: underline; padding: 0; width: fit-content;}
-    .cart-item-row__remove:hover { color: var(--poke-red); }
-
-    .cart-item-row__controls { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; }
-    .cart-item-row__price { font-size: 0.85rem; color: #666; font-weight: 500;}
-    .cart-item-row__subtotal { color: var(--poke-red); font-weight: 800; font-size: 1.1rem; }
-
-    .cart-panel__footer { padding: 20px; border-top: 1px solid #eee; background-color: #f9f9f9; display: flex; flex-direction: column; gap: 15px; }
-    .cart-panel__summary { display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; color: #333;}
-    .cart-panel__summary strong { color: var(--poke-dark-blue); font-size: 1.4rem; font-weight: 900;}
-    .cart-panel__checkout { background-color: var(--poke-yellow); color: var(--poke-dark-blue); border: none; padding: 15px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: opacity 0.2s, transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
-    .cart-panel__checkout:hover { opacity: 0.9; transform: translateY(-2px);}
 
     /* =========================================
        FOOTER (PIE DE PÁGINA) - SÓLIDO Y PROFESIONAL
@@ -334,20 +290,6 @@ const GlobalStyle = createGlobalStyle`
 
     body.dark-mode .carousel-btn { background-color: #1f2937; border-color: #374151; color: #e5e7eb; }
     body.dark-mode .carousel-btn:hover { background-color: var(--poke-yellow); color: var(--poke-dark-blue); }
-    body.dark-mode .cart-panel__body { background-color: #111827; border-left: 1px solid #374151; }
-    body.dark-mode .cart-panel__header { background-color: #0f172a; border-bottom-color: #374151; }
-    body.dark-mode .cart-item-row { border-bottom-color: #374151; }
-    body.dark-mode .cart-item-row img { background: #1f2937; border-color: #374151; }
-    body.dark-mode .cart-item-row__name { color: #f8fafc; }
-    body.dark-mode .cart-item-row__set, body.dark-mode .cart-item-row__price { color: #94a3b8; }
-    body.dark-mode .cart-qty-btn { background: #1f2937; border-color: #374151; color: #f8fafc; }
-    body.dark-mode .cart-item-row__qty { color: #f8fafc; }
-    body.dark-mode .cart-item-row__subtotal { color: #38bdf8; }
-    body.dark-mode .cart-item-row__remove { color: #64748b; }
-    body.dark-mode .cart-panel__footer { background-color: #1f2937; border-top-color: #374151; }
-    body.dark-mode .cart-panel__summary { color: #e5e7eb; }
-    body.dark-mode .cart-panel__summary strong { color: #f8fafc; }
-
     body.dark-mode .cart-count { background-color: var(--badge-cyan); color: black; } /* Changed to cyan for dark mode */
 
     /* Increase opacity for CTA buttons in deals section (flash deals) */

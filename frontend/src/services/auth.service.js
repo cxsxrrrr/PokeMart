@@ -1,4 +1,5 @@
 import { CONSTANTS } from '../utils/constants';
+import { normalizeError } from '../utils/normalizeResponses';
 
 const API_BASE = CONSTANTS.API_BASE_URL || "http://localhost:8000";
 
@@ -13,7 +14,7 @@ const authService = {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || "Error al iniciar sesión");
+      throw new Error(normalizeError(errorData.error || "Error al iniciar sesión"));
     }
     
     return response.json();
@@ -29,7 +30,7 @@ const authService = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || "Error al crear la cuenta");
+      throw new Error(normalizeError(errorData.error || "Error al crear la cuenta"));
     }
 
     return response.json();
@@ -42,7 +43,7 @@ const authService = {
     });
     
     if (!response.ok) {
-      throw new Error("Error al cerrar sesión");
+      throw new Error(normalizeError("Error al cerrar sesión"));
     }
     return response.json();
   },
@@ -54,7 +55,7 @@ const authService = {
     });
 
     if (!response.ok) {
-      throw new Error("No autenticado");
+      throw new Error(normalizeError("No autenticado"));
     }
     return response.json();
   }

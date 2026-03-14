@@ -16,8 +16,8 @@ const fallbackVideos = [
   },
   {
     id: "pokemon-news-2",
-    title: "Momento Pikachu",
-    description: "Un clip corto y nostálgico de Pikachu para abrir la sección de noticias con energía clásica y mantener la Home más viva.",
+    title: "Momento Lucario",
+    description: "Un Lucario bien entrenado es capaz de emitir ondas que le permiten percibir la presencia y los sentimientos de un individuo incluso a 1km de distancia.",
     source: "Pokémon Highlights",
     publishedAt: "Reciente",
     previewGif: pikachugif,
@@ -25,7 +25,7 @@ const fallbackVideos = [
   {
     id: "pokemon-news-3",
     title: "Gameplay reveal",
-    description: "Mecánicas nuevas, mundo abierto y más.",
+    description: "Conoce el nuevo juego de Pokemon, Pokopia! Un juego de rol donde podrás explorar un mundo abierto y capturar Pokémon.",
     source: "Nintendo / Pokémon",
     publishedAt: "Reciente",
     previewGif: pokeball,

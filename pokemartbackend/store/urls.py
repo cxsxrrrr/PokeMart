@@ -25,10 +25,20 @@ urlpatterns = [
 
     # Orders
     path('orders/', views.list_orders, name='list_orders'),
+    path('sales/', views.list_sales, name='list_sales'),
     path('orders/create/', views.create_order, name='create_order'),
     path('orders/<int:order_id>/', views.get_order, name='get_order'),
+    path('orders/<int:order_id>/status/', views.update_order_status, name='update_order_status'),
+
+    # Chat / Negotiation
+    path('orders/<int:order_id>/messages/', views.list_order_messages, name='list_order_messages'),
+    path('orders/<int:order_id>/messages/add/', views.add_order_message, name='add_order_message'),
+    path('orders/<int:order_id>/add-item/', views.add_item_to_order, name='add_item_to_order'),
+    path('orders/<int:order_id>/remove-item/', views.remove_item_from_order, name='remove_item_from_order'),
+    path('users/<str:username>/listings/', views.list_user_listings, name='list_user_listings'),
 
     # Reviews
     path('reviews/create/', views.create_review, name='create_review'),
     path('reviews/<int:order_id>/', views.get_review, name='get_review'),
+    path('home-feed/', views.get_home_feed, name='get_home_feed'),
 ]

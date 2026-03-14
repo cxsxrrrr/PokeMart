@@ -9,7 +9,8 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel = 'Añadir al carrit
   const timeoutRef = useRef(null);
 
   const mockData = useMemo(() => {
-    const seed = card.id ? card.id.charCodeAt(0) + card.id.charCodeAt(card.id.length - 1) : 50;
+    const idStr = String(card.id || '');
+    const seed = idStr ? idStr.charCodeAt(0) + idStr.charCodeAt(idStr.length - 1) : 50;
     const ratings = [4.5, 4.8, 4.9, 5.0, 4.7];
     const sellers = ["AshKetchum", "MistyWater", "BrockRock", "GaryOak", "RocketShop", "PokeFan99"];
     return {
@@ -68,7 +69,7 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel = 'Añadir al carrit
             <img src={frontSrc} alt={card?.name} loading="lazy" onError={advanceImageCandidate} />
           </div>
           <div className="card-3d-face card-3d-back">
-            <img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Reverso" aria-hidden="true" />
+            <img src={CONSTANTS.CARD_BACK_IMAGE} alt="Reverso" aria-hidden="true" />
           </div>
         </div>
       </div>

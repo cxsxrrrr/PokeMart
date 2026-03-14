@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logo from "../../assets/logo-morado.png";
 
 const Footer = ({ backendStatus }) => {
@@ -11,11 +12,13 @@ const Footer = ({ backendStatus }) => {
                 <div className="footer-grid">
                     <div className="footer-col">
                         <div className="logo" style={{ fontSize: "1.4rem" }}>
-                            <img
-                                src={logo}
-                                alt="PokéMart TCG"
-                                className="logo__img"
-                            />
+                            <Link to="/">
+                                <img
+                                    src={logo}
+                                    alt="PokéMart TCG"
+                                    className="logo__img"
+                                />
+                            </Link>
                         </div>
                         <p
                             style={{ marginTop: "1rem", color: "#ccc", fontSize: "0.9rem" }}
@@ -28,16 +31,13 @@ const Footer = ({ backendStatus }) => {
                         <h4>Enlaces Rápidos</h4>
                         <ul>
                             <li>
-                                <a href="#popular">Comprar Cartas</a>
+                                <Link to="/dashboard">Vender mis Cartas</Link>
                             </li>
                             <li>
-                                <a href="#deals">Vender mis Cartas</a>
+                                <Link to="/about">Sobre Nosotros</Link>
                             </li>
                             <li>
-                                <a href="#footer">Guía de Estado</a>
-                            </li>
-                            <li>
-                                <a href="#footer">Sobre Nosotros</a>
+                                <Link to="/catalog">Ver Catálogo</Link>
                             </li>
                         </ul>
                     </div>
@@ -45,16 +45,13 @@ const Footer = ({ backendStatus }) => {
                         <h4>Ayuda</h4>
                         <ul>
                             <li>
-                                <a href="#footer">Centro de Soporte</a>
+                                <Link to="/about">Centro de Soporte</Link>
                             </li>
                             <li>
-                                <a href="#footer">Envíos y Devoluciones</a>
+                                <Link to="/terms">Términos y Condiciones</Link>
                             </li>
                             <li>
-                                <a href="#footer">Términos y Condiciones</a>
-                            </li>
-                            <li>
-                                <a href="#footer">Política de Privacidad</a>
+                                <Link to="/privacy">Política de Privacidad</Link>
                             </li>
                         </ul>
                     </div>

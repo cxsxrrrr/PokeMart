@@ -5,7 +5,7 @@ class Orders(models.Model):
     id = models.AutoField(primary_key=True)
     buyer_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='orders')
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=45)
+    status = models.CharField(max_length=45, default="Pendiente") # Pendiente, En proceso, Completado, Cancelado
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -85,3 +85,13 @@ class Reviews(models.Model):
 
     def __str__(self):
         return f"Reviews(id={self.id}, order_id={self.order_id}, rating={self.rating})"
+
+class Message(models.Model):
+    id = models.AutoField(primary_key=True)
+    order = models.ForeignKey('Orders', on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Message(id={self.id}, sender={self.sender.username}, order_id={self.order.id})"
