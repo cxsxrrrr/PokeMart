@@ -41,4 +41,5 @@ urlpatterns = [
     path('reviews/create/', views.create_review, name='create_review'),
     path('reviews/<int:order_id>/', views.get_review, name='get_review'),
     path('home-feed/', views.get_home_feed, name='get_home_feed'),
+    path('seller-stats/', views.seller_stats, name='seller_stats'),
 ]

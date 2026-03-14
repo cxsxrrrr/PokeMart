@@ -68,7 +68,7 @@ def search_cards(request):
     if not query:
         return JsonResponse({"error": "Query parameter 'q' is required."}, status=400)
 
-    cards = Card.objects.filter(name__icontains=query).order_by("name")[:50]
+    cards = Card.objects.filter(name__icontains=query).order_by("name").only("id", "name", "collection", "rarity", "image_url", "recommended_price")[:20]
     card_list = [
         {
             "id": card.id,
@@ -838,4 +838,106 @@ def get_home_feed(request):
                 }
             } for l in new_arrivals
         ]
+    })
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def seller_stats(request):
+    """Return aggregated statistics for the current seller's dashboard."""
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required."}, status=401)
+
+    from django.db.models import Sum, Count, F
+    from django.db.models.functions import TruncMonth
+
+    user = request.user
+
+    # ── 1. Cards sold (completed orders where user is seller) ──
+    completed_details = Order_details.objects.filter(
+        listing_id__seller=user,
+        order_id__status__in=["Completado", "Finalizado"]
+    ).select_related("listing_id__card_id")
+
+    total_cards_sold = completed_details.aggregate(total=Sum("quantity"))["total"] or 0
+
+    # ── 2. Total revenue ──
+    total_revenue = 0
+    for d in completed_details:
+        total_revenue += float(d.unit_price) * d.quantity
+
+    # ── 3. Monthly revenue (last 6 months) ──
+    monthly_data = (
+        Order_details.objects.filter(
+            listing_id__seller=user,
+            order_id__status__in=["Completado", "Finalizado"]
+        )
+        .annotate(month=TruncMonth("order_id__created_at"))
+        .values("month")
+        .annotate(
+            revenue=Sum(F("unit_price") * F("quantity")),
+            cards=Sum("quantity")
+        )
+        .order_by("month")
+    )
+
+    monthly_revenue = [
+        {
+            "month": item["month"].strftime("%b %Y") if item["month"] else "",
+            "revenue": float(item["revenue"] or 0),
+            "cards": item["cards"] or 0,
+        }
+        for item in monthly_data
+    ]
+
+    # ── 4. Price comparison: real price vs recommended (active listings) ──
+    active_listings = Listings.objects.filter(
+        seller=user,
+        status__in=["Available", "Disponible"]
+    ).select_related("card_id").order_by("-created_at")[:20]
+
+    price_comparison = [
+        {
+            "name": l.card_id.name[:20],
+            "your_price": float(l.price),
+            "recommended": float(l.card_id.recommended_price),
+        }
+        for l in active_listings
+    ]
+
+    # ── 5. Sales by card (top sellers) ──
+    top_cards = (
+        Order_details.objects.filter(
+            listing_id__seller=user,
+            order_id__status__in=["Completado", "Finalizado"]
+        )
+        .values(name=F("listing_id__card_id__name"))
+        .annotate(sold=Sum("quantity"))
+        .order_by("-sold")[:8]
+    )
+
+    cards_sold_breakdown = [
+        {"name": item["name"][:18], "sold": item["sold"]}
+        for item in top_cards
+    ]
+
+    # ── 6. Active listings count ──
+    active_count = Listings.objects.filter(
+        seller=user, status__in=["Available", "Disponible"]
+    ).count()
+
+    # ── 7. Pending orders ──
+    pending_count = Orders.objects.filter(
+        order_details__listing_id__seller=user,
+        status="Pendiente"
+    ).distinct().count()
+
+    return JsonResponse({
+        "total_cards_sold": total_cards_sold,
+        "total_revenue": round(total_revenue, 2),
+        "active_listings": active_count,
+        "pending_orders": pending_count,
+        "monthly_revenue": monthly_revenue,
+        "price_comparison": price_comparison,
+        "cards_sold_breakdown": cards_sold_breakdown,
     })
