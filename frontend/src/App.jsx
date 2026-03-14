@@ -12,6 +12,8 @@ import HowItWorksSection from './components/HowItWorks';
 import RegisterForm from './components/Auth/RegisterForm';
 import LoginForm from './components/Auth/LoginForm';
 import LogoutForm from './components/Auth/LogoutForm';
+import ScrollToTop from './components/Common/ScrollToTop';
+import { Navigate } from 'react-router-dom';
 import VideoNewsSection from './components/VideoNewsSection/VideoNewsSection';
 import Catalog from './components/Catalog/Catalog';
 import About from './components/About/About';
@@ -75,6 +77,7 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
       <GlobalStyle />
 
       {!isAuthPage && (
@@ -99,11 +102,11 @@ function App() {
         loading={cartLoading}
       />
 
-      <main style={{ minHeight: '80vh', paddingTop: (location.pathname === '/' && !user) ? '0' : '45px' }}>
+      <main style={{ minHeight: '80vh', paddingTop: (isAuthPage || (location.pathname === '/' && !user)) ? '0' : '45px' }}>
         <Routes>
           <Route path="/" element={user ? <HomeFeed onAdd={addItemToCart} /> : <HomePage />} />
-          <Route path="/dashboard" element={user ? <Dashboard /> : <LoginForm />} />
-          <Route path="/dashboard/negotiations/:id" element={user ? <NegotiationChat /> : <LoginForm />} />
+          <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" replace />} />
+          <Route path="/dashboard/negotiations/:id" element={user ? <NegotiationChat /> : <Navigate to="/login" replace />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/logout" element={<LogoutForm />} />
@@ -114,7 +117,7 @@ function App() {
         </Routes>
       </main>
 
-      {!isAuthPage && <Footer backendStatus="offline" />}
+      {!isAuthPage && <Footer />}
     </>
   );
 }

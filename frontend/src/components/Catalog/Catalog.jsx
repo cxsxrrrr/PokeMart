@@ -74,9 +74,11 @@ const FilterSidebar = ({
         <h3 className="text-sm font-bold text-slate-800 dark:text-white">Rango de Precio</h3>
         <Checkbox 
           size="sm" 
-          color="secondary" 
           isSelected={usePriceFilter} 
           onValueChange={setUsePriceFilter}
+          classNames={{
+            wrapper: "group-data-[selected=true]:bg-violet-600 dark:group-data-[selected=true]:bg-cyan-400 after:bg-violet-600 dark:after:bg-cyan-400",
+          }}
         >
           Activar
         </Checkbox>
@@ -90,7 +92,13 @@ const FilterSidebar = ({
           onChange={setPriceRange}
           formatOptions={{style: "currency", currency: "USD"}}
           className="max-w-md"
-          color="secondary"
+          classNames={{
+            filler: "bg-violet-600 dark:bg-cyan-400",
+            thumb: [
+              "bg-violet-600 dark:bg-cyan-400",
+              "after:bg-violet-600 dark:after:bg-cyan-400"
+            ]
+          }}
         />
         <div className="flex justify-between mt-2 text-xs font-bold text-slate-500">
           <span>${priceRange[0]}</span>

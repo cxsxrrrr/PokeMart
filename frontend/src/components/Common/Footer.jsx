@@ -1,10 +1,7 @@
 import { Link } from "react-router-dom";
 import logo from "../../assets/logo-morado.png";
 
-const Footer = ({ backendStatus }) => {
-    const backendLabel =
-        backendStatus === "online" ? "Online" :
-            backendStatus === "offline" ? "Offline" : "Revisando...";
+const Footer = () => {
 
     return (
         <footer className="main-footer" id="footer">
@@ -69,11 +66,6 @@ const Footer = ({ backendStatus }) => {
                             <input type="email" placeholder="Tu email..." />
                             <button type="submit">⚡</button>
                         </form>
-                        <div
-                            className={`backend-status backend-status--${backendStatus}`}
-                        >
-                            Backend: {backendLabel}
-                        </div>
                     </div>
                 </div>
                 <div className="copyright">
@@ -81,7 +73,7 @@ const Footer = ({ backendStatus }) => {
                 </div>
             </div>
         </footer>
-  );
+    );
 };
 
 export default Footer;

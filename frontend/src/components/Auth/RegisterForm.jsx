@@ -240,6 +240,7 @@ export default function RegisterForm() {
               <Checkbox
                 size="sm"
                 classNames={{
+                  wrapper: "group-data-[selected=true]:bg-violet-600 dark:group-data-[selected=true]:bg-cyan-400 after:bg-violet-600 dark:after:bg-cyan-400",
                   label: "text-xs text-slate-600 dark:text-slate-400 font-medium leading-relaxed"
                 }}
               >

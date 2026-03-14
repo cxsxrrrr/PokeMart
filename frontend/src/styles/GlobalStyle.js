@@ -252,11 +252,6 @@ const GlobalStyle = createGlobalStyle`
     .newsletter-form button:hover {
         background-color: #74a8c0;
     }
-    .backend-status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; padding: 6px 12px; border-radius: 20px; background: var(--badge-purple); color: white; } /* Changed background and color for light mode badge */
-    .backend-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; display: block !important; background: none; }
-    .backend-status--online::before { background-color: #4ade80 !important; box-shadow: 0 0 8px #4ade80; }
-    .backend-status--offline::before { background-color: #f87171 !important; box-shadow: 0 0 8px #f87171; }
-    .backend-status--checking::before { background-color: #fbbf24 !important; }
 
     .copyright { text-align: center; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; color: #888; }
 
