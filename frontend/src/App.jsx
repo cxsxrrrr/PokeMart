@@ -54,27 +54,6 @@ function App() {
     }
   };
 
-  const HomePage = () => (
-    <>
-      <HeroSection2 />
-      <HowItWorksSection />
-      <PopularCarousel
-        cards={popularCards}
-        status={status}
-        statusMessage={statusMessage}
-        onAdd={addItemToCart}
-        isMobile={isMobile}
-      />
-      <DealsSection
-        cards={dealCards}
-        status={status}
-        statusMessage={statusMessage}
-        onAdd={addItemToCart}
-      />
-      <VideoNewsSection />
-    </>
-  );
-
   return (
     <>
       <ScrollToTop />
@@ -104,7 +83,26 @@ function App() {
 
       <main style={{ minHeight: '80vh', paddingTop: (isAuthPage || (location.pathname === '/' && !user)) ? '0' : '45px' }}>
         <Routes>
-          <Route path="/" element={user ? <HomeFeed onAdd={addItemToCart} /> : <HomePage />} />
+          <Route path="/" element={user ? <HomeFeed onAdd={addItemToCart} /> : (
+            <>
+              <HeroSection2 />
+              <HowItWorksSection />
+              <PopularCarousel
+                cards={popularCards}
+                status={status}
+                statusMessage={statusMessage}
+                onAdd={addItemToCart}
+                isMobile={isMobile}
+              />
+              <DealsSection
+                cards={dealCards}
+                status={status}
+                statusMessage={statusMessage}
+                onAdd={addItemToCart}
+              />
+              <VideoNewsSection />
+            </>
+          )} />
           <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" replace />} />
           <Route path="/dashboard/negotiations/:id" element={user ? <NegotiationChat /> : <Navigate to="/login" replace />} />
           <Route path="/register" element={<RegisterForm />} />
