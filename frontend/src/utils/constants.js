@@ -1,6 +1,6 @@
 export const CONSTANTS = {
-    DATA_URL: process.env.APP_CARDS_ENDPOINT || 'data/cards.json',
-    API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:8000',
+    DATA_URL: process.env.REACT_APP_CARDS_ENDPOINT || 'data/cards.json',
+    API_BASE_URL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000',
     IMAGE_ROOT: '/assets/cards/',
     CARD_BACK_IMAGE: '/assets/back.png',
     PLACEHOLDER_IMAGE: '/assets/back.png',
