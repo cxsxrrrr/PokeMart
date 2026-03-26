@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/PokeMart/static/css/main.c9c3ecd2.css",
-    "main.js": "/PokeMart/static/js/main.6ab7f221.js",
-    "static/js/707.0cc680cd.chunk.js": "/PokeMart/static/js/707.0cc680cd.chunk.js",
-    "static/media/pikachu-gif.gif": "/PokeMart/static/media/pikachu-gif.54de185a433f6dd8ef1c.gif",
-    "static/media/pokeball.gif": "/PokeMart/static/media/pokeball.300309e0442b6ef922cd.gif",
-    "static/media/herodark2.png": "/PokeMart/static/media/herodark2.a18d55355e007b57c7b9.png",
-    "static/media/vekrom.png": "/PokeMart/static/media/vekrom.42360c2f535c248e7bfd.png",
-    "static/media/logo-morado.png": "/PokeMart/static/media/logo-morado.42d3b0effa63cbc710db.png",
-    "static/media/logo2.png": "/PokeMart/static/media/logo2.6b5e5104a42c55616a1e.png",
-    "static/media/pokemon-wind-wave.webp": "/PokeMart/static/media/pokemon-wind-wave.ed15d4774f81057df1c7.webp",
-    "index.html": "/PokeMart/index.html",
-    "main.c9c3ecd2.css.map": "/PokeMart/static/css/main.c9c3ecd2.css.map",
-    "main.6ab7f221.js.map": "/PokeMart/static/js/main.6ab7f221.js.map",
-    "707.0cc680cd.chunk.js.map": "/PokeMart/static/js/707.0cc680cd.chunk.js.map"
+    "main.css": "/homeuribe/static/css/main.c9c3ecd2.css",
+    "main.js": "/homeuribe/static/js/main.1d0a4aa5.js",
+    "static/js/707.0cc680cd.chunk.js": "/homeuribe/static/js/707.0cc680cd.chunk.js",
+    "static/media/pikachu-gif.gif": "/homeuribe/static/media/pikachu-gif.54de185a433f6dd8ef1c.gif",
+    "static/media/pokeball.gif": "/homeuribe/static/media/pokeball.300309e0442b6ef922cd.gif",
+    "static/media/herodark2.png": "/homeuribe/static/media/herodark2.a18d55355e007b57c7b9.png",
+    "static/media/vekrom.png": "/homeuribe/static/media/vekrom.42360c2f535c248e7bfd.png",
+    "static/media/logo-morado.png": "/homeuribe/static/media/logo-morado.42d3b0effa63cbc710db.png",
+    "static/media/logo2.png": "/homeuribe/static/media/logo2.6b5e5104a42c55616a1e.png",
+    "static/media/pokemon-wind-wave.webp": "/homeuribe/static/media/pokemon-wind-wave.ed15d4774f81057df1c7.webp",
+    "index.html": "/homeuribe/index.html",
+    "main.c9c3ecd2.css.map": "/homeuribe/static/css/main.c9c3ecd2.css.map",
+    "main.1d0a4aa5.js.map": "/homeuribe/static/js/main.1d0a4aa5.js.map",
+    "707.0cc680cd.chunk.js.map": "/homeuribe/static/js/707.0cc680cd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c9c3ecd2.css",
-    "static/js/main.6ab7f221.js"
+    "static/js/main.1d0a4aa5.js"
   ]
 }
