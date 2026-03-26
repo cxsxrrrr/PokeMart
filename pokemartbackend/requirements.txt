@@ -2,3 +2,5 @@ django
 django-cors-headers
 resend
 python-dotenv
+gunicorn
+whitenoise
