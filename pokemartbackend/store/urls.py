@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     # Health
+    path('health', views.health_check, name='health_check_no_slash'),
     path('health/', views.health_check, name='health_check'),
 
     # Cards
