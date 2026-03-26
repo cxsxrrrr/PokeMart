@@ -6,6 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import "./LoginForm.css";
 
 export default function LoginForm() {
+  const PUBLIC_URL = process.env.PUBLIC_URL || '';
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [username, setUsername] = useState("");
@@ -102,15 +103,15 @@ export default function LoginForm() {
             
             {/* Imagen Light Mode */}
             <img
-              src="/assets/cards/zsv10pt5-161.png"
+              src={`${PUBLIC_URL}/assets/cards/zsv10pt5-161.png`}
               alt="Carta Destacada"
               className="block dark:hidden w-[90%] h-auto object-contain rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/30 premium-card-anim z-20"
-              onError={(e) => { e.target.src = "/assets/cards/pikachupicasso.jpg"; }}
+              onError={(e) => { e.target.src = `${PUBLIC_URL}/assets/cards/pikachupicasso.jpg`; }}
             />
 
             {/* Imagen Dark Mode */}
             <img
-              src="/assets/cards/pikachupicasso.jpg"
+              src={`${PUBLIC_URL}/assets/cards/pikachupicasso.jpg`}
               alt="Carta Destacada Oscura"
               className="hidden dark:block w-[90%] h-auto object-contain rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-white/10 premium-card-anim z-20"
             />

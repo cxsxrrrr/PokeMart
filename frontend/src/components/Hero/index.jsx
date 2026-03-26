@@ -3,6 +3,7 @@ import { CONSTANTS } from '../../utils/constants';
 
 // Función auxiliar para limitar valores
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+const PUBLIC_URL = process.env.PUBLIC_URL || '';
 
 const HeroSection = ({ theme }) => {
   const heroTiltWrapperRef = useRef(null);
@@ -158,7 +159,7 @@ const HeroSection = ({ theme }) => {
           </div>
         </div>
       </section>
-      <audio ref={heroAudioRef} src="/assets/sounds/charizard.mp3" preload="auto" />
+      <audio ref={heroAudioRef} src={`${PUBLIC_URL}/assets/sounds/charizard.mp3`} preload="auto" />
     </>
   );
 };
