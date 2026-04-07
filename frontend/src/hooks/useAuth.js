@@ -125,6 +125,10 @@ export const AuthProvider = ({ children }) => {
 
       // Keep current session state on transient network/server issues.
       if (isUnauthorized) {
+        if (userRef.current) {
+          return userRef.current;
+        }
+
         setUser(null);
         return null;
       }

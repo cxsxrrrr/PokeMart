@@ -36,13 +36,17 @@ export default function LoginForm() {
       setUnverifiedEmail("");
       
       // Lógica de "Recordarme"
-      if (rememberMe) {
-        localStorage.setItem("pokemart_remembered_user", username);
-      } else {
-        localStorage.removeItem("pokemart_remembered_user");
+      try {
+        if (rememberMe) {
+          localStorage.setItem("pokemart_remembered_user", username);
+        } else {
+          localStorage.removeItem("pokemart_remembered_user");
+        }
+      } catch (storageError) {
+        console.warn("No se pudo guardar preferencia de recordarme:", storageError);
       }
 
-      navigate('/');
+      navigate('/catalog', { replace: true });
     } catch (err) {
       if (err?.requiresVerification && err?.email) {
         setUnverifiedEmail(err.email);
