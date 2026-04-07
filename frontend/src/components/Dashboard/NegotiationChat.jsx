@@ -82,20 +82,29 @@ export default function NegotiationChat() {
     const lastMsg = messages[messages.length - 1];
     const isFromMe = lastMsg.sender === user?.username;
     
-    // Obtenemos el contenedor del ScrollShadow
-    const container = messagesEndRef.current?.closest('.scroll-container') || messagesEndRef.current?.parentElement;
+    // Intentamos buscar el contendor con overflow donde viven los mensajes
+    const container = 
+      messagesEndRef.current?.closest('.scroll-container') || 
+      messagesEndRef.current?.closest('[data-slot="base"]') ||
+      messagesEndRef.current?.parentElement;
 
-    if (loading || isFromMe) {
-      // Si es carga inicial o mensaje propio, bajamos sí o sí
-      messagesEndRef.current?.scrollIntoView({ behavior: loading ? "auto" : "smooth" });
-    } else if (container) {
-      // Si es mensaje de otro, solo bajamos si el usuario ya estaba al fondo
-      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 150;
-      if (isNearBottom) {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (container) {
+      if (loading || isFromMe) {
+        // En lugar de scrollIntoView (que baja toda la pantalla), movemos el scroll interno
+        setTimeout(() => {
+          container.scrollTo({ top: container.scrollHeight, behavior: loading ? "auto" : "smooth" });
+        }, 50);
+      } else {
+        // Si es mensaje de otro, solo bajamos si el usuario ya estaba al fondo
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 150;
+        if (isNearBottom) {
+          setTimeout(() => {
+             container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+          }, 50);
+        }
       }
     }
-  }, [messages.length]);
+  }, [messages.length, loading, user?.username]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
