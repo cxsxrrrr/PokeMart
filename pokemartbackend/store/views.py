@@ -68,7 +68,48 @@ def search_cards(request):
     if not query:
         return JsonResponse({"error": "Query parameter 'q' is required."}, status=400)
 
-    cards = Card.objects.filter(name__icontains=query).order_by("name").only("id", "name", "collection", "rarity", "image_url", "recommended_price")[:20]
+    try:
+        page = max(1, int(request.GET.get("page", "1")))
+    except ValueError:
+        page = 1
+
+    try:
+        page_size = int(request.GET.get("page_size", "40"))
+    except ValueError:
+        page_size = 40
+
+    page_size = max(10, min(page_size, 80))
+    start = (page - 1) * page_size
+    end = start + page_size + 1
+
+    base_qs = Card.objects.only("id", "name", "collection", "rarity", "image_url", "recommended_price")
+
+    startswith_ids = list(
+        base_qs.filter(name__istartswith=query)
+        .order_by("name", "id")
+        .values_list("id", flat=True)[:end]
+    )
+
+    remaining = max(0, end - len(startswith_ids))
+    contains_ids = []
+    if remaining > 0:
+        contains_ids = list(
+            base_qs.filter(name__icontains=query)
+            .exclude(id__in=startswith_ids)
+            .order_by("name", "id")
+            .values_list("id", flat=True)[:remaining]
+        )
+
+    ordered_ids = startswith_ids + contains_ids
+    page_ids = ordered_ids[start:end]
+    cards_by_id = {
+        card.id: card
+        for card in base_qs.filter(id__in=page_ids)
+    }
+    cards = [cards_by_id[card_id] for card_id in page_ids if card_id in cards_by_id]
+
+    has_more = len(ordered_ids) > end
+
     card_list = [
         {
             "id": card.id,
@@ -80,7 +121,13 @@ def search_cards(request):
         }
         for card in cards
     ]
-    return JsonResponse(card_list, safe=False)
+
+    return JsonResponse({
+        "results": card_list,
+        "page": page,
+        "page_size": page_size,
+        "has_more": has_more,
+    })
 
 
 # ─── Listings Endpoints ────────────────────────────────────────────────────────

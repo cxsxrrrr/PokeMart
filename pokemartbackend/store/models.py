@@ -72,6 +72,12 @@ class Card(models.Model):
     image_url = models.URLField(max_length=200)
     recommended_price = models.DecimalField(max_digits=10, decimal_places=2)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['name'], name='store_card_name_idx'),
+            models.Index(fields=['name', 'id'], name='store_card_name_id_idx'),
+        ]
+
     def __str__(self):
         return f"Card(id={self.id}, name={self.name}, collection={self.collection}, rarity={self.rarity})"
 

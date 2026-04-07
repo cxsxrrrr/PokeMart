@@ -4,3 +4,4 @@ resend
 python-dotenv
 gunicorn
 whitenoise
+requests
