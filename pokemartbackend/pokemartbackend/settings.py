@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+from importlib.util import find_spec
+from urllib.parse import urlparse, unquote, parse_qs
 from dotenv import load_dotenv
 
 # Carga .env del directorio del backend (pokemartbackend/.env)
@@ -113,25 +115,63 @@ WSGI_APPLICATION = "pokemartbackend.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
 SQLITECLOUD_URL = os.environ.get("SQLITECLOUD_URL", "").strip()
-SQLITECLOUD_DJANGO_ENGINE = os.environ.get("SQLITECLOUD_DJANGO_ENGINE", "").strip()
+SQLITE_FALLBACK_PATH = os.environ.get("SQLITE_FALLBACK_PATH", str(BASE_DIR / "db.sqlite3"))
 
-if SQLITECLOUD_URL:
-    DATABASES = {
-        "default": {
-            # Example engine values (depends on installed package):
-            # - sqlitecloud.django.backend
-            # - sqlitecloud.django
-            "ENGINE": SQLITECLOUD_DJANGO_ENGINE or "sqlitecloud.django.backend",
-            "NAME": SQLITECLOUD_URL,
-            "CONN_MAX_AGE": int(os.environ.get("DB_CONN_MAX_AGE", "60")),
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+if DATABASE_URL:
+    parsed = urlparse(DATABASE_URL)
+
+    if parsed.scheme in ("postgres", "postgresql"):
+        query_params = parse_qs(parsed.query)
+        sslmode = (
+            query_params.get("sslmode", [None])[0]
+            or os.environ.get("PGSSLMODE")
+            or "require"
+        )
+
+        db_options = {
+            "sslmode": sslmode,
+            "connect_timeout": int(os.environ.get("PGCONNECT_TIMEOUT", "15")),
         }
-    }
+
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": parsed.path.lstrip("/") or os.environ.get("POSTGRES_DB", "postgres"),
+                "USER": unquote(parsed.username or ""),
+                "PASSWORD": unquote(parsed.password or ""),
+                "HOST": parsed.hostname or "",
+                "PORT": str(parsed.port or "5432"),
+                "CONN_MAX_AGE": int(os.environ.get("DB_CONN_MAX_AGE", "60")),
+                "OPTIONS": db_options,
+            }
+        }
+    elif parsed.scheme == "sqlite":
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": parsed.path or SQLITE_FALLBACK_PATH,
+            }
+        }
+    else:
+        print(f"[DB CONFIG] Esquema no soportado para Django ORM: '{parsed.scheme}'. Usando sqlite local.")
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": SQLITE_FALLBACK_PATH,
+            }
+        }
 else:
+    if SQLITECLOUD_URL:
+        print("[DB CONFIG] SQLITECLOUD_URL detectado, pero SQLite Cloud no expone backend Django ORM compatible. Usa DATABASE_URL de PostgreSQL para ORM remoto.")
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "NAME": SQLITE_FALLBACK_PATH,
         }
     }
 

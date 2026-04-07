@@ -6,3 +6,4 @@ gunicorn
 whitenoise
 requests
 sqlitecloud
+psycopg[binary]
