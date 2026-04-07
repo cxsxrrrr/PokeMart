@@ -65,8 +65,20 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+raw_cors_origins = os.environ.get(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:3000,https://cxsxrrrr.github.io,https://poke-mart.store,https://www.poke-mart.store",
+)
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in raw_cors_origins.split(",") if origin.strip()]
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
+
+# Cross-site session support (frontend on GitHub Pages/custom domain + backend on Render).
+SESSION_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 ROOT_URLCONF = "pokemartbackend.urls"
 
