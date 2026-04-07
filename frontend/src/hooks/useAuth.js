@@ -1,4 +1,4 @@
-import { useState, useCallback, createContext, useContext } from 'react';
+import { useState, useCallback, createContext, useContext, useRef, useEffect } from 'react';
 import authService from '../services/auth.service';
 import { normalizeError } from '../utils/normalizeResponses';
 
@@ -9,6 +9,11 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const userRef = useRef(user);
+
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   const login = useCallback(async (username, password) => {
     setLoading(true);
@@ -124,11 +129,11 @@ export const AuthProvider = ({ children }) => {
         return null;
       }
 
-      return user;
+      return userRef.current;
     } finally {
       setAuthChecked(true);
     }
-  }, [user]);
+  }, []);
 
   const updateProfile = useCallback(async ({ username, avatarUrl }) => {
     setLoading(true);
