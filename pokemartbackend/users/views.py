@@ -79,6 +79,95 @@ def create_user(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+def resend_verification_code(request):
+    """Regenerate and resend the verification OTP for an inactive account."""
+    resend_window_seconds = 600
+    resend_max_attempts = 3
+    resend_cooldown_seconds = 60
+
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"error": "Invalid JSON payload."}, status=400)
+
+    email = payload.get("email", "").strip().lower()
+    if not email:
+        return JsonResponse({"error": "El campo email es requerido."}, status=400)
+
+    forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR", "")
+    client_ip = (forwarded_for.split(",")[0].strip() if forwarded_for else request.META.get("REMOTE_ADDR", "unknown"))
+
+    cooldown_key = f"verify_resend_cooldown_{email}"
+    email_attempts_key = f"verify_resend_attempts_email_{email}"
+    ip_attempts_key = f"verify_resend_attempts_ip_{client_ip}"
+
+    cooldown_remaining = cache.get(cooldown_key)
+    if cooldown_remaining:
+        return JsonResponse(
+            {
+                "error": f"Debes esperar {cooldown_remaining}s antes de reenviar otro código.",
+                "retryAfter": cooldown_remaining,
+            },
+            status=429,
+        )
+
+    email_attempts = cache.get(email_attempts_key, 0)
+    ip_attempts = cache.get(ip_attempts_key, 0)
+
+    if email_attempts >= resend_max_attempts:
+        return JsonResponse(
+            {"error": "Alcanzaste el máximo de reenvíos para este correo. Intenta nuevamente en 10 minutos."},
+            status=429,
+        )
+
+    if ip_attempts >= resend_max_attempts:
+        return JsonResponse(
+            {"error": "Alcanzaste el máximo de reenvíos desde esta IP. Intenta nuevamente en 10 minutos."},
+            status=429,
+        )
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "Usuario no encontrado."}, status=404)
+
+    if user.is_active:
+        return JsonResponse({"error": "Esta cuenta ya está verificada."}, status=400)
+
+    otp_code = f"{random.randint(100000, 999999)}"
+    cache.set(f"verify_{email}", otp_code, timeout=600)
+
+    resend.api_key = settings.RESEND_API_KEY
+
+    try:
+        resend.Emails.send({
+            "from": "PokéMart <noreply@poke-mart.store>",
+            "to": [email],
+            "subject": "Nuevo código de verificación - PokéMart",
+            "html": f"""
+                <div style="font-family: 'Segoe UI', sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
+                    <h1 style="color: #5b21b6; font-size: 24px; margin-bottom: 8px;">PokéMart TCG</h1>
+                    <p style="color: #475569; font-size: 15px;">Hola <strong>{user.username}</strong>, aquí tienes un nuevo código para verificar tu cuenta.</p>
+                    <div style="background: linear-gradient(135deg, #7c3aed, #06b6d4); border-radius: 12px; padding: 24px; text-align: center; margin: 24px 0;">
+                        <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 0 0 8px 0; letter-spacing: 2px; text-transform: uppercase;">Tu código OTP</p>
+                        <p style="color: #fff; font-size: 36px; font-weight: 800; letter-spacing: 8px; margin: 0;">{otp_code}</p>
+                    </div>
+                    <p style="color: #94a3b8; font-size: 13px;">Este código expira en <strong>10 minutos</strong>.</p>
+                </div>
+            """,
+        })
+    except Exception as e:
+        return JsonResponse({"error": f"Error al enviar el correo: {str(e)}"}, status=500)
+
+    cache.set(email_attempts_key, email_attempts + 1, timeout=resend_window_seconds)
+    cache.set(ip_attempts_key, ip_attempts + 1, timeout=resend_window_seconds)
+    cache.set(cooldown_key, resend_cooldown_seconds, timeout=resend_cooldown_seconds)
+
+    return JsonResponse({"message": "Se envío un nuevo código de verificación al correo."}, status=200)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
 def login_user(request):
     try:
         payload = json.loads(request.body.decode("utf-8"))
@@ -344,4 +433,4 @@ def verify_email(request):
         "role": user.role,
         "avatarUrl": user.avatar_url,
         "message": "Correo verificado exitosamente."
-    }, status=200)
+    }, status=200)
