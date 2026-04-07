@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { IconPlus, IconTrendingUp, IconShoppingBag, IconMessageCircle, IconClock, IconCheck, IconSearch, IconX } from "@tabler/icons-react";
+import { IconPlus, IconTrendingUp, IconShoppingBag, IconMessageCircle, IconClock, IconCheck, IconSearch } from "@tabler/icons-react";
 import { useAuth } from "../../hooks/useAuth";
 import { formatCurrency } from "../../utils/formatters";
 import { CONSTANTS } from "../../utils/constants";
+import PublishCardModal from "./PublishCardModal";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -12,6 +13,7 @@ export default function Dashboard() {
   const [ventas, setVentas] = useState([]);
   const [compras, setCompras] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showPublishModal, setShowPublishModal] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -89,7 +91,7 @@ export default function Dashboard() {
               <IconSearch size={20} /> Explorar
             </button>
             <button 
-              onClick={() => alert("Pronto podrás publicar tus propias cartas...")}
+              onClick={() => setShowPublishModal(true)}
               className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-cyan-400 text-slate-900 hover:bg-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all font-black flex items-center gap-2 text-sm sm:text-base"
             >
               <IconPlus size={20} /> Publicar
@@ -172,6 +174,12 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      <PublishCardModal
+        isOpen={showPublishModal}
+        onClose={() => setShowPublishModal(false)}
+        onCreated={fetchData}
+      />
     </div>
   );
 }
