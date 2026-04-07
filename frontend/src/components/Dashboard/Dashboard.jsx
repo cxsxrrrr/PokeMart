@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { IconPlus, IconTrendingUp, IconShoppingBag, IconMessageCircle, IconClock, IconCheck, IconSearch } from "@tabler/icons-react";
+import { IconPlus, IconTrendingUp, IconShoppingBag, IconMessageCircle, IconClock, IconCheck, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useAuth } from "../../hooks/useAuth";
 import { formatCurrency } from "../../utils/formatters";
 import { CONSTANTS } from "../../utils/constants";
 import PublishCardModal from "./PublishCardModal";
+import { listingService } from "../../services/listing.service";
+import { useToast } from "../../providers/ToastProvider";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -14,6 +16,8 @@ export default function Dashboard() {
   const [compras, setCompras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showPublishModal, setShowPublishModal] = useState(false);
+  const [removingListingId, setRemovingListingId] = useState(null);
+  const { showToast } = useToast();
 
   const fetchData = async () => {
     try {
@@ -37,6 +41,29 @@ export default function Dashboard() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleRemoveListing = async (e, listingId) => {
+    e.stopPropagation();
+    if (!listingId || removingListingId) {
+      return;
+    }
+
+    const confirmed = window.confirm("¿Seguro que quieres quitar esta carta del catálogo?");
+    if (!confirmed) {
+      return;
+    }
+
+    setRemovingListingId(listingId);
+    try {
+      await listingService.deleteListing(listingId);
+      showToast("Publicación retirada del catálogo", "success");
+      await fetchData();
+    } catch (error) {
+      showToast(error.message || "No se pudo quitar la publicación", "error");
+    } finally {
+      setRemovingListingId(null);
+    }
+  };
   
   const getStatusBadge = (status) => {
     switch (status) {
@@ -155,6 +182,18 @@ export default function Dashboard() {
                   <div className="flex items-center justify-center p-3 rounded-xl bg-violet-100 dark:bg-cyan-500/10 text-violet-600 dark:text-cyan-400 group-hover:bg-violet-600 group-hover:text-white dark:group-hover:bg-cyan-500 dark:group-hover:text-slate-950 transition-all">
                     <IconMessageCircle size={22} />
                   </div>
+                )}
+
+                {item.type === 'listing' && (
+                  <button
+                    type="button"
+                    onClick={(e) => handleRemoveListing(e, item.real_id)}
+                    disabled={removingListingId === item.real_id}
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-200 dark:border-red-800/40 text-xs font-bold hover:bg-red-200 dark:hover:bg-red-900/45 transition-colors disabled:opacity-60"
+                  >
+                    <IconTrash size={14} />
+                    {removingListingId === item.real_id ? 'Quitando...' : 'Quitar'}
+                  </button>
                 )}
               </div>
             </div>

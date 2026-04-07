@@ -3,17 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Input, Button, Checkbox, Link as NextUILink } from "@heroui/react";
 import { IconEye, IconEyeOff, IconSparkles, IconX, IconAlertCircle } from "@tabler/icons-react";
 import { useAuth } from "../../hooks/useAuth";
+import { AVATAR_OPTIONS } from "../../utils/constants";
 import "./RegisterForm.css";
-
-const AVATAR_OPTIONS = [
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",  // Pikachu
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",   // Bulbasaur
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",   // Charmander
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",   // Squirtle
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png", // Eevee
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png",  // Gengar
-  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png", // Snorlax
-];
 
 export default function RegisterForm() {
   const PUBLIC_URL = process.env.PUBLIC_URL || '';

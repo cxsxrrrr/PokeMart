@@ -84,6 +84,8 @@ const HomeFeed = ({ onAdd }) => {
                   key={item.id} 
                   card={{
                     ...item,
+                    seller: item.seller,
+                    sellerAvatar: item.seller_avatar_url,
                     imageCandidates: [item.card.image_url],
                     images: { small: item.card.image_url, large: item.card.image_url },
                     name: item.card.name,

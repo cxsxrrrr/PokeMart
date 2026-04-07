@@ -54,3 +54,13 @@ export const rarityBasePrices = {
   'Special Illustration Rare': 36,
   'Black White Rare': 42
 };
+
+export const AVATAR_OPTIONS = [
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/133.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png",
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/143.png"
+];

@@ -58,4 +58,18 @@ export const listingService = {
 
     return response.json();
   },
+
+  deleteListing: async (listingId) => {
+    const response = await fetch(`${API_BASE}/store/listings/${listingId}/delete/`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "No se pudo quitar la publicación");
+    }
+
+    return response.json();
+  },
 };

@@ -20,6 +20,7 @@ import VideoNewsSection from './components/VideoNewsSection/VideoNewsSection';
 import Catalog from './components/Catalog/Catalog';
 import About from './components/About/About';
 import Dashboard from './components/Dashboard/Dashboard';
+import ProfileSettings from './components/Profile/ProfileSettings';
 import Terms from './components/Legal/Terms';
 import Privacy from './components/Legal/Privacy';
 import NegotiationChat from './components/Dashboard/NegotiationChat';
@@ -118,6 +119,7 @@ function App() {
             </>
           )} />
           <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" replace />} />
+          <Route path="/profile" element={user ? <ProfileSettings /> : <Navigate to="/login" replace />} />
           <Route path="/dashboard/negotiations/:id" element={user ? <NegotiationChat /> : <Navigate to="/login" replace />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/login" element={<LoginForm />} />

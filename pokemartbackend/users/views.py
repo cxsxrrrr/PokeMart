@@ -261,6 +261,41 @@ def get_current_user(request):
     }, status=200)
 
 
+@csrf_exempt
+@require_http_methods(["PATCH"])
+def update_current_user(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required."}, status=401)
+
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"error": "Invalid JSON payload."}, status=400)
+
+    user = request.user
+    new_username = str(payload.get("username", user.username)).strip()
+    new_avatar_url = str(payload.get("avatarUrl", user.avatar_url or "")).strip()
+
+    if not new_username:
+        return JsonResponse({"error": "El nombre de usuario no puede estar vacío."}, status=400)
+
+    username_taken = User.objects.exclude(id=user.id).filter(username__iexact=new_username).exists()
+    if username_taken:
+        return JsonResponse({"error": "Username already exists."}, status=409)
+
+    user.username = new_username
+    user.avatar_url = new_avatar_url
+    user.save(update_fields=["username", "avatar_url"])
+
+    return JsonResponse({
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "role": user.role,
+        "avatarUrl": user.avatar_url,
+    }, status=200)
+
+
 # ────────────────────────────────────────────
 #  Forgot / Reset password  (OTP via Resend)
 # ────────────────────────────────────────────

@@ -33,6 +33,7 @@ const normalizeListing = (listing) => ({
   quantity: listing.quantity,
   condition: listing.condition,
   seller: listing.seller?.username ?? "Vendedor",
+  sellerAvatar: listing.seller?.avatar_url ?? listing.seller_avatar_url ?? "",
   description: listing.description ?? "",
   image_url: listing.card?.image_url ?? "",
   imageCandidates: listing.card?.image_url ? [listing.card.image_url] : [CONSTANTS.PLACEHOLDER_IMAGE],

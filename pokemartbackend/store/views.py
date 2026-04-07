@@ -143,6 +143,7 @@ def list_listings(request):
             "seller": {
                 "id": listing.seller.id,
                 "username": listing.seller.username,
+                "avatar_url": listing.seller.avatar_url,
             },
             "card": {
                 "id": listing.card_id.id,
@@ -177,6 +178,7 @@ def get_listing(request, listing_id):
         "seller": {
             "id": listing.seller.id,
             "username": listing.seller.username,
+            "avatar_url": listing.seller.avatar_url,
         },
         "card": {
             "id": listing.card_id.id,
@@ -886,6 +888,7 @@ def get_home_feed(request):
                 "price": str(l.price),
                 "condition": l.condition,
                 "seller": l.seller.username,
+                "seller_avatar_url": l.seller.avatar_url,
                 "card": {
                     "name": l.card_id.name,
                     "image_url": l.card_id.image_url,
@@ -901,6 +904,7 @@ def get_home_feed(request):
                 "price": str(l.price),
                 "condition": l.condition,
                 "seller": l.seller.username,
+                "seller_avatar_url": l.seller.avatar_url,
                 "card": {
                     "name": l.card_id.name,
                     "image_url": l.card_id.image_url,

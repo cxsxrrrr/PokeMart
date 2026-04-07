@@ -23,6 +23,8 @@ const CONDITION_OPTIONS = [
   "Damaged",
 ];
 
+const PLATFORM_FEE_RATE = 0.15;
+
 export default function PublishCardModal({ isOpen, onClose, onCreated }) {
   const modalRef = useRef(null);
   const resultsRef = useRef(null);
@@ -44,6 +46,14 @@ export default function PublishCardModal({ isOpen, onClose, onCreated }) {
   const [condition, setCondition] = useState("Near Mint");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const estimatedPayout = useMemo(() => {
+    const parsedPrice = Number(price);
+    if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) {
+      return null;
+    }
+    return (parsedPrice * (1 - PLATFORM_FEE_RATE)).toFixed(2);
+  }, [price]);
 
   const isFormValid = useMemo(() => {
     const p = Number(price);
@@ -78,6 +88,25 @@ export default function PublishCardModal({ isOpen, onClose, onCreated }) {
       document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    // Start each publish flow with a clean state to avoid carrying previous values.
+    setQuery("");
+    setResults([]);
+    setSelectedCard(null);
+    setPrice("");
+    setQuantity("1");
+    setCondition("Near Mint");
+    setDescription("");
+    setSearching(false);
+    setLoadingMore(false);
+    setHasMore(false);
+    setPage(1);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -200,9 +229,8 @@ export default function PublishCardModal({ isOpen, onClose, onCreated }) {
   const handleSelectCard = (card) => {
     setSelectedCard(card);
     setQuery(card.name);
-    if (!price) {
-      setPrice(card.recommended_price || "");
-    }
+    setPrice(card.recommended_price || "");
+    setDescription("");
   };
 
   const handleCreateListing = async (e) => {
@@ -422,6 +450,17 @@ export default function PublishCardModal({ isOpen, onClose, onCreated }) {
               <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
                 {selectedCard ? "Se publicará como estado Available para aparecer en el catálogo." : "Selecciona una carta para habilitar publicación."}
               </p>
+
+              <div className="p-3 rounded-xl border border-amber-200 dark:border-amber-700/40 bg-amber-50 dark:bg-amber-900/15">
+                <p className="text-xs font-semibold text-amber-800 dark:text-amber-300">
+                  Al vender esta carta, la plataforma retiene un 15% de comisión.
+                </p>
+                {estimatedPayout && (
+                  <p className="text-xs mt-1 text-amber-700 dark:text-amber-200">
+                    Ganancia estimada para ti: <span className="font-bold">${estimatedPayout}</span>
+                  </p>
+                )}
+              </div>
 
               {isFormValid && !submitting && (
                 <div className="text-emerald-700 dark:text-emerald-300 text-xs font-bold inline-flex items-center gap-1">

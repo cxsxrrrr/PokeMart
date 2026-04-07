@@ -129,6 +129,22 @@ const authService = {
       throw new Error(normalizeError("No autenticado"));
     }
     return response.json();
+  },
+
+  updateProfile: async ({ username, avatarUrl }) => {
+    const response = await fetch(`${API_BASE}/users/profile/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, avatarUrl }),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(normalizeError(errorData.error || "No se pudo actualizar el perfil"));
+    }
+
+    return response.json();
   }
 };
 

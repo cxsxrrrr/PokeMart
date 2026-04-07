@@ -122,8 +122,23 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const updateProfile = useCallback(async ({ username, avatarUrl }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userData = await authService.updateProfile({ username, avatarUrl });
+      setUser(userData);
+      return userData;
+    } catch (err) {
+      setError(normalizeError(err.message));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, loading, error, authChecked, login, register, verifyEmail, resendVerificationCode, forgotPassword, resetPassword, logout, checkCurrentUser, setUser, setError }}>
+    <AuthContext.Provider value={{ user, loading, error, authChecked, login, register, verifyEmail, resendVerificationCode, forgotPassword, resetPassword, logout, checkCurrentUser, updateProfile, setUser, setError }}>
       {children}
     </AuthContext.Provider>
   );

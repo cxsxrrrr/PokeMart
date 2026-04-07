@@ -12,11 +12,9 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel = 'Añadir al carrit
     const idStr = String(card.id || '');
     const seed = idStr ? idStr.charCodeAt(0) + idStr.charCodeAt(idStr.length - 1) : 50;
     const ratings = [4.5, 4.8, 4.9, 5.0, 4.7];
-    const sellers = ["AshKetchum", "MistyWater", "BrockRock", "GaryOak", "RocketShop", "PokeFan99"];
     return {
       rating: ratings[seed % ratings.length],
-      sellerName: sellers[seed % sellers.length],
-      sellerAvatar: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${(seed % 150) + 1}.png`
+      sellerAvatar: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
     };
   }, [card.id]);
 
@@ -48,6 +46,7 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel = 'Añadir al carrit
   }, [imageCandidates.length]);
 
   const frontSrc = imageCandidates[Math.min(imageIndex, imageCandidates.length - 1)] || CONSTANTS.PLACEHOLDER_IMAGE;
+  const sellerAvatarSrc = card?.sellerAvatar || mockData.sellerAvatar;
 
   return (
     <div className="card-item relative poke-card-group group flex flex-col items-center bg-white dark:bg-[#17233f] border-2 border-gray-200 dark:border-[#233252] hover:border-violet-600 dark:hover:border-cyan-500 rounded-2xl p-4 sm:p-4 p-3 min-h-[420px] sm:min-h-[480px] h-full transition-all duration-300 hover:shadow-xl dark:hover:shadow-cyan-500/20">
@@ -112,9 +111,9 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel = 'Añadir al carrit
 
         {/* Información del Vendedor */}
         <div className="flex items-center gap-2.5 mb-4">
-          <img src={mockData.sellerAvatar} alt="avatar" className="w-6 h-6 rounded-full bg-slate-200 border border-slate-300 dark:border-slate-600 object-cover" />
+          <img src={sellerAvatarSrc} alt="avatar" className="w-6 h-6 rounded-full bg-slate-200 border border-slate-300 dark:border-slate-600 object-cover" />
           <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 truncate">
-            @{card.seller || mockData.sellerName}
+            @{card.seller || 'Vendedor'}
           </span>
         </div>
 
