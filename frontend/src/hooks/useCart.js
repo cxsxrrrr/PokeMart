@@ -14,6 +14,21 @@ export const useCart = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
+  const isAuthLikeError = useCallback((error) => {
+    if (!error) return false;
+    if (error.status === 401 || error.status === 403) return true;
+
+    const message = String(error?.message || "").toLowerCase();
+    return (
+      message.includes("authentication required") ||
+      message.includes("autenticación requerida") ||
+      message.includes("es necesario iniciar sesión") ||
+      message.includes("sesión") ||
+      message.includes("sesion") ||
+      message.includes("no autenticado")
+    );
+  }, []);
+
   // Cargar carrito desde el backend si está logueado, sino local
   const fetchCart = useCallback(async () => {
     if (!authChecked) {
@@ -120,13 +135,19 @@ export const useCart = () => {
       setIsCartOpen(true);
     } catch (error) {
       console.error("Error adding to cart:", error);
-      const errorMessage = String(error?.message || "").toLowerCase();
-      const isAuthError =
-        errorMessage.includes("authentication required") ||
-        errorMessage.includes("autenticación requerida") ||
-        errorMessage.includes("no autenticado");
+      if (isAuthLikeError(error)) {
+        try {
+          const refreshedUser = await checkCurrentUser();
+          if (refreshedUser) {
+            await cartService.addListingToCart(listingId, 1);
+            await fetchCart();
+            setIsCartOpen(true);
+            return;
+          }
+        } catch (refreshError) {
+          console.warn("Session refresh before cart retry failed:", refreshError);
+        }
 
-      if (isAuthError) {
         localStorage.setItem('pokemart_pending_listing', listingId);
         showToast("Tu sesión expiró. Inicia sesión nuevamente para continuar.", "warning");
         navigate('/login');
@@ -135,7 +156,7 @@ export const useCart = () => {
 
       showToast("Hubo un error al añadir al carrito. Verifica tu conexión.", "error");
     }
-  }, [user, authChecked, checkCurrentUser, navigate, fetchCart, showToast]);
+  }, [user, authChecked, checkCurrentUser, navigate, fetchCart, showToast, isAuthLikeError]);
 
   const removeItemFromCart = useCallback(async (id) => {
     if (!user) {

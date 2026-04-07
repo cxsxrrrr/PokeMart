@@ -11,7 +11,9 @@ export const cartService = {
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || "Failed to fetch cart");
+      const error = new Error(errorData.error || "Failed to fetch cart");
+      error.status = response.status;
+      throw error;
     }
     return response.json();
   },
@@ -25,7 +27,9 @@ export const cartService = {
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || "Failed to add to cart");
+      const error = new Error(errorData.error || "Failed to add to cart");
+      error.status = response.status;
+      throw error;
     }
     return response.json();
   },
@@ -39,7 +43,9 @@ export const cartService = {
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || "Failed to update quantity");
+      const error = new Error(errorData.error || "Failed to update quantity");
+      error.status = response.status;
+      throw error;
     }
     return response.json();
   },
@@ -52,7 +58,9 @@ export const cartService = {
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || "Failed to remove item");
+      const error = new Error(errorData.error || "Failed to remove item");
+      error.status = response.status;
+      throw error;
     }
     return response.json();
   },
@@ -65,7 +73,9 @@ export const cartService = {
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || "Checkout failed");
+      const error = new Error(errorData.error || "Checkout failed");
+      error.status = response.status;
+      throw error;
     }
     return response.json();
   }
