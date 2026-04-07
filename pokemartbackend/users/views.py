@@ -179,25 +179,31 @@ def login_user(request):
     if not required_fields.issubset(payload):
         return JsonResponse({"error": "Missing required fields."}, status=400)
 
+    identifier = payload["username"].strip()
+    password = payload["password"]
+
+    matched_user = (
+        User.objects.filter(username__iexact=identifier).first()
+        or User.objects.filter(email__iexact=identifier).first()
+    )
+
+    auth_username = matched_user.username if matched_user else identifier
+
     user = authenticate(
         request,
-        username=payload["username"],
-        password=payload["password"]
+        username=auth_username,
+        password=password
     )
 
     if user is None:
         # Check if user exists but hasn't verified their email
-        try:
-            unverified = User.objects.get(username=payload["username"])
-            if not unverified.is_active:
-                return JsonResponse(
-                    {"error": "Debes verificar tu correo electrónico antes de iniciar sesión.",
-                     "needsVerification": True,
-                     "email": unverified.email},
-                    status=403
-                )
-        except User.DoesNotExist:
-            pass
+        if matched_user and not matched_user.is_active:
+            return JsonResponse(
+                {"error": "Debes verificar tu correo electrónico antes de iniciar sesión.",
+                 "needsVerification": True,
+                 "email": matched_user.email},
+                status=403
+            )
         return JsonResponse({"error": "Invalid credentials."}, status=401)
 
     login(request, user)
