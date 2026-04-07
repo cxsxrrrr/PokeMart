@@ -35,6 +35,11 @@ def create_user(request):
         is_active=False  # User must verify email first
     )
 
+    # Create a session immediately after registration so credentialed requests
+    # keep working consistently across the auth flow.
+    login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    request.session.set_expiry(60 * 60 * 24 * 7)
+
     # Generate 6-digit OTP
     import random
     from django.core.cache import cache
@@ -207,6 +212,7 @@ def login_user(request):
         return JsonResponse({"error": "Invalid credentials."}, status=401)
 
     login(request, user)
+    request.session.set_expiry(60 * 60 * 24 * 7)
     return JsonResponse({
         "id": user.id,
         "username": user.username,
@@ -431,6 +437,7 @@ def verify_email(request):
 
     # Log the user in automatically after verifying
     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+    request.session.set_expiry(60 * 60 * 24 * 7)
 
     return JsonResponse({
         "id": user.id,

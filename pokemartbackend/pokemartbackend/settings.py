@@ -113,13 +113,27 @@ WSGI_APPLICATION = "pokemartbackend.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+SQLITECLOUD_URL = os.environ.get("SQLITECLOUD_URL", "").strip()
+SQLITECLOUD_DJANGO_ENGINE = os.environ.get("SQLITECLOUD_DJANGO_ENGINE", "").strip()
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if SQLITECLOUD_URL:
+    DATABASES = {
+        "default": {
+            # Example engine values (depends on installed package):
+            # - sqlitecloud.django.backend
+            # - sqlitecloud.django
+            "ENGINE": SQLITECLOUD_DJANGO_ENGINE or "sqlitecloud.django.backend",
+            "NAME": SQLITECLOUD_URL,
+            "CONN_MAX_AGE": int(os.environ.get("DB_CONN_MAX_AGE", "60")),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation

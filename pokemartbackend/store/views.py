@@ -813,6 +813,8 @@ def update_order_status(request, order_id):
         is_buyer = order.buyer_id == request.user
         
         new_status = payload.get("status")
+        if not new_status:
+            return JsonResponse({"error": "El estado es requerido."}, status=400)
         
         if is_seller:
             # Vendedor puede hacer cualquier cosa
@@ -823,8 +825,29 @@ def update_order_status(request, order_id):
         else:
             return JsonResponse({"error": "No tienes permiso para realizar esta acción."}, status=403)
             
-        order.status = new_status
-        order.save()
+        completed_statuses = {"Completado", "Finalizado", "Completed"}
+        was_completed = order.status in completed_statuses
+        now_completed = new_status in completed_statuses
+
+        # Apply stock changes only the first time an order is completed/finalized.
+        if now_completed and not was_completed:
+            with transaction.atomic():
+                locked_order = Orders.objects.select_for_update().get(id=order_id)
+                details = Order_details.objects.select_related("listing_id").filter(order_id=locked_order)
+
+                for detail in details:
+                    listing = Listings.objects.select_for_update().get(id=detail.listing_id.id)
+                    listing.quantity = max(0, listing.quantity - detail.quantity)
+                    listing.status = "Sold Out" if listing.quantity <= 0 else "Available"
+                    listing.save(update_fields=["quantity", "status"])
+
+                locked_order.status = new_status
+                locked_order.save(update_fields=["status"])
+                order = locked_order
+        else:
+            order.status = new_status
+            order.save(update_fields=["status"])
+
         return JsonResponse({"id": order.id, "status": order.status})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
