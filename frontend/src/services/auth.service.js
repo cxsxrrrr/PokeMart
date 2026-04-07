@@ -14,7 +14,14 @@ const authService = {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(normalizeError(errorData.error || "Error al iniciar sesión"));
+      const error = new Error(normalizeError(errorData.error || "Error al iniciar sesión"));
+      if (errorData.email) {
+        error.email = errorData.email;
+      }
+      if ((errorData.error || "").toLowerCase().includes("verificar")) {
+        error.requiresVerification = true;
+      }
+      throw error;
     }
     
     return response.json();
@@ -31,6 +38,70 @@ const authService = {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(normalizeError(errorData.error || "Error al crear la cuenta"));
+    }
+
+    return response.json();
+  },
+
+  verifyEmail: async (email, otp) => {
+    const response = await fetch(`${API_BASE}/users/verify-email/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp }),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(normalizeError(errorData.error || "No se pudo verificar el correo"));
+    }
+
+    return response.json();
+  },
+
+  resendVerificationCode: async (email) => {
+    const response = await fetch(`${API_BASE}/users/resend-verification/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(normalizeError(errorData.error || "No se pudo reenviar el código"));
+    }
+
+    return response.json();
+  },
+
+  forgotPassword: async (email) => {
+    const response = await fetch(`${API_BASE}/users/forgot-password/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(normalizeError(errorData.error || "No se pudo enviar el código"));
+    }
+
+    return response.json();
+  },
+
+  resetPassword: async (email, otp, newPassword) => {
+    const response = await fetch(`${API_BASE}/users/reset-password/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp, newPassword }),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(normalizeError(errorData.error || "No se pudo restablecer la contraseña"));
     }
 
     return response.json();

@@ -12,6 +12,8 @@ import HowItWorksSection from './components/HowItWorks';
 import RegisterForm from './components/Auth/RegisterForm';
 import LoginForm from './components/Auth/LoginForm';
 import LogoutForm from './components/Auth/LogoutForm';
+import ForgotPasswordForm from './components/Auth/ForgotPasswordForm';
+import VerifyEmailForm from './components/Auth/VerifyEmailForm';
 import ScrollToTop from './components/Common/ScrollToTop';
 import { Navigate } from 'react-router-dom';
 import VideoNewsSection from './components/VideoNewsSection/VideoNewsSection';
@@ -32,7 +34,7 @@ import { useEffect } from 'react';
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem('pokemart-theme') || 'light');
   const location = useLocation();
-  const isAuthPage = location.pathname === '/register' || location.pathname === '/login';
+  const isAuthPage = ['/register', '/login', '/forgot-password', '/verify-email'].includes(location.pathname);
 
   const { cartItems, isCartOpen, setIsCartOpen, addItemToCart, removeItemFromCart, updateItemQuantity, cartTotal, loading: cartLoading } = useCart();
   const { popularCards, dealCards, catalogCards, status, statusMessage, loadCards } = useProducts();
@@ -107,6 +109,8 @@ function App() {
           <Route path="/dashboard/negotiations/:id" element={user ? <NegotiationChat /> : <Navigate to="/login" replace />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/login" element={<LoginForm />} />
+          <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+          <Route path="/verify-email" element={<VerifyEmailForm />} />
           <Route path="/logout" element={<LogoutForm />} />
           <Route path="/catalog" element={<Catalog onAdd={addItemToCart} />} />
           <Route path="/about" element={<About />} />

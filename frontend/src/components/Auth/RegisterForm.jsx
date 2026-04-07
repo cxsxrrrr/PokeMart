@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input, Button, Checkbox, Link as NextUILink } from "@heroui/react";
-import { IconEye, IconEyeOff, IconBrandGoogle, IconSparkles, IconX, IconAlertCircle } from "@tabler/icons-react";
+import { IconEye, IconEyeOff, IconSparkles, IconX, IconAlertCircle } from "@tabler/icons-react";
 import { useAuth } from "../../hooks/useAuth";
 import "./RegisterForm.css";
 
@@ -45,7 +45,7 @@ export default function RegisterForm() {
 
     try {
       await register(username, email, password, avatarUrl);
-      navigate('/login'); // mandamos a hacer login
+      navigate('/verify-email', { state: { email } });
     } catch (err) {
       console.error("Registro fallido:", err);
     }
@@ -258,6 +258,10 @@ export default function RegisterForm() {
             >
               {loading ? "Creando..." : "Crear mi cuenta"}
             </Button>
+
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mt-1">
+              Al crear tu cuenta, te enviaremos un código OTP al correo para validar y activar el acceso.
+            </p>
 
           </form>
 

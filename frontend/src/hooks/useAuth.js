@@ -38,6 +38,60 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const verifyEmail = useCallback(async (email, otp) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userData = await authService.verifyEmail(email, otp);
+      setUser(userData);
+      return userData;
+    } catch (err) {
+      setError(normalizeError(err.message));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const resendVerificationCode = useCallback(async (email) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await authService.resendVerificationCode(email);
+    } catch (err) {
+      setError(normalizeError(err.message));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const forgotPassword = useCallback(async (email) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await authService.forgotPassword(email);
+    } catch (err) {
+      setError(normalizeError(err.message));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const resetPassword = useCallback(async (email, otp, newPassword) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await authService.resetPassword(email, otp, newPassword);
+    } catch (err) {
+      setError(normalizeError(err.message));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const logout = useCallback(async () => {
     setLoading(true);
     try {
@@ -61,7 +115,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, register, logout, checkCurrentUser, setUser, setError }}>
+    <AuthContext.Provider value={{ user, loading, error, login, register, verifyEmail, resendVerificationCode, forgotPassword, resetPassword, logout, checkCurrentUser, setUser, setError }}>
       {children}
     </AuthContext.Provider>
   );

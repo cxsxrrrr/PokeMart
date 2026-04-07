@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input, Button, Checkbox, Link as NextUILink } from "@heroui/react";
-import { IconEye, IconEyeOff, IconBrandGoogle, IconSparkles, IconX, IconAlertCircle } from "@tabler/icons-react";
+import { IconEye, IconEyeOff, IconSparkles, IconX, IconAlertCircle } from "@tabler/icons-react";
 import { useAuth } from "../../hooks/useAuth";
 import "./LoginForm.css";
 
@@ -12,6 +12,7 @@ export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState("");
   const { login, loading, error, setError } = useAuth();
 
   // Al montar, limpiar errores y cargar usuario recordado
@@ -32,6 +33,7 @@ export default function LoginForm() {
 
     try {
       await login(username, password);
+      setUnverifiedEmail("");
       
       // Lógica de "Recordarme"
       if (rememberMe) {
@@ -42,6 +44,9 @@ export default function LoginForm() {
 
       navigate('/');
     } catch (err) {
+      if (err?.requiresVerification && err?.email) {
+        setUnverifiedEmail(err.email);
+      }
       console.error("Login fallido:", err);
     }
   };
@@ -146,6 +151,17 @@ export default function LoginForm() {
               </div>
             )}
 
+            {unverifiedEmail && (
+              <button
+                type="button"
+                onClick={() => navigate("/verify-email", { state: { email: unverifiedEmail } })}
+                className="text-left w-full flex items-start gap-2 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 p-3 rounded-lg text-sm font-medium border border-amber-200 dark:border-amber-700/40 hover:bg-amber-200/70 dark:hover:bg-amber-900/40 transition-colors"
+              >
+                <IconAlertCircle size={20} className="shrink-0 mt-0.5" />
+                <span>Tu cuenta no está verificada. Haz clic aquí para validar tu correo y activar tu cuenta.</span>
+              </button>
+            )}
+
             <Input
               isRequired
               type="text"
@@ -196,7 +212,7 @@ export default function LoginForm() {
               >
                 Recordarme
               </Checkbox>
-              <NextUILink href="#" className="text-sm font-semibold text-violet-700 dark:text-cyan-400 hover:underline">
+              <NextUILink href="#" onClick={(e) => { e.preventDefault(); navigate('/forgot-password'); }} className="text-sm font-semibold text-violet-700 dark:text-cyan-400 hover:underline">
                 ¿Olvidaste tu contraseña?
               </NextUILink>
             </div>

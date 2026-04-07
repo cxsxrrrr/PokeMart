@@ -1,0 +1,39 @@
+.verify-email-root {
+  -webkit-font-smoothing: antialiased;
+}
+
+.verify-email-root * {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.verify-email-root button {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+}
+
+.verify-email-root input:-webkit-autofill,
+.verify-email-root input:-webkit-autofill:hover,
+.verify-email-root input:-webkit-autofill:focus,
+.verify-email-root input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #f5f3ff inset !important;
+  -webkit-text-fill-color: #1e1b4b !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark .verify-email-root input:-webkit-autofill,
+.dark .verify-email-root input:-webkit-autofill:hover,
+.dark .verify-email-root input:-webkit-autofill:focus,
+.dark .verify-email-root input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
+  -webkit-text-fill-color: #cffafe !important;
+}
+
+@keyframes premiumFloat {
+  0% { transform: translateY(0) rotate(3deg); }
+  50% { transform: translateY(-15px) rotate(-1deg); }
+  100% { transform: translateY(0) rotate(3deg); }
+}
+
+.premium-card-anim {
+  animation: premiumFloat 6s ease-in-out infinite;
+  transition: transform 0.4s ease-out, box-shadow 0.4s ease-out !important;
+}
