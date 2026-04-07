@@ -149,7 +149,7 @@ const HomeFeed = ({ onAdd }) => {
         </div>
 
         {/* RIGHT COLUMN: Activity Feed */}
-        <aside className="lg:col-span-4 sticky top-24">
+        <aside className="lg:col-span-4 lg:sticky lg:top-24">
           <Card className="bg-white dark:bg-[#111827] border border-slate-100 dark:border-slate-800 rounded-[2.5rem] shadow-xl">
             <CardHeader className="p-6 pb-0 flex flex-col items-start gap-2">
               <div className="flex items-center gap-2 w-full">

@@ -174,13 +174,13 @@ export default function NegotiationChat() {
   }
 
   return (
-    <div className="container mx-auto px-4 pb-8 max-w-6xl h-[88vh] flex flex-col md:flex-row gap-6">
+    <div className="container mx-auto px-3 sm:px-4 pb-8 max-w-6xl min-h-[80vh] md:h-[88vh] flex flex-col md:flex-row gap-4 sm:gap-6">
       
       {/* Columna Principal: Chat */}
       <div className="flex-1 flex flex-col h-full bg-white dark:bg-[#111827] rounded-3xl shadow-xl overflow-hidden border border-slate-100 dark:border-slate-800">
         
         {/* Header chat */}
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4 bg-slate-50/30 dark:bg-white/5 backdrop-blur-md">
+        <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 sm:gap-4 bg-slate-50/30 dark:bg-white/5 backdrop-blur-md flex-wrap">
           <div className="flex items-center gap-4">
             <Button 
               isIconOnly 
@@ -192,7 +192,7 @@ export default function NegotiationChat() {
               <IconArrowLeft size={18} />
             </Button>
             <div>
-              <h1 className="text-lg font-black text-slate-800 dark:text-white flex items-center gap-2">
+              <h1 className="text-sm sm:text-lg font-black text-slate-800 dark:text-white flex items-center gap-2 flex-wrap">
                 {order?.is_seller ? `Negociación con ${order?.buyer_username}` : `Negociación con ${order?.seller_usernames?.[0] || 'Vendedor'}`}
                 <span className="text-[10px] font-bold px-2 py-0.5 bg-violet-100 text-violet-700 dark:bg-cyan-500/10 dark:text-cyan-400 rounded-full uppercase tracking-tighter">
                   {order?.status || 'Pendiente'}
@@ -242,7 +242,7 @@ export default function NegotiationChat() {
         </div>
 
         {/* Messages area */}
-        <ScrollShadow className="flex-1 p-6 space-y-6 bg-slate-50/10 dark:bg-transparent scroll-container">
+        <ScrollShadow className="flex-1 p-3 sm:p-6 space-y-4 sm:space-y-6 bg-slate-50/10 dark:bg-transparent scroll-container">
           {messages.map((msg, index) => {
             const isMe = msg.sender === user?.username;
             return (
@@ -267,7 +267,7 @@ export default function NegotiationChat() {
         </ScrollShadow>
 
         {/* Input area */}
-        <div className="p-6 bg-white dark:bg-[#111827] border-t border-slate-100 dark:border-slate-800">
+        <div className="p-3 sm:p-6 bg-white dark:bg-[#111827] border-t border-slate-100 dark:border-slate-800">
           <form onSubmit={handleSendMessage} className="flex gap-3">
             <Input 
               value={newMessage}
@@ -292,7 +292,7 @@ export default function NegotiationChat() {
       </div>
 
       {/* Sidebar: Detalle de Negociación y Catálogo */}
-      <div className={`w-full md:w-80 h-full flex flex-col bg-slate-50 dark:bg-[#0b1021] rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-lg transition-all ${showCatalog ? 'block' : 'hidden md:flex'}`}>
+      <div className={`w-full md:w-80 md:h-full max-h-[60vh] md:max-h-full flex flex-col bg-slate-50 dark:bg-[#0b1021] rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-lg transition-all ${showCatalog ? 'flex' : 'hidden md:flex'}`}>
         
         <ScrollShadow className="flex-1">
           {/* SECCIÓN 1: CARTAS EN ESTA NEGOCIACIÓN */}

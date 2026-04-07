@@ -50,11 +50,11 @@ const CardItem = ({ card, basePrice, discountRate, ctaLabel = 'Añadir al carrit
   const frontSrc = imageCandidates[Math.min(imageIndex, imageCandidates.length - 1)] || CONSTANTS.PLACEHOLDER_IMAGE;
 
   return (
-    <div className="card-item relative poke-card-group group flex flex-col items-center bg-white dark:bg-[#17233f] border-2 border-gray-200 dark:border-[#233252] hover:border-violet-600 dark:hover:border-cyan-500 rounded-2xl p-4 min-h-[480px] h-full transition-all duration-300 hover:shadow-xl dark:hover:shadow-cyan-500/20">
+    <div className="card-item relative poke-card-group group flex flex-col items-center bg-white dark:bg-[#17233f] border-2 border-gray-200 dark:border-[#233252] hover:border-violet-600 dark:hover:border-cyan-500 rounded-2xl p-4 sm:p-4 p-3 min-h-[420px] sm:min-h-[480px] h-full transition-all duration-300 hover:shadow-xl dark:hover:shadow-cyan-500/20">
 
       {/* BADGE DE DESCUENTO */}
       {discountRate ? (
-        <div className="absolute -top-3 -left-3 
+        <div className="absolute -top-2 -left-2 sm:-top-3 sm:-left-3 
       bg-purple-400 text-slate-900 
       dark:bg-cyan-400 dark:text-cyan-900
       px-3 py-1 rounded-full font-extrabold text-sm z-50 border-2 border-slate-900 shadow-lg">

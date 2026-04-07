@@ -61,7 +61,7 @@ export default function Dashboard() {
     <div className="container mx-auto px-5 pb-20 min-h-[80vh]">
       
       {/* Header del Dashboard */}
-      <div className="bg-gradient-to-r from-violet-900 to-indigo-800 dark:from-[#0b1021] dark:to-[#111827] rounded-3xl p-8 mb-6 text-white shadow-xl shadow-violet-900/20 relative overflow-hidden">
+      <div className="bg-gradient-to-r from-violet-900 to-indigo-800 dark:from-[#0b1021] dark:to-[#111827] rounded-2xl sm:rounded-3xl p-5 sm:p-8 mb-6 text-white shadow-xl shadow-violet-900/20 relative overflow-hidden">
         <div className="absolute top-[-50%] right-[-10%] w-[60%] h-[200%] bg-white/5 rotate-12 pointer-events-none blur-3xl"></div>
         <div className="absolute bottom-[-20%] left-[-10%] w-[40%] h-[100%] bg-cyan-400/10 rounded-full pointer-events-none blur-3xl"></div>
         
@@ -76,21 +76,21 @@ export default function Dashboard() {
               />
             </div>
             <div>
-              <h1 className="text-3xl font-black mb-1">¡Hola de nuevo, {user?.username}!</h1>
+              <h1 className="text-xl sm:text-3xl font-black mb-1">¡Hola de nuevo, {user?.username}!</h1>
               <p className="text-violet-200 dark:text-cyan-400 font-medium tracking-tight">Gestiona tus cartas y negociaciones activas</p>
             </div>
           </div>
           
-          <div className="flex gap-4">
+          <div className="flex gap-3 sm:gap-4 flex-wrap">
             <button 
               onClick={() => navigate('/catalog')}
-              className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition-colors font-bold flex items-center gap-2 backdrop-blur-sm"
+              className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 transition-colors font-bold flex items-center gap-2 backdrop-blur-sm text-sm sm:text-base"
             >
               <IconSearch size={20} /> Explorar
             </button>
             <button 
               onClick={() => alert("Pronto podrás publicar tus propias cartas...")}
-              className="px-6 py-3 rounded-xl bg-cyan-400 text-slate-900 hover:bg-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all font-black flex items-center gap-2"
+              className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-cyan-400 text-slate-900 hover:bg-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all font-black flex items-center gap-2 text-sm sm:text-base"
             >
               <IconPlus size={20} /> Publicar
             </button>

@@ -150,7 +150,7 @@ const CartPanel = ({ isOpen, items, onClose, onIncrease, onDecrease, onRemove, t
                   {/* Botón Eliminar Flotante (Sutil) */}
                   <button 
                     onClick={() => onRemove(item.id)}
-                    className="self-start p-1.5 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-all"
+                    className="self-start p-1.5 sm:opacity-0 sm:group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-all"
                   >
                     <IconTrash size={18} />
                   </button>

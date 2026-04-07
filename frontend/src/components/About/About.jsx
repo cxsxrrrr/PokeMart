@@ -45,11 +45,11 @@ const About = () => {
         <div>
 
             {/* Hero Section */}
-            <section className="text-center px-6 pt-20 pb-16 rounded-b-[32px] bg-gradient-to-br from-violet-600/[0.08] to-cyan-500/[0.06] dark:from-violet-600/[0.15] dark:to-cyan-500/[0.1]">
+            <section className="text-center px-4 sm:px-6 pt-12 sm:pt-20 pb-10 sm:pb-16 rounded-b-[32px] bg-gradient-to-br from-violet-600/[0.08] to-cyan-500/[0.06] dark:from-violet-600/[0.15] dark:to-cyan-500/[0.1]">
                 <p className="inline-block bg-gradient-to-r from-violet-600 to-cyan-500 text-white px-5 py-1.5 rounded-full text-sm font-bold mb-6 tracking-wide">
                     SOBRE NOSOTROS
                 </p>
-                <h1 className="text-4xl md:text-5xl font-black text-gray-800 dark:text-white leading-tight mb-5">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-800 dark:text-white leading-tight mb-5">
                     Tu destino para
                     <br />
                     <span className="text-violet-600 dark:text-cyan-400">cartas Pokémon TCG</span>
@@ -133,7 +133,7 @@ const About = () => {
                     {/* Glow effect behind */}
                     <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-cyan-500 blur-2xl opacity-20 dark:opacity-30 rounded-[3rem] -z-10 animate-pulse" />
                     
-                    <div className="bg-white/80 dark:bg-[#0f1424]/80 backdrop-blur-xl border border-white/60 dark:border-white/5 rounded-[2.5rem] p-10 md:p-16 text-center shadow-2xl relative overflow-hidden group transition-all duration-300 hover:shadow-violet-500/10 dark:hover:shadow-cyan-500/10 hover:-translate-y-1">
+                    <div className="bg-white/80 dark:bg-[#0f1424]/80 backdrop-blur-xl border border-white/60 dark:border-white/5 rounded-2xl sm:rounded-[2.5rem] p-6 sm:p-10 md:p-16 text-center shadow-2xl relative overflow-hidden group transition-all duration-300 hover:shadow-violet-500/10 dark:hover:shadow-cyan-500/10 hover:-translate-y-1">
                         
                         {/* Decorative background elements */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/10 dark:bg-cyan-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
@@ -143,7 +143,7 @@ const About = () => {
                             <IconStarFilled size={36} className="text-yellow-400 drop-shadow-md" />
                         </div>
                         
-                        <h2 className="text-4xl md:text-5xl font-black mb-6 bg-gradient-to-r from-violet-600 to-cyan-500 dark:from-violet-400 dark:to-cyan-400 bg-clip-text text-transparent">
+                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-6 bg-gradient-to-r from-violet-600 to-cyan-500 dark:from-violet-400 dark:to-cyan-400 bg-clip-text text-transparent">
                             Nuestra Misión
                         </h2>
                         <p className="max-w-2xl mx-auto text-[1.1rem] md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
@@ -155,7 +155,7 @@ const About = () => {
             </section>
 
             {/* Contacto */}
-            <section className="container mx-auto px-5 pt-8 pb-24">
+            <section className="container mx-auto px-4 sm:px-5 pt-8 pb-16 sm:pb-24">
                 <div className="max-w-3xl mx-auto text-center">
                     <h2 className="section-title flex justify-center mb-10 dark:text-cyan-400">
                         Contáctanos

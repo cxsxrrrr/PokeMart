@@ -59,7 +59,7 @@ const HowItWorksSection = () => {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-4 gap-10"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-10"
         >
           {STEPS.map((step, i) => {
             const Icon = step.icon;
