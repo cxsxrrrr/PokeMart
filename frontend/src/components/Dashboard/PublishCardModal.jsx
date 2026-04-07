@@ -264,12 +264,12 @@ export default function PublishCardModal({ isOpen, onClose, onCreated }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[2500] flex items-center justify-center p-3 sm:p-6">
+    <div className="fixed inset-0 z-[2500] flex items-start sm:items-center justify-center p-3 sm:p-6 overflow-y-auto">
       <div className="absolute inset-0 bg-slate-950/65 backdrop-blur-sm" aria-hidden="true" />
 
       <div
         ref={modalRef}
-        className="relative w-full max-w-6xl max-h-[92vh] bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden"
+        className="relative my-3 sm:my-0 w-full max-w-6xl max-h-[92dvh] bg-white dark:bg-[#0f172a] rounded-3xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-y-auto lg:overflow-hidden"
       >
         <div className="h-2 w-full bg-gradient-to-r from-cyan-500 via-violet-500 to-fuchsia-500" />
 
@@ -282,8 +282,8 @@ export default function PublishCardModal({ isOpen, onClose, onCreated }) {
           <IconX size={20} />
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] h-full">
-          <div className="p-5 sm:p-7 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700 min-h-[420px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] h-auto lg:h-full">
+          <div className="p-5 sm:p-7 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700 min-h-0 lg:min-h-[420px]">
             <div className="mb-5">
               <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-1">Publicar Carta</h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -315,7 +315,7 @@ export default function PublishCardModal({ isOpen, onClose, onCreated }) {
                 <span>Precio ref.</span>
               </div>
 
-              <div ref={resultsRef} onScroll={handleResultsScroll} className="max-h-[44vh] overflow-y-auto">
+              <div ref={resultsRef} onScroll={handleResultsScroll} className="max-h-[30vh] sm:max-h-[44vh] overflow-y-auto">
                 {query.trim().length < 2 ? (
                   <div className="px-4 py-10 text-center text-slate-500 dark:text-slate-400 text-sm">
                     Escribe al menos 2 letras para buscar.
@@ -367,7 +367,7 @@ export default function PublishCardModal({ isOpen, onClose, onCreated }) {
             </div>
           </div>
 
-          <form onSubmit={handleCreateListing} className="p-5 sm:p-7 bg-slate-50 dark:bg-slate-900/40 overflow-y-auto">
+          <form onSubmit={handleCreateListing} className="p-5 sm:p-7 bg-slate-50 dark:bg-slate-900/40 overflow-visible lg:overflow-y-auto">
             <h4 className="text-xl font-black text-slate-900 dark:text-white mb-4">Detalles del Listing</h4>
 
             <div className="space-y-4">

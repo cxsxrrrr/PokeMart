@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconPlus, IconTrendingUp, IconShoppingBag, IconMessageCircle, IconClock, IconCheck, IconSearch, IconTrash } from "@tabler/icons-react";
 import { useAuth } from "../../hooks/useAuth";
@@ -19,7 +19,7 @@ export default function Dashboard() {
   const [removingListingId, setRemovingListingId] = useState(null);
   const { showToast } = useToast();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const urlBase = CONSTANTS.API_BASE_URL || 'http://localhost:8000';
@@ -29,18 +29,46 @@ export default function Dashboard() {
         fetch(`${urlBase}/store/orders/`, { credentials: "include" })
       ]);
 
-      if (resVentas.ok) setVentas(await resVentas.json());
+      let ventasData = [];
+      if (resVentas.ok) {
+        ventasData = await resVentas.json();
+      }
+
+      // Fallback: if sales endpoint is empty/unavailable, derive listings directly.
+      if ((!Array.isArray(ventasData) || ventasData.length === 0) && user?.username) {
+        try {
+          const listingsResponse = await fetch(`${urlBase}/store/listings/`, { credentials: "include" });
+          if (listingsResponse.ok) {
+            const listings = await listingsResponse.json();
+            ventasData = (Array.isArray(listings) ? listings : [])
+              .filter((listing) => (listing?.seller?.username || "") === user.username)
+              .map((listing) => ({
+                id: `listing-${listing.id}`,
+                real_id: listing.id,
+                type: 'listing',
+                status: listing.status || 'Available',
+                item_name: listing?.card?.name || 'Carta',
+                total_price: Number(listing.price || 0),
+                image: listing?.card?.image_url || '',
+              }));
+          }
+        } catch (fallbackError) {
+          console.warn('No se pudo cargar fallback de ventas:', fallbackError);
+        }
+      }
+
+      setVentas(Array.isArray(ventasData) ? ventasData : []);
       if (resCompras.ok) setCompras(await resCompras.json());
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.username]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleRemoveListing = async (e, listingId) => {
     e.stopPropagation();

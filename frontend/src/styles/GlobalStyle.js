@@ -108,8 +108,9 @@ const GlobalStyle = createGlobalStyle`
     .menu-toggle:hover { background-color: rgba(255,255,255,0.1); }
     .menu-toggle__bar {
         display: block; width: 22px; height: 2.5px; border-radius: 2px;
-        background-color: #ffffff; transition: transform 0.3s ease, opacity 0.3s ease;
+        background-color: #111111; transition: transform 0.3s ease, opacity 0.3s ease;
     }
+    .dark .menu-toggle__bar { background-color: #ffffff; }
     .header-content--light .menu-toggle__bar { background-color: #111111; }
 
     /* Animación hamburguesa → X */
@@ -143,7 +144,8 @@ const GlobalStyle = createGlobalStyle`
     }
 
     .user-actions { display: flex; gap: 1.5rem; align-items: center; margin-left: auto; }
-    .header-sell { color: #ffffff; font-weight: 600; transition: color 0.3s ease; white-space: nowrap; }
+    .header-sell { color: #111111; font-weight: 600; transition: color 0.3s ease; white-space: nowrap; }
+    .dark .header-sell { color: #ffffff; }
     .header-content.header-content--light .header-sell { color: #111111; }
 
     .cart-icon {
@@ -191,6 +193,9 @@ const GlobalStyle = createGlobalStyle`
             display: block; padding: 0.85rem 1rem; border-radius: 12px; font-size: 0.95rem;
             transition: background-color 0.2s;
         }
+        .header-flex .header-sell {
+            color: #ffffff;
+        }
         .header-flex .user-actions > a:hover,
         .header-flex .user-actions > .header-sell:not(.cart-icon):hover {
             background-color: rgba(255,255,255,0.08);
@@ -211,6 +216,7 @@ const GlobalStyle = createGlobalStyle`
        RESPONSIVE MOBILE — SECCIONES GENERALES
        ========================================= */
     @media (max-width: 540px) {
+        html, body, #root { max-width: 100%; overflow-x: hidden; }
         .container { padding: 0 14px; }
         .section-title { font-size: 1.35rem; gap: 0.4rem; }
         .section-title__icon { width: 4rem; }
@@ -301,14 +307,35 @@ const GlobalStyle = createGlobalStyle`
     .carousel-track .card-3d-face img { filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3)); }
     
     @media (max-width: 768px) {
-        .carousel-window { height: auto; padding-bottom: 2rem; overflow-x: auto; scroll-snap-type: x mandatory; display: flex; scrollbar-width: none; }
-        .carousel-window::-webkit-scrollbar { display: none; }
-        .carousel-shell { display: block; margin: 0 -14px; } /* Override container padding for full width scrolling */
-        .carousel-track { display: flex; gap: 1rem; width: max-content; padding: 0 14px; transform-style: flat; }
+        .carousel-window {
+            height: auto;
+            padding: 0 12px 2rem;
+            overflow-x: hidden;
+            overflow-y: visible;
+            display: block;
+        }
+        .carousel-shell {
+            display: block;
+            margin: 0;
+        }
+        .carousel-track {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            max-width: 100%;
+            padding: 0;
+            transform-style: flat;
+        }
         .carousel-track .card-item { 
             position: relative; left: 0; transform: none !important; opacity: 1 !important;
-            width: 260px; min-height: 480px !important; scroll-snap-align: center; pointer-events: auto !important;
-            flex-shrink: 0; margin-bottom: 0;
+            width: min(320px, calc(100vw - 48px));
+            max-width: 100%;
+            min-height: 480px !important;
+            pointer-events: auto !important;
+            flex-shrink: 0;
+            margin-bottom: 0;
         }
         .carousel-track .card-3d-wrapper { height: 260px !important; }
         .carousel-btn { display: none; } /* Hide arrows on mobile, use touch scroll */

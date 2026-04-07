@@ -210,7 +210,7 @@ const Catalog = ({ onAdd }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 min-h-[90vh]">
+    <div className="container mx-auto px-4 min-h-[90vh] overflow-x-hidden">
       <div className="flex flex-col lg:flex-row gap-8 pt-6">
         
         {/* SIDEBAR FILTERS (Desktop) */}
@@ -249,14 +249,15 @@ const Catalog = ({ onAdd }) => {
                ))}
              </div>
           ) : filteredCards.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center sm:justify-items-stretch">
               {filteredCards.map((card) => (
-                <CardItem
-                  key={card.id}
-                  card={card}
-                  basePrice={card.price}
-                  onAdd={onAdd}
-                />
+                <div key={card.id} className="w-full max-w-[340px] sm:max-w-none">
+                  <CardItem
+                    card={card}
+                    basePrice={card.price}
+                    onAdd={onAdd}
+                  />
+                </div>
               ))}
             </div>
           ) : (

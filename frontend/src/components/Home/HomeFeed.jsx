@@ -65,7 +65,7 @@ const HomeFeed = ({ onAdd }) => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 overflow-x-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         {/* LEFT COLUMN: Main Feed */}
@@ -78,23 +78,24 @@ const HomeFeed = ({ onAdd }) => {
                 Cartas Recomendadas
               </h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center sm:justify-items-stretch">
               {feedData.recommendations.map((item) => (
-                <CardItem 
-                  key={item.id} 
-                  card={{
-                    ...item,
-                    seller: item.seller,
-                    sellerAvatar: item.seller_avatar_url,
-                    imageCandidates: [item.card.image_url],
-                    images: { small: item.card.image_url, large: item.card.image_url },
-                    name: item.card.name,
-                    set: { name: item.card.collection },
-                    rarity: item.card.rarity
-                  }} 
-                  basePrice={parseFloat(item.price)}
-                  onAdd={onAdd}
-                />
+                <div key={item.id} className="w-full max-w-[340px] sm:max-w-none">
+                  <CardItem 
+                    card={{
+                      ...item,
+                      seller: item.seller,
+                      sellerAvatar: item.seller_avatar_url,
+                      imageCandidates: [item.card.image_url],
+                      images: { small: item.card.image_url, large: item.card.image_url },
+                      name: item.card.name,
+                      set: { name: item.card.collection },
+                      rarity: item.card.rarity
+                    }} 
+                    basePrice={parseFloat(item.price)}
+                    onAdd={onAdd}
+                  />
+                </div>
               ))}
             </div>
           </section>
@@ -106,12 +107,12 @@ const HomeFeed = ({ onAdd }) => {
                 Mira lo último publicado
               </h2>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6 justify-items-center">
               {feedData.new_arrivals.map((item) => (
                 <Card 
                   key={item.id} 
                   isPressable 
-                  className="bg-transparent shadow-none border-none overflow-visible group"
+                  className="bg-transparent shadow-none border-none overflow-visible group w-full max-w-[165px] sm:max-w-none"
                   onClick={() => onAdd({
                     id: item.id,
                     name: item.card.name,

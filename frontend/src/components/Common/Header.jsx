@@ -131,7 +131,7 @@ const Header = ({
                         />
                       </button>
                       {userMenuOpen && (
-                        <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className={`${isMenuMobile ? "mt-3 w-56" : "absolute right-0 mt-3 w-48"} bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200`}>
                           <div className="p-3 border-b border-slate-100 dark:border-slate-800">
                             <p className="text-sm font-bold text-slate-800 dark:text-cyan-400 capitalize truncate">{user.username}</p>
                             <p className="text-xs text-slate-500 truncate">{user.email}</p>
