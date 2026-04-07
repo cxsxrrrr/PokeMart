@@ -1,5 +1,6 @@
 import { CONSTANTS } from '../utils/constants';
 import { normalizeError } from '../utils/normalizeResponses';
+import { apiFetch, saveTokens, clearTokens, getAccessToken } from '../utils/apiClient';
 
 const API_BASE = CONSTANTS.API_BASE_URL || "http://localhost:8000";
 
@@ -24,7 +25,12 @@ const authService = {
       throw error;
     }
     
-    return response.json();
+    const data = await response.json();
+    // Save JWT tokens
+    if (data.access_token) {
+      saveTokens(data.access_token, data.refresh_token);
+    }
+    return data;
   },
 
   register: async (username, email, password, avatarUrl) => {
@@ -40,7 +46,11 @@ const authService = {
       throw new Error(normalizeError(errorData.error || "Error al crear la cuenta"));
     }
 
-    return response.json();
+    const data = await response.json();
+    if (data.access_token) {
+      saveTokens(data.access_token, data.refresh_token);
+    }
+    return data;
   },
 
   verifyEmail: async (email, otp) => {
@@ -56,7 +66,11 @@ const authService = {
       throw new Error(normalizeError(errorData.error || "No se pudo verificar el correo"));
     }
 
-    return response.json();
+    const data = await response.json();
+    if (data.access_token) {
+      saveTokens(data.access_token, data.refresh_token);
+    }
+    return data;
   },
 
   resendVerificationCode: async (email) => {
@@ -108,22 +122,27 @@ const authService = {
   },
 
   logout: async () => {
-    const response = await fetch(`${API_BASE}/users/logout/`, {
-      method: "POST",
-      credentials: "include",
-    });
-    
-    if (!response.ok) {
-      throw new Error(normalizeError("Error al cerrar sesión"));
+    try {
+      await apiFetch('/users/logout/', { method: "POST" });
+    } catch {
+      // Ignore logout errors
     }
-    return response.json();
+    clearTokens();
+    return { message: "Logged out" };
   },
 
   getCurrentUser: async () => {
-    const response = await fetch(`${API_BASE}/users/me/`, {
+    // If there's no token at all, skip the request
+    const token = getAccessToken();
+    if (!token) {
+      const error = new Error("No autenticado");
+      error.status = 401;
+      throw error;
+    }
+
+    const response = await apiFetch('/users/me/', {
       method: "GET",
-      cache: "no-store",
-      credentials: "include",
+      headers: { "Content-Type": "application/json" },
     });
 
     if (!response.ok) {
@@ -137,11 +156,10 @@ const authService = {
   },
 
   updateProfile: async ({ username, avatarUrl }) => {
-    const response = await fetch(`${API_BASE}/users/profile/`, {
+    const response = await apiFetch('/users/profile/', {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, avatarUrl }),
-      credentials: "include",
     });
 
     if (!response.ok) {

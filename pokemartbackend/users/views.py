@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+from .jwt_utils import generate_tokens, get_user_from_request, get_user_from_token
+
 User = get_user_model()
 
 
@@ -73,12 +75,15 @@ def create_user(request):
         print(f"Error sending verification email: {e}")
         pass  # Don't block registration if email fails
 
+    access_token, refresh_token = generate_tokens(user)
     return JsonResponse({
         "id": user.id,
         "username": user.username,
         "email": user.email,
         "role": user.role,
         "avatarUrl": user.avatar_url,
+        "access_token": access_token,
+        "refresh_token": refresh_token,
     }, status=201)
 
 
@@ -213,12 +218,15 @@ def login_user(request):
 
     login(request, user)
     request.session.set_expiry(60 * 60 * 24 * 7)
+    access_token, refresh_token = generate_tokens(user)
     return JsonResponse({
         "id": user.id,
         "username": user.username,
         "email": user.email,
         "role": user.role,
         "avatarUrl": user.avatar_url,
+        "access_token": access_token,
+        "refresh_token": refresh_token,
     }, status=200)
 
 
@@ -248,10 +256,10 @@ def get_user(request, user_id):
 @csrf_exempt
 @require_http_methods(["GET"])
 def get_current_user(request):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
-    user = request.user
     return JsonResponse({
         "id": user.id,
         "username": user.username,
@@ -264,7 +272,8 @@ def get_current_user(request):
 @csrf_exempt
 @require_http_methods(["PATCH"])
 def update_current_user(request):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     try:
@@ -272,7 +281,6 @@ def update_current_user(request):
     except (json.JSONDecodeError, UnicodeDecodeError):
         return JsonResponse({"error": "Invalid JSON payload."}, status=400)
 
-    user = request.user
     new_username = str(payload.get("username", user.username)).strip()
     new_avatar_url = str(payload.get("avatarUrl", user.avatar_url or "")).strip()
 
@@ -473,6 +481,7 @@ def verify_email(request):
     # Log the user in automatically after verifying
     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
     request.session.set_expiry(60 * 60 * 24 * 7)
+    access_token, refresh_token = generate_tokens(user)
 
     return JsonResponse({
         "id": user.id,
@@ -480,5 +489,38 @@ def verify_email(request):
         "email": user.email,
         "role": user.role,
         "avatarUrl": user.avatar_url,
-        "message": "Correo verificado exitosamente."
+        "message": "Correo verificado exitosamente.",
+        "access_token": access_token,
+        "refresh_token": refresh_token,
     }, status=200)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def refresh_token_view(request):
+    """Exchange a valid refresh token for a new access + refresh token pair."""
+    try:
+        payload = json.loads(request.body.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"error": "Invalid JSON payload."}, status=400)
+
+    token = payload.get("refresh_token", "").strip()
+    if not token:
+        return JsonResponse({"error": "refresh_token es requerido."}, status=400)
+
+    try:
+        user = get_user_from_token(token, expected_type="refresh")
+    except ValueError as e:
+        return JsonResponse({"error": str(e)}, status=401)
+
+    access_token, new_refresh_token = generate_tokens(user)
+    return JsonResponse({
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "role": user.role,
+        "avatarUrl": user.avatar_url,
+        "access_token": access_token,
+        "refresh_token": new_refresh_token,
+    }, status=200)
+

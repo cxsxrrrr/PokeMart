@@ -4,6 +4,7 @@ import { IconPlus, IconTrendingUp, IconShoppingBag, IconMessageCircle, IconClock
 import { useAuth } from "../../hooks/useAuth";
 import { formatCurrency } from "../../utils/formatters";
 import { CONSTANTS } from "../../utils/constants";
+import { apiFetch } from "../../utils/apiClient";
 import PublishCardModal from "./PublishCardModal";
 import { listingService } from "../../services/listing.service";
 import { useToast } from "../../providers/ToastProvider";
@@ -22,28 +23,10 @@ export default function Dashboard() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const urlBase = CONSTANTS.API_BASE_URL || 'http://localhost:8000';
 
-      const fetchWithSessionRetry = async (url) => {
-        let response = await fetch(url, { credentials: "include", cache: "no-store" });
-
-        if (response.status === 401 || response.status === 403) {
-          try {
-            const refreshed = await checkCurrentUser();
-            if (refreshed) {
-              response = await fetch(url, { credentials: "include", cache: "no-store" });
-            }
-          } catch (error) {
-            console.warn("No se pudo refrescar sesión para dashboard:", error);
-          }
-        }
-
-        return response;
-      };
-      
       const [resVentas, resCompras] = await Promise.all([
-        fetchWithSessionRetry(`${urlBase}/store/sales/`),
-        fetchWithSessionRetry(`${urlBase}/store/orders/`)
+        apiFetch('/store/sales/'),
+        apiFetch('/store/orders/')
       ]);
 
       let ventasData = [];
@@ -54,7 +37,7 @@ export default function Dashboard() {
       // Fallback: if sales endpoint is empty/unavailable, derive listings directly.
       if ((!Array.isArray(ventasData) || ventasData.length === 0) && user?.username) {
         try {
-          const listingsResponse = await fetchWithSessionRetry(`${urlBase}/store/listings/`);
+          const listingsResponse = await apiFetch('/store/listings/');
           if (listingsResponse.ok) {
             const listings = await listingsResponse.json();
             ventasData = (Array.isArray(listings) ? listings : [])
@@ -86,7 +69,7 @@ export default function Dashboard() {
     } finally {
       setLoading(false);
     }
-  }, [user?.username, checkCurrentUser]);
+  }, [user?.username]);
 
   useEffect(() => {
     fetchData();

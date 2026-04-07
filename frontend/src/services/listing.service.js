@@ -1,6 +1,4 @@
-import { CONSTANTS } from "../utils/constants";
-
-const API_BASE = CONSTANTS.API_BASE_URL || "http://localhost:8000";
+import { apiFetch } from "../utils/apiClient";
 
 export const listingService = {
   searchCards: async (query, { page = 1, pageSize = 40, signal } = {}) => {
@@ -9,14 +7,13 @@ export const listingService = {
       return { results: [], has_more: false, page: 1, page_size: pageSize };
     }
 
-    const response = await fetch(
-      `${API_BASE}/store/cards/search/?q=${encodeURIComponent(q)}&page=${page}&page_size=${pageSize}`,
+    const response = await apiFetch(
+      `/store/cards/search/?q=${encodeURIComponent(q)}&page=${page}&page_size=${pageSize}`,
       {
-      method: "GET",
-      credentials: "include",
-      signal,
-      cache: "no-store",
-      }
+        method: "GET",
+        signal,
+      },
+      { skipAuth: true } // search is public
     );
 
     if (!response.ok) {
@@ -37,10 +34,9 @@ export const listingService = {
   },
 
   createListing: async ({ cardId, price, quantity, condition, description }) => {
-    const response = await fetch(`${API_BASE}/store/listings/create/`, {
+    const response = await apiFetch('/store/listings/create/', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
       body: JSON.stringify({
         card_id: cardId,
         price,
@@ -60,9 +56,8 @@ export const listingService = {
   },
 
   deleteListing: async (listingId) => {
-    const response = await fetch(`${API_BASE}/store/listings/${listingId}/delete/`, {
+    const response = await apiFetch(`/store/listings/${listingId}/delete/`, {
       method: "DELETE",
-      credentials: "include",
     });
 
     if (!response.ok) {

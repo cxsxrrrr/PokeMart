@@ -27,7 +27,7 @@ import {
 import { chatService } from "../../services/chat.service";
 import { useAuth } from "../../hooks/useAuth";
 import { formatCurrency } from "../../utils/formatters";
-import { CONSTANTS } from "../../utils/constants";
+import { apiFetch } from "../../utils/apiClient";
 
 export default function NegotiationChat() {
   const { id } = useParams();
@@ -49,10 +49,7 @@ export default function NegotiationChat() {
         return msgs;
       });
       
-      const urlBase = CONSTANTS.API_BASE_URL || 'http://localhost:8000';
-      const response = await fetch(`${urlBase}/store/orders/${id}/`, {
-        credentials: "include"
-      });
+      const response = await apiFetch(`/store/orders/${id}/`);
       if (response.ok) {
         const orderData = await response.json();
         setOrder(orderData);
@@ -60,9 +57,7 @@ export default function NegotiationChat() {
         // Cargar listings del vendedor (el primero que aparezca en la lista)
         if (orderData.seller_usernames?.length > 0) {
           const sellerName = orderData.seller_usernames[0];
-          const listingsRes = await fetch(`${urlBase}/store/users/${sellerName}/listings/`, {
-            credentials: "include"
-          });
+          const listingsRes = await apiFetch(`/store/users/${sellerName}/listings/`);
           if (listingsRes.ok) {
             setSellerListings(await listingsRes.json());
           }
@@ -126,12 +121,10 @@ export default function NegotiationChat() {
 
   const handleAddCard = async (listingId, cardName) => {
     try {
-      const urlBase = CONSTANTS.API_BASE_URL || 'http://localhost:8000';
-      const res = await fetch(`${urlBase}/store/orders/${id}/add-item/`, {
+      const res = await apiFetch(`/store/orders/${id}/add-item/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ listing_id: listingId, quantity: 1 }),
-        credentials: "include"
       });
       
       if (res.ok) {
@@ -148,12 +141,10 @@ export default function NegotiationChat() {
     if (order.details.length <= 1) return; // Ya validado en backend pero por UX
 
     try {
-      const urlBase = CONSTANTS.API_BASE_URL || 'http://localhost:8000';
-      const res = await fetch(`${urlBase}/store/orders/${id}/remove-item/`, {
+      const res = await apiFetch(`/store/orders/${id}/remove-item/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ detail_id: detailId }),
-        credentials: "include"
       });
       
       if (res.ok) {

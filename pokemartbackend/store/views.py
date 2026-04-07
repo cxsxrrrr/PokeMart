@@ -7,6 +7,7 @@ from django.http import JsonResponse, HttpResponse
 from django.db import transaction
 
 from .models import Orders, Order_details, Listings, Cart, Card, Reviews, Message
+from users.jwt_utils import get_user_from_request
 
 
 def health_check(request):
@@ -200,7 +201,8 @@ def get_listing(request, listing_id):
 @csrf_exempt
 @require_http_methods(["POST"])
 def create_listing(request):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     try:
@@ -218,7 +220,7 @@ def create_listing(request):
         return JsonResponse({"error": "Card not found."}, status=404)
 
     listing = Listings.objects.create(
-        seller=request.user,
+        seller=user,
         card_id=card,
         price=payload["price"],
         quantity=payload["quantity"],
@@ -243,11 +245,12 @@ def create_listing(request):
 @csrf_exempt
 @require_http_methods(["PUT"])
 def update_listing(request, listing_id):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     try:
-        listing = Listings.objects.get(id=listing_id, seller=request.user)
+        listing = Listings.objects.get(id=listing_id, seller=user)
     except Listings.DoesNotExist:
         return JsonResponse({"error": "Listing not found or not owned by you."}, status=404)
 
@@ -282,11 +285,12 @@ def update_listing(request, listing_id):
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def delete_listing(request, listing_id):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     try:
-        listing = Listings.objects.get(id=listing_id, seller=request.user)
+        listing = Listings.objects.get(id=listing_id, seller=user)
     except Listings.DoesNotExist:
         return JsonResponse({"error": "Listing not found or not owned by you."}, status=404)
 
@@ -299,10 +303,11 @@ def delete_listing(request, listing_id):
 @csrf_exempt
 @require_http_methods(["GET"])
 def list_cart_items(request):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
-    cart_items = Cart.objects.filter(user_id=request.user).select_related("listing_id__card_id")
+    cart_items = Cart.objects.filter(user_id=user).select_related("listing_id__card_id")
     response_data = []
     for item in cart_items:
         listing = item.listing_id
@@ -335,7 +340,8 @@ def list_cart_items(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def add_cart_item(request):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     try:
@@ -356,7 +362,7 @@ def add_cart_item(request):
         return JsonResponse({"error": "Listing is not available."}, status=400)
 
     # Check if item already in cart — update quantity instead
-    existing = Cart.objects.filter(user_id=request.user, listing_id=listing).first()
+    existing = Cart.objects.filter(user_id=user, listing_id=listing).first()
     if existing:
         existing.quantity += int(payload["quantity"])
         existing.save()
@@ -368,7 +374,7 @@ def add_cart_item(request):
         })
 
     cart_item = Cart.objects.create(
-        user_id=request.user,
+        user_id=user,
         listing_id=listing,
         quantity=payload["quantity"],
     )
@@ -384,11 +390,12 @@ def add_cart_item(request):
 @csrf_exempt
 @require_http_methods(["PUT"])
 def update_cart_item(request, cart_item_id):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     try:
-        cart_item = Cart.objects.get(id=cart_item_id, user_id=request.user)
+        cart_item = Cart.objects.get(id=cart_item_id, user_id=user)
     except Cart.DoesNotExist:
         return JsonResponse({"error": "Cart item not found."}, status=404)
 
@@ -413,11 +420,12 @@ def update_cart_item(request, cart_item_id):
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def delete_cart_item(request, cart_item_id):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     try:
-        cart_item = Cart.objects.get(id=cart_item_id, user_id=request.user)
+        cart_item = Cart.objects.get(id=cart_item_id, user_id=user)
     except Cart.DoesNotExist:
         return JsonResponse({"error": "Cart item not found."}, status=404)
 
@@ -430,10 +438,11 @@ def delete_cart_item(request, cart_item_id):
 @csrf_exempt
 @require_http_methods(["POST"])
 def create_order(request):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
-    cart_items = Cart.objects.filter(user_id=request.user).select_related("listing_id")
+    cart_items = Cart.objects.filter(user_id=user).select_related("listing_id")
 
     if not cart_items.exists():
         return JsonResponse({"error": "Cart is empty."}, status=400)
@@ -452,7 +461,7 @@ def create_order(request):
             total_price = sum(item.listing_id.price * item.quantity for item in items)
             
             order = Orders.objects.create(
-                buyer_id=request.user,
+                buyer_id=user,
                 total_price=total_price,
                 status="Pendiente",
             )
@@ -493,11 +502,12 @@ def create_order(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def list_orders(request):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     # Compras: órdenes donde soy el comprador
-    orders = Orders.objects.filter(buyer_id=request.user).order_by("-created_at")
+    orders = Orders.objects.filter(buyer_id=user).order_by("-created_at")
 
     data = []
     for order in orders:
@@ -519,14 +529,15 @@ def list_orders(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def list_sales(request):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     # 1. Obtener Publicaciones Activas (Listings sin ventas aún o disponibles)
-    active_listings = Listings.objects.filter(seller=request.user, status__in=["Available", "Disponible"]).select_related("card_id").order_by("-created_at")
+    active_listings = Listings.objects.filter(seller=user, status__in=["Available", "Disponible"]).select_related("card_id").order_by("-created_at")
     
     # 2. Obtener Negociaciones/Órdenes (Ventas en curso o completadas)
-    orders = Orders.objects.filter(order_details__listing_id__seller=request.user).distinct().order_by("-created_at")
+    orders = Orders.objects.filter(order_details__listing_id__seller=user).distinct().order_by("-created_at")
 
     data = []
     
@@ -546,7 +557,7 @@ def list_sales(request):
 
     # Agregar órdenes
     for order in orders:
-        first_detail = Order_details.objects.filter(order_id=order, listing_id__seller=request.user).select_related("listing_id__card_id").first()
+        first_detail = Order_details.objects.filter(order_id=order, listing_id__seller=user).select_related("listing_id__card_id").first()
         data.append({
             "id": order.id,
             "type": "order",
@@ -566,18 +577,19 @@ def list_sales(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def get_order(request, order_id):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     try:
         order = Orders.objects.select_related('buyer_id').get(id=order_id)
         
         # Verificar si es comprador
-        is_buyer = order.buyer_id == request.user
+        is_buyer = order.buyer_id == user
         
         # Verificar si es vendedor de algún item
         details = Order_details.objects.filter(order_id=order).select_related("listing_id__card_id", "listing_id__seller")
-        is_seller = any(detail.listing_id.seller == request.user for detail in details)
+        is_seller = any(detail.listing_id.seller == user for detail in details)
         
         if not (is_buyer or is_seller):
              return JsonResponse({"error": "Order not found."}, status=404)
@@ -625,7 +637,8 @@ def get_order(request, order_id):
 @csrf_exempt
 @require_http_methods(["POST"])
 def create_review(request):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     try:
@@ -642,7 +655,7 @@ def create_review(request):
         return JsonResponse({"error": "Rating must be an integer between 1 and 5."}, status=400)
 
     try:
-        order = Orders.objects.get(id=payload["order_id"], buyer_id=request.user)
+        order = Orders.objects.get(id=payload["order_id"], buyer_id=user)
     except Orders.DoesNotExist:
         return JsonResponse({"error": "Order not found or not owned by you."}, status=404)
 
@@ -685,7 +698,8 @@ def get_review(request, order_id):
 @csrf_exempt
 @require_http_methods(["POST"])
 def add_order_message(request, order_id):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Autenticación requerida."}, status=401)
     
     try:
@@ -693,7 +707,7 @@ def add_order_message(request, order_id):
         order = Orders.objects.get(id=order_id)
         message = Message.objects.create(
             order=order,
-            sender=request.user,
+            sender=user,
             content=payload["content"]
         )
         return JsonResponse({
@@ -741,7 +755,8 @@ def list_user_listings(request, username):
 @csrf_exempt
 @require_http_methods(["POST"])
 def add_item_to_order(request, order_id):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Auth required"}, status=401)
     
     try:
@@ -775,7 +790,8 @@ def add_item_to_order(request, order_id):
 @csrf_exempt
 @require_http_methods(["POST"])
 def remove_item_from_order(request, order_id):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Auth required"}, status=401)
     
     try:
@@ -802,7 +818,8 @@ def remove_item_from_order(request, order_id):
 @csrf_exempt
 @require_http_methods(["PUT"])
 def update_order_status(request, order_id):
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Autenticación requerida."}, status=401)
     
     try:
@@ -811,8 +828,8 @@ def update_order_status(request, order_id):
         
         # Solo un vendedor de la orden puede cambiar el estado, 
         # excepto para cancelar que también puede el comprador.
-        is_seller = Order_details.objects.filter(order_id=order, listing_id__seller=request.user).exists()
-        is_buyer = order.buyer_id == request.user
+        is_seller = Order_details.objects.filter(order_id=order, listing_id__seller=user).exists()
+        is_buyer = order.buyer_id == user
         
         new_status = payload.get("status")
         if not new_status:
@@ -919,13 +936,12 @@ def get_home_feed(request):
 @require_http_methods(["GET"])
 def seller_stats(request):
     """Return aggregated statistics for the current seller's dashboard."""
-    if not request.user.is_authenticated:
+    user = get_user_from_request(request)
+    if user is None:
         return JsonResponse({"error": "Authentication required."}, status=401)
 
     from django.db.models import Sum, Count, F
     from django.db.models.functions import TruncMonth
-
-    user = request.user
 
     # ── 1. Cards sold (completed orders where user is seller) ──
     completed_details = Order_details.objects.filter(

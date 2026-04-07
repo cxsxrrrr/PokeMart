@@ -1,6 +1,7 @@
 import { useState, useCallback, createContext, useContext, useRef, useEffect } from 'react';
 import authService from '../services/auth.service';
 import { normalizeError } from '../utils/normalizeResponses';
+import { getAccessToken, clearTokens } from '../utils/apiClient';
 
 const AuthContext = createContext();
 
@@ -109,12 +110,23 @@ export const AuthProvider = ({ children }) => {
       setAuthChecked(true);
     } catch (err) {
       console.error(err);
+      // Even if the server call fails, clear local state
+      clearTokens();
+      setUser(null);
     } finally {
       setLoading(false);
     }
   }, []);
 
   const checkCurrentUser = useCallback(async () => {
+    // If there's no token at all, skip the API call entirely
+    const token = getAccessToken();
+    if (!token) {
+      setUser(null);
+      setAuthChecked(true);
+      return null;
+    }
+
     try {
       const userData = await authService.getCurrentUser();
       setUser(userData);
@@ -123,16 +135,14 @@ export const AuthProvider = ({ children }) => {
       const status = err?.status;
       const isUnauthorized = status === 401 || status === 403;
 
-      // Keep current session state on transient network/server issues.
       if (isUnauthorized) {
-        if (userRef.current) {
-          return userRef.current;
-        }
-
+        // Token is truly invalid/expired (refresh also failed in apiClient)
+        clearTokens();
         setUser(null);
         return null;
       }
 
+      // Keep current session state on transient network/server issues
       return userRef.current;
     } finally {
       setAuthChecked(true);

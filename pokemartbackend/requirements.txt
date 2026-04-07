@@ -7,3 +7,4 @@ whitenoise
 requests
 sqlitecloud
 psycopg[binary]
+PyJWT

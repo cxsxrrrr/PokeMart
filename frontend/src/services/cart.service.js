@@ -1,14 +1,10 @@
-import { CONSTANTS } from '../utils/constants';
-
-const BASE_URL = CONSTANTS.API_BASE_URL || 'http://localhost:8000';
+import { apiFetch } from '../utils/apiClient';
 
 export const cartService = {
   async getCart() {
-    const response = await fetch(`${BASE_URL}/store/cart/`, {
+    const response = await apiFetch('/store/cart/', {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-      credentials: "include", // Important for session cookies
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -20,12 +16,10 @@ export const cartService = {
   },
 
   async addListingToCart(listingId, quantity = 1) {
-    const response = await fetch(`${BASE_URL}/store/cart/add/`, {
+    const response = await apiFetch('/store/cart/add/', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      cache: "no-store",
       body: JSON.stringify({ listing_id: listingId, quantity }),
-      credentials: "include",
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -37,12 +31,10 @@ export const cartService = {
   },
 
   async updateItemQuantity(cartItemId, quantity) {
-    const response = await fetch(`${BASE_URL}/store/cart/${cartItemId}/update/`, {
+    const response = await apiFetch(`/store/cart/${cartItemId}/update/`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      cache: "no-store",
       body: JSON.stringify({ quantity }),
-      credentials: "include",
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -54,11 +46,9 @@ export const cartService = {
   },
 
   async removeFromCart(cartItemId) {
-    const response = await fetch(`${BASE_URL}/store/cart/${cartItemId}/delete/`, {
+    const response = await apiFetch(`/store/cart/${cartItemId}/delete/`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-      credentials: "include",
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -70,11 +60,9 @@ export const cartService = {
   },
 
   async checkout() {
-    const response = await fetch(`${BASE_URL}/store/orders/create/`, {
+    const response = await apiFetch('/store/orders/create/', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-      credentials: "include",
     });
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
