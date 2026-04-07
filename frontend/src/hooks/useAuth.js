@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
   const login = useCallback(async (username, password) => {
     setLoading(true);
@@ -15,6 +16,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const userData = await authService.login(username, password);
       setUser(userData);
+      setAuthChecked(true);
       return userData;
     } catch (err) {
       setError(normalizeError(err.message));
@@ -29,6 +31,7 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const userData = await authService.register(username, email, password, avatarUrl);
+      setAuthChecked(true);
       return userData;
     } catch (err) {
       setError(normalizeError(err.message));
@@ -44,6 +47,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const userData = await authService.verifyEmail(email, otp);
       setUser(userData);
+      setAuthChecked(true);
       return userData;
     } catch (err) {
       setError(normalizeError(err.message));
@@ -97,6 +101,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await authService.logout();
       setUser(null);
+      setAuthChecked(true);
     } catch (err) {
       console.error(err);
     } finally {
@@ -111,11 +116,14 @@ export const AuthProvider = ({ children }) => {
       return userData;
     } catch (err) {
       setUser(null);
+      return null;
+    } finally {
+      setAuthChecked(true);
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, register, verifyEmail, resendVerificationCode, forgotPassword, resetPassword, logout, checkCurrentUser, setUser, setError }}>
+    <AuthContext.Provider value={{ user, loading, error, authChecked, login, register, verifyEmail, resendVerificationCode, forgotPassword, resetPassword, logout, checkCurrentUser, setUser, setError }}>
       {children}
     </AuthContext.Provider>
   );

@@ -30,6 +30,7 @@ import { useProducts } from './hooks/useProducts';
 import { useMediaQuery } from './hooks/useMediaQuery';
 import { useAuth } from './hooks/useAuth';
 import { useEffect } from 'react';
+import { IconLoader2 } from '@tabler/icons-react';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem('pokemart-theme') || 'light');
@@ -39,11 +40,22 @@ function App() {
   const { cartItems, isCartOpen, setIsCartOpen, addItemToCart, removeItemFromCart, updateItemQuantity, cartTotal, loading: cartLoading } = useCart();
   const { popularCards, dealCards, catalogCards, status, statusMessage, loadCards } = useProducts();
   const isMobile = useMediaQuery('(max-width: 540px)');
-  const { user, checkCurrentUser } = useAuth();
+  const { user, authChecked, checkCurrentUser } = useAuth();
 
   useEffect(() => {
     checkCurrentUser();
   }, [checkCurrentUser]);
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <div className="inline-flex items-center gap-3 text-slate-600 dark:text-slate-300 font-semibold">
+          <IconLoader2 className="animate-spin" size={20} />
+          Verificando sesión...
+        </div>
+      </div>
+    );
+  }
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';

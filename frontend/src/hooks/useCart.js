@@ -10,12 +10,16 @@ export const useCart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, authChecked, checkCurrentUser } = useAuth();
   const navigate = useNavigate();
   const { showToast } = useToast();
 
   // Cargar carrito desde el backend si está logueado, sino local
   const fetchCart = useCallback(async () => {
+    if (!authChecked) {
+      return;
+    }
+
     if (!user) {
       const saved = localStorage.getItem(CONSTANTS.CART_STORAGE_KEY);
       if (saved) setCartItems(safeParseCart(saved));
@@ -41,7 +45,7 @@ export const useCart = () => {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, authChecked]);
 
   useEffect(() => {
     fetchCart();
@@ -49,15 +53,19 @@ export const useCart = () => {
 
   // Si no hay usuario, guardamos en localStorage para persistencia temporal
   useEffect(() => {
+    if (!authChecked) {
+      return;
+    }
+
     if (!user) {
       localStorage.setItem(CONSTANTS.CART_STORAGE_KEY, JSON.stringify(cartItems));
     }
-  }, [cartItems, user]);
+  }, [cartItems, user, authChecked]);
 
   // Efecto para procesar artículos pendientes después de iniciar sesión
   useEffect(() => {
     const processPending = async () => {
-      if (user) {
+      if (authChecked && user) {
         const pendingId = localStorage.getItem('pokemart_pending_listing');
         if (pendingId) {
           localStorage.removeItem('pokemart_pending_listing');
@@ -72,7 +80,7 @@ export const useCart = () => {
       }
     };
     processPending();
-  }, [user, fetchCart, showToast]);
+  }, [user, authChecked, fetchCart, showToast]);
 
   const addItemToCart = useCallback(async (product, priceOverride) => {
     // Extraer el ID numérico real. Si es un string como "listing-5", tomar el 5.
@@ -81,12 +89,26 @@ export const useCart = () => {
       listingId = parseInt(listingId.replace('listing-', ''), 10);
     }
 
-    if (!user) {
-      // Guardar el ID para añadirlo automáticamente después del login
-      localStorage.setItem('pokemart_pending_listing', listingId);
-      showToast("Debes iniciar sesión para añadir productos al carrito. Tu selección se guardará.", "info");
-      navigate('/login');
+    if (!authChecked) {
+      showToast("Estamos verificando tu sesión, intenta de nuevo en un momento.", "info");
       return;
+    }
+
+    let activeUser = user;
+    if (!activeUser) {
+      try {
+        activeUser = await checkCurrentUser();
+      } catch (error) {
+        activeUser = null;
+      }
+
+      if (!activeUser) {
+        // Guardar el ID para añadirlo automáticamente después del login
+        localStorage.setItem('pokemart_pending_listing', listingId);
+        showToast("Debes iniciar sesión para añadir productos al carrito. Tu selección se guardará.", "info");
+        navigate('/login');
+        return;
+      }
     }
 
     try {
@@ -98,9 +120,22 @@ export const useCart = () => {
       setIsCartOpen(true);
     } catch (error) {
       console.error("Error adding to cart:", error);
+      const errorMessage = String(error?.message || "").toLowerCase();
+      const isAuthError =
+        errorMessage.includes("authentication required") ||
+        errorMessage.includes("autenticación requerida") ||
+        errorMessage.includes("no autenticado");
+
+      if (isAuthError) {
+        localStorage.setItem('pokemart_pending_listing', listingId);
+        showToast("Tu sesión expiró. Inicia sesión nuevamente para continuar.", "warning");
+        navigate('/login');
+        return;
+      }
+
       showToast("Hubo un error al añadir al carrito. Verifica tu conexión.", "error");
     }
-  }, [user, navigate, fetchCart, showToast]);
+  }, [user, authChecked, checkCurrentUser, navigate, fetchCart, showToast]);
 
   const removeItemFromCart = useCallback(async (id) => {
     if (!user) {
@@ -158,4 +193,4 @@ export const useCart = () => {
     cartTotal,
     loading
   };
-};
+};
