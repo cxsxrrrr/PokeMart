@@ -115,12 +115,20 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       return userData;
     } catch (err) {
-      setUser(null);
-      return null;
+      const status = err?.status;
+      const isUnauthorized = status === 401 || status === 403;
+
+      // Keep current session state on transient network/server issues.
+      if (isUnauthorized) {
+        setUser(null);
+        return null;
+      }
+
+      return user;
     } finally {
       setAuthChecked(true);
     }
-  }, []);
+  }, [user]);
 
   const updateProfile = useCallback(async ({ username, avatarUrl }) => {
     setLoading(true);

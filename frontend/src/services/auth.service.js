@@ -122,11 +122,16 @@ const authService = {
   getCurrentUser: async () => {
     const response = await fetch(`${API_BASE}/users/me/`, {
       method: "GET",
+      cache: "no-store",
       credentials: "include",
     });
 
     if (!response.ok) {
-      throw new Error(normalizeError("No autenticado"));
+      const errorData = await response.json().catch(() => ({}));
+      const message = errorData.error || (response.status === 401 || response.status === 403 ? "No autenticado" : "No se pudo validar la sesión");
+      const error = new Error(normalizeError(message));
+      error.status = response.status;
+      throw error;
     }
     return response.json();
   },
