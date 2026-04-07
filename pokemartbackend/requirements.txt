@@ -6,4 +6,3 @@ gunicorn
 whitenoise
 requests
 sqlitecloud
-django-sqlitecloud
