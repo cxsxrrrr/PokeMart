@@ -9,7 +9,7 @@ import { listingService } from "../../services/listing.service";
 import { useToast } from "../../providers/ToastProvider";
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, checkCurrentUser } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("ventas"); // 'ventas' | 'compras'
   const [ventas, setVentas] = useState([]);
@@ -23,10 +23,27 @@ export default function Dashboard() {
     try {
       setLoading(true);
       const urlBase = CONSTANTS.API_BASE_URL || 'http://localhost:8000';
+
+      const fetchWithSessionRetry = async (url) => {
+        let response = await fetch(url, { credentials: "include", cache: "no-store" });
+
+        if (response.status === 401 || response.status === 403) {
+          try {
+            const refreshed = await checkCurrentUser();
+            if (refreshed) {
+              response = await fetch(url, { credentials: "include", cache: "no-store" });
+            }
+          } catch (error) {
+            console.warn("No se pudo refrescar sesión para dashboard:", error);
+          }
+        }
+
+        return response;
+      };
       
       const [resVentas, resCompras] = await Promise.all([
-        fetch(`${urlBase}/store/sales/`, { credentials: "include" }),
-        fetch(`${urlBase}/store/orders/`, { credentials: "include" })
+        fetchWithSessionRetry(`${urlBase}/store/sales/`),
+        fetchWithSessionRetry(`${urlBase}/store/orders/`)
       ]);
 
       let ventasData = [];
@@ -37,7 +54,7 @@ export default function Dashboard() {
       // Fallback: if sales endpoint is empty/unavailable, derive listings directly.
       if ((!Array.isArray(ventasData) || ventasData.length === 0) && user?.username) {
         try {
-          const listingsResponse = await fetch(`${urlBase}/store/listings/`, { credentials: "include" });
+          const listingsResponse = await fetchWithSessionRetry(`${urlBase}/store/listings/`);
           if (listingsResponse.ok) {
             const listings = await listingsResponse.json();
             ventasData = (Array.isArray(listings) ? listings : [])
@@ -58,13 +75,18 @@ export default function Dashboard() {
       }
 
       setVentas(Array.isArray(ventasData) ? ventasData : []);
-      if (resCompras.ok) setCompras(await resCompras.json());
+      if (resCompras.ok) {
+        const comprasData = await resCompras.json();
+        setCompras(Array.isArray(comprasData) ? comprasData : []);
+      } else if (resCompras.status !== 401 && resCompras.status !== 403) {
+        setCompras([]);
+      }
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
     }
-  }, [user?.username]);
+  }, [user?.username, checkCurrentUser]);
 
   useEffect(() => {
     fetchData();

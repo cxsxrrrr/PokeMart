@@ -7,6 +7,7 @@ export const cartService = {
     const response = await fetch(`${BASE_URL}/store/cart/`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
+      cache: "no-store",
       credentials: "include", // Important for session cookies
     });
     if (!response.ok) {
@@ -22,6 +23,7 @@ export const cartService = {
     const response = await fetch(`${BASE_URL}/store/cart/add/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      cache: "no-store",
       body: JSON.stringify({ listing_id: listingId, quantity }),
       credentials: "include",
     });
@@ -38,6 +40,7 @@ export const cartService = {
     const response = await fetch(`${BASE_URL}/store/cart/${cartItemId}/update/`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
+      cache: "no-store",
       body: JSON.stringify({ quantity }),
       credentials: "include",
     });
@@ -54,6 +57,7 @@ export const cartService = {
     const response = await fetch(`${BASE_URL}/store/cart/${cartItemId}/delete/`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
+      cache: "no-store",
       credentials: "include",
     });
     if (!response.ok) {
@@ -69,6 +73,7 @@ export const cartService = {
     const response = await fetch(`${BASE_URL}/store/orders/create/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      cache: "no-store",
       credentials: "include",
     });
     if (!response.ok) {

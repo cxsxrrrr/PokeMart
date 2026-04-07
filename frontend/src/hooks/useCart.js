@@ -149,8 +149,12 @@ export const useCart = () => {
         }
 
         localStorage.setItem('pokemart_pending_listing', listingId);
-        showToast("Tu sesión expiró. Inicia sesión nuevamente para continuar.", "warning");
-        navigate('/login');
+        if (user) {
+          showToast("No pudimos validar tu sesión en este momento. Intenta nuevamente en unos segundos.", "warning");
+        } else {
+          showToast("Tu sesión expiró. Inicia sesión nuevamente para continuar.", "warning");
+          navigate('/login');
+        }
         return;
       }
 
