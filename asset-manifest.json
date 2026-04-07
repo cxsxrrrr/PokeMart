@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/PokeMart/static/css/main.4d8c84d8.css",
-    "main.js": "/PokeMart/static/js/main.7f89bccb.js",
+    "main.js": "/PokeMart/static/js/main.58b53b0e.js",
     "static/js/707.0cc680cd.chunk.js": "/PokeMart/static/js/707.0cc680cd.chunk.js",
     "static/media/pikachu-gif.gif": "/PokeMart/static/media/pikachu-gif.54de185a433f6dd8ef1c.gif",
     "static/media/pokeball.gif": "/PokeMart/static/media/pokeball.300309e0442b6ef922cd.gif",
@@ -12,11 +12,11 @@
     "static/media/pokemon-wind-wave.webp": "/PokeMart/static/media/pokemon-wind-wave.ed15d4774f81057df1c7.webp",
     "index.html": "/PokeMart/index.html",
     "main.4d8c84d8.css.map": "/PokeMart/static/css/main.4d8c84d8.css.map",
-    "main.7f89bccb.js.map": "/PokeMart/static/js/main.7f89bccb.js.map",
+    "main.58b53b0e.js.map": "/PokeMart/static/js/main.58b53b0e.js.map",
     "707.0cc680cd.chunk.js.map": "/PokeMart/static/js/707.0cc680cd.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.4d8c84d8.css",
-    "static/js/main.7f89bccb.js"
+    "static/js/main.58b53b0e.js"
   ]
 }
